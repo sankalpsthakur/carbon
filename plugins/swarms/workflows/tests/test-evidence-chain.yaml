@@ -1,0 +1,224 @@
+apiVersion: carbonkit-swarm/v1
+
+metadata:
+  name: test-evidence-chain
+  version: "1.0.0"
+  description: "Test workflow: validates cross-plugin evidence chain from data ingestion through calculation, execution, and strategy -- ensuring outputs from each plugin correctly flow as inputs to the next."
+  team: esg-full-swarm
+  tags:
+    - test
+    - evidence-chain
+    - cross-plugin
+    - traceability
+
+params:
+  fiscal_year:
+    type: string
+    default: "FY2025"
+  reporting_currency:
+    type: string
+    default: "USD"
+
+fixtures:
+  source_data:
+    - vendor: "EvidenceVendor-1"
+      category: "purchased_goods"
+      spend_usd: 30000
+      quantity_kg: 500
+      unit: "kg"
+    - vendor: "EvidenceVendor-2"
+      category: "waste_treatment"
+      spend_usd: 7000
+      quantity_kg: 200
+      unit: "kg"
+  expected_chain:
+    - link: "ingest -> calc"
+      field: "job_id"
+      description: "Ingestion job_id must flow to calculation stage"
+    - link: "calc -> exec"
+      field: "run_id"
+      description: "Calculation run_id must flow to execution stage"
+    - link: "exec -> strategy"
+      field: "evidence_package_id"
+      description: "Execution evidence must flow to strategy stage"
+
+stages:
+  - id: calc_ingest
+    name: "Calculation Plugin: Ingest"
+    depends_on: []
+    timeout_minutes: 10
+    agents:
+      - role: ingester
+        agent: spend-baseline-operator
+        plugin: scope3-calculation
+        task: "Ingest fixture data through the calc MCP. Produce a job_id that downstream stages can reference."
+        tools:
+          - calc.ingest
+          - calc.db.get
+          - calc.db.set
+        inputs:
+          reporting_currency: "$params.reporting_currency"
+        outputs:
+          - job_id
+          - row_count
+          - ingest_hash
+    merge:
+      strategy: collect
+      output_key: ingest_result
+    gate:
+      type: all_agents_succeed
+      on_failure: abort
+
+  - id: calc_compute
+    name: "Calculation Plugin: Compute"
+    depends_on:
+      - calc_ingest
+    timeout_minutes: 10
+    agents:
+      - role: calculator
+        agent: calculation-orchestrator
+        plugin: scope3-calculation
+        task: "Run emissions computation using the ingested job_id. Verify the job_id reference resolves correctly."
+        tools:
+          - calc.compute
+          - calc.db.get
+          - calc.dqs_score
+        inputs:
+          job_id: "$stages.calc_ingest.outputs.job_id"
+        outputs:
+          - run_id
+          - total_kgco2e
+          - dqs_score
+          - compute_hash
+    merge:
+      strategy: collect
+      output_key: compute_result
+    gate:
+      type: all_agents_succeed
+      on_failure: abort
+
+  - id: exec_evidence
+    name: "Execution Plugin: Evidence Collection"
+    depends_on:
+      - calc_compute
+    timeout_minutes: 10
+    agents:
+      - role: evidence-collector
+        agent: evidence-integrity-operator
+        plugin: scope3-execution
+        task: "Collect execution evidence from the calculation run. Verify the run_id reference from calc resolves correctly. Generate an evidence package ID."
+        tools:
+          - exec.db.get
+          - exec.db.set
+          - exec.db.list
+        inputs:
+          run_id: "$stages.calc_compute.outputs.run_id"
+          job_id: "$stages.calc_ingest.outputs.job_id"
+        outputs:
+          - evidence_package_id
+          - evidence_items
+          - chain_verified
+    merge:
+      strategy: collect
+      output_key: evidence_result
+    gate:
+      type: all_agents_succeed
+      on_failure: retry
+
+  - id: strategy_snapshot
+    name: "Strategy Plugin: Snapshot & Verify"
+    depends_on:
+      - exec_evidence
+    timeout_minutes: 10
+    agents:
+      - role: snapshot-verifier
+        agent: strategy-flow-orchestrator
+        plugin: scope3-strategy
+        task: "Create a strategy snapshot referencing the evidence package. Verify the full chain: job_id -> run_id -> evidence_package_id is intact."
+        tools:
+          - strategy.snapshot
+          - strategy.db.get
+          - strategy.db.set
+        inputs:
+          evidence_package_id: "$stages.exec_evidence.outputs.evidence_package_id"
+          run_id: "$stages.calc_compute.outputs.run_id"
+          job_id: "$stages.calc_ingest.outputs.job_id"
+        outputs:
+          - snapshot_id
+          - chain_intact
+          - chain_links
+    merge:
+      strategy: collect
+      output_key: snapshot_result
+    gate:
+      type: all_agents_succeed
+      on_failure: escalate
+
+  - id: chain_audit
+    name: "Cross-Plugin Chain Audit"
+    depends_on:
+      - strategy_snapshot
+    timeout_minutes: 5
+    agents:
+      - role: chain-auditor
+        agent: traceability-auditor
+        plugin: scope3-calculation
+        task: "Audit the complete evidence chain across all plugins. Verify every link has a valid reference and no orphaned records exist."
+        tools:
+          - calc.db.get
+          - calc.db.list
+        inputs:
+          job_id: "$stages.calc_ingest.outputs.job_id"
+          run_id: "$stages.calc_compute.outputs.run_id"
+          evidence_package_id: "$stages.exec_evidence.outputs.evidence_package_id"
+          snapshot_id: "$stages.strategy_snapshot.outputs.snapshot_id"
+        outputs:
+          - chain_valid
+          - orphaned_records
+          - link_count
+    merge:
+      strategy: collect
+      output_key: audit_result
+    gate:
+      type: all_agents_succeed
+      on_failure: abort
+
+assertions:
+  - stage: calc_ingest
+    check: "job_id != null"
+    description: "Calc ingest must produce a job_id"
+  - stage: calc_compute
+    check: "run_id != null"
+    description: "Calc compute must produce a run_id referencing the job_id"
+  - stage: exec_evidence
+    check: "evidence_package_id != null"
+    description: "Exec must produce an evidence_package_id referencing the run_id"
+  - stage: exec_evidence
+    check: "chain_verified == true"
+    description: "Execution must verify the calc->exec link"
+  - stage: strategy_snapshot
+    check: "chain_intact == true"
+    description: "Strategy must verify the full calc->exec->strategy chain"
+  - stage: chain_audit
+    check: "chain_valid == true"
+    description: "Final audit must confirm entire chain is valid"
+  - stage: chain_audit
+    check: "orphaned_records == 0 || orphaned_records == null"
+    description: "No orphaned records should exist"
+
+deliverable:
+  name: "Cross-Plugin Evidence Chain Test Results"
+  format: json
+  sections:
+    - title: "Calculation: Ingest"
+      source_stage: calc_ingest
+    - title: "Calculation: Compute"
+      source_stage: calc_compute
+    - title: "Execution: Evidence"
+      source_stage: exec_evidence
+    - title: "Strategy: Snapshot"
+      source_stage: strategy_snapshot
+    - title: "Chain Audit"
+      source_stage: chain_audit
+  hash: true
+  audit_trail: true

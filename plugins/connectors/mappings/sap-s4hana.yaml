@@ -1,0 +1,33 @@
+source: sap-s4hana
+version: "1.0"
+api_type: odata
+auth_type: oauth2
+description: SAP S/4HANA Purchase Order Items via OData API_PURCHASEORDER_PROCESS_SRV
+
+canonical_mapping:
+  vendor: "Supplier"
+  amount: "NetPriceAmount"
+  currency: "DocumentCurrency"
+  quantity: "OrderQuantity"
+  unit: "PurchaseOrderQuantityUnit"
+  category: "MaterialGroup"
+  date: "PurchaseOrderDate"
+  org_unit: "CompanyCode"
+
+transforms:
+  date: "iso8601"
+  currency: "iso4217_validate"
+  category_lookup: "material_group_to_unspsc"
+
+api_config:
+  entity_set: "A_PurchaseOrderItem"
+  select: "Supplier,NetPriceAmount,DocumentCurrency,OrderQuantity,PurchaseOrderQuantityUnit,MaterialGroup,PurchaseOrderDate,CompanyCode,Material,Plant"
+  expand: "to_PurchaseOrder"
+
+notes: |
+  SAP S/4HANA exposes Purchase Order data through OData v2/v4.
+  The A_PurchaseOrderItem entity contains line-item procurement data.
+  MaterialGroup maps to UNSPSC via the material_group_to_unspsc lookup table.
+  NetPriceAmount is per-unit price; multiply by OrderQuantity for total spend.
+  CompanyCode identifies the legal entity (org_unit).
+  Requires SAP Communication Arrangement for API_PURCHASEORDER_PROCESS_SRV.

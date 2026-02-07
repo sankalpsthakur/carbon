@@ -1,0 +1,36 @@
+source: xero
+version: "1.0"
+api_type: rest
+auth_type: oauth2
+description: Xero Accounting API - Purchase invoices (Bills) with line items
+
+canonical_mapping:
+  vendor: "Contact.Name"
+  amount: "UnitAmount"
+  currency: "CurrencyCode"
+  quantity: "Quantity"
+  unit: "UnitOfMeasure"
+  category: "AccountCode"
+  date: "DateString"
+  org_unit: "TrackingCategory"
+
+transforms:
+  date: "iso8601"
+  currency: "iso4217_validate"
+
+api_config:
+  endpoint: "/api.xro/2.0/Invoices"
+  params:
+    where: 'Type=="ACCPAY"'
+    page: 1
+  line_item_path: "Invoices[].LineItems[]"
+
+notes: |
+  Xero returns invoices with nested LineItems arrays.
+  Type ACCPAY = bills/purchase invoices (supplier spend).
+  Contact.Name is the supplier name from the invoice header.
+  UnitAmount is per-unit; multiply by Quantity for line total.
+  AccountCode maps to Xero's chart of accounts (use as category proxy).
+  TrackingCategory can be used as org_unit if tracking is configured.
+  CurrencyCode is at the invoice level, shared by all line items.
+  Requires OAuth 2.0 with accounting.transactions.read scope.

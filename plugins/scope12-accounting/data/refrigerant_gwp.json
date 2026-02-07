@@ -1,0 +1,25 @@
+{
+  "_meta": {
+    "source": "IPCC AR6 WG1 Table 7.SM.7 + ASHRAE Standard 34",
+    "metric": "GWP-100",
+    "version": "refrigerants-AR6-2024-v1",
+    "note": "Used for fugitive emissions (Scope 1 refrigerant leakage calculations)"
+  },
+  "refrigerants": {
+    "R-12": { "name": "CFC-12 (Dichlorodifluoromethane)", "gwp100": 10200, "cas": "75-71-8", "phase_out": "Montreal Protocol" },
+    "R-22": { "name": "HCFC-22 (Chlorodifluoromethane)", "gwp100": 1960, "cas": "75-45-6", "phase_out": "2030 (developed)" },
+    "R-32": { "name": "HFC-32 (Difluoromethane)", "gwp100": 771, "cas": "75-10-5" },
+    "R-125": { "name": "HFC-125 (Pentafluoroethane)", "gwp100": 3740, "cas": "354-33-6" },
+    "R-134a": { "name": "HFC-134a (1,1,1,2-Tetrafluoroethane)", "gwp100": 1530, "cas": "811-97-2" },
+    "R-143a": { "name": "HFC-143a (1,1,1-Trifluoroethane)", "gwp100": 5810, "cas": "420-46-2" },
+    "R-152a": { "name": "HFC-152a (1,1-Difluoroethane)", "gwp100": 164, "cas": "75-37-6" },
+    "R-227ea": { "name": "HFC-227ea", "gwp100": 3600, "cas": "431-89-0" },
+    "R-245fa": { "name": "HFC-245fa", "gwp100": 962, "cas": "460-73-1" },
+    "R-404A": { "name": "R-404A blend (HFC-125/143a/134a)", "gwp100": 4728, "blend": true },
+    "R-407C": { "name": "R-407C blend (HFC-32/125/134a)", "gwp100": 1774, "blend": true },
+    "R-410A": { "name": "R-410A blend (HFC-32/125)", "gwp100": 2088, "blend": true },
+    "R-507A": { "name": "R-507A blend (HFC-125/143a)", "gwp100": 4710, "blend": true },
+    "R-1234yf": { "name": "HFO-1234yf", "gwp100": 0.501, "cas": "754-12-1", "note": "Low-GWP alternative" },
+    "R-1234ze": { "name": "HFO-1234ze(E)", "gwp100": 1.37, "cas": "29118-24-9", "note": "Low-GWP alternative" }
+  }
+}

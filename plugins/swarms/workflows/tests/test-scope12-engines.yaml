@@ -1,0 +1,168 @@
+apiVersion: carbonkit-swarm/v1
+
+metadata:
+  name: test-scope12-engines
+  version: "1.0.0"
+  description: "Test workflow: validates Scope 1 and Scope 2 calculation engines with fixture data for stationary combustion, mobile sources, and grid electricity."
+  team: esg-scope12
+  tags:
+    - test
+    - scope1
+    - scope2
+    - calculation
+
+params:
+  fiscal_year:
+    type: string
+    default: "FY2025"
+  reporting_currency:
+    type: string
+    default: "USD"
+
+fixtures:
+  scope1_stationary:
+    - facility: "Plant-A"
+      fuel_type: "natural_gas"
+      quantity_mmbtu: 15000
+      ef_kgco2e_per_mmbtu: 53.06
+    - facility: "Plant-B"
+      fuel_type: "diesel"
+      quantity_liters: 8500
+      ef_kgco2e_per_liter: 2.68
+  scope1_mobile:
+    - fleet: "delivery_trucks"
+      fuel_type: "diesel"
+      quantity_liters: 45000
+      ef_kgco2e_per_liter: 2.68
+  scope1_fugitive:
+    - source: "HVAC_system"
+      refrigerant: "R-410A"
+      quantity_kg: 12
+      gwp: 2088
+  scope2_electricity:
+    - facility: "Plant-A"
+      grid_region: "US-WECC"
+      kwh: 500000
+      location_ef_kgco2e_per_kwh: 0.322
+      market_ef_kgco2e_per_kwh: 0.0
+      eac_coverage_pct: 100
+    - facility: "Plant-B"
+      grid_region: "US-ERCOT"
+      kwh: 300000
+      location_ef_kgco2e_per_kwh: 0.407
+      market_ef_kgco2e_per_kwh: 0.407
+      eac_coverage_pct: 0
+
+stages:
+  - id: scope1_calc
+    name: "Scope 1 Calculation Test"
+    depends_on: []
+    timeout_minutes: 10
+    agents:
+      - role: scope1-engineer
+        agent: scope1-ledger-engineer
+        plugin: scope12-accounting
+        task: "Calculate Scope 1 emissions from fixture data: stationary combustion (natural gas + diesel), mobile sources (fleet diesel), and fugitive emissions (refrigerant leakage)."
+        tools:
+          - calc.db.get
+          - calc.db.set
+          - calc.db.list
+        inputs:
+          fiscal_year: "$params.fiscal_year"
+        outputs:
+          - scope1_stationary_kgco2e
+          - scope1_mobile_kgco2e
+          - scope1_fugitive_kgco2e
+          - scope1_total_kgco2e
+    merge:
+      strategy: collect
+      output_key: scope1_result
+    gate:
+      type: all_agents_succeed
+      on_failure: abort
+
+  - id: scope2_calc
+    name: "Scope 2 Calculation Test"
+    depends_on: []
+    timeout_minutes: 10
+    agents:
+      - role: scope2-analyst
+        agent: scope2-energy-attribute-analyst
+        plugin: scope12-accounting
+        task: "Calculate Scope 2 emissions: location-based and market-based. Apply EAC coverage to market-based calculations."
+        tools:
+          - calc.db.get
+          - calc.db.set
+          - calc.db.list
+        inputs:
+          fiscal_year: "$params.fiscal_year"
+        outputs:
+          - scope2_location_kgco2e
+          - scope2_market_kgco2e
+          - eac_coverage_pct
+    merge:
+      strategy: collect
+      output_key: scope2_result
+    gate:
+      type: all_agents_succeed
+      on_failure: abort
+
+  - id: kpi_normalize
+    name: "KPI Normalization Test"
+    depends_on:
+      - scope1_calc
+      - scope2_calc
+    timeout_minutes: 5
+    agents:
+      - role: kpi-auditor
+        agent: kpi-normalization-auditor
+        plugin: scope12-accounting
+        task: "Normalize Scope 1+2 totals against revenue and headcount denominators."
+        tools:
+          - calc.db.get
+          - calc.db.list
+        inputs:
+          scope1_total: "$stages.scope1_calc.outputs.scope1_total_kgco2e"
+          scope2_location: "$stages.scope2_calc.outputs.scope2_location_kgco2e"
+          scope2_market: "$stages.scope2_calc.outputs.scope2_market_kgco2e"
+        outputs:
+          - normalized_kpis
+    merge:
+      strategy: collect
+      output_key: kpi_result
+    gate:
+      type: all_agents_succeed
+      on_failure: retry
+
+assertions:
+  - stage: scope1_calc
+    check: "scope1_total_kgco2e > 0"
+    description: "Total Scope 1 emissions must be positive"
+  - stage: scope1_calc
+    check: "scope1_stationary_kgco2e > 0"
+    description: "Stationary combustion emissions must be calculated"
+  - stage: scope1_calc
+    check: "scope1_fugitive_kgco2e > 0"
+    description: "Fugitive emissions must include refrigerant GWP"
+  - stage: scope2_calc
+    check: "scope2_location_kgco2e > scope2_market_kgco2e"
+    description: "Location-based must exceed market-based due to 100% EAC at Plant-A"
+  - stage: scope2_calc
+    check: "scope2_market_kgco2e >= 0"
+    description: "Market-based must be non-negative"
+  - stage: kpi_normalize
+    check: "normalized_kpis != null"
+    description: "KPI normalization must produce results"
+
+deliverable:
+  name: "Scope 1/2 Engine Test Results"
+  format: json
+  sections:
+    - title: "Scope 1 Emissions"
+      source_stage: scope1_calc
+    - title: "Scope 2 Emissions"
+      source_stage: scope2_calc
+    - title: "Normalized KPIs"
+      source_stage: kpi_normalize
+  hash: true
+  audit_trail: true

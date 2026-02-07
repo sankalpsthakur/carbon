@@ -1,0 +1,26 @@
+FROM node:20-alpine
+
+LABEL maintainer="CarbonKit <carbonkit@example.com>"
+LABEL description="CarbonKit Scope 1 & 2 Calculation MCP Server"
+
+WORKDIR /app
+
+# Copy shared services
+COPY plugins/shared-services/tools/ /app/shared-services/
+
+# Copy scope12 plugin
+COPY plugins/scope12-accounting/ /app/scope12-accounting/
+
+RUN mkdir -p /app/scope12-accounting/data
+
+ENV NODE_ENV=production
+ENV MCP_TRANSPORT=http
+ENV MCP_HTTP_PORT=8404
+ENV MCP_SERVER_NAME=scope12-mcp
+
+EXPOSE 8404
+
+HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
+  CMD wget -qO- http://localhost:8404/health || exit 1
+
+CMD ["node", "/app/scope12-accounting/tools/scope12-mcp.js"]

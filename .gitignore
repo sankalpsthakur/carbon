@@ -1,0 +1,38 @@
+# Dependencies
+node_modules/
+package-lock.json
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Data artifacts (test-generated JSON in data dirs)
+plugins/*/data/_audit_log.json
+plugins/*/data/test_col.json
+plugins/*/data/closed_periods.json
+
+# Build & runtime
+*.log
+.DS_Store
+dist/
+build/
+coverage/
+
+# Git backup artifacts
+*.git.bak/
+.git.bak/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Docker
+docker/data/
+
+# Temporary
+tmp/
+*.tmp
+.DS_Store

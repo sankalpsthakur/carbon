@@ -1,0 +1,224 @@
+apiVersion: carbonkit-swarm/v1
+
+metadata:
+  name: csrd-disclosure-prep
+  version: "1.0.0"
+  description: "CSRD/ESRS disclosure preparation: DMA materiality, Scope 1/2/3 data assembly, ESRS integrity checks, and disclosure-ready evidence package."
+  team: esg-full-swarm
+  tags:
+    - csrd
+    - esrs
+    - disclosure
+    - compliance
+
+params:
+  fiscal_year:
+    type: string
+    default: "FY2025"
+  reporting_currency:
+    type: string
+    default: "EUR"
+  job_id:
+    type: string
+    description: "Existing Scope 3 calculation job ID"
+    required: true
+
+stages:
+  - id: dma_review
+    name: "Double Materiality Assessment Review"
+    depends_on: []
+    timeout_minutes: 20
+    agents:
+      - role: dma-strategist
+        agent: csrd-dma-precollection-strategist
+        plugin: scope3-strategy
+        task: "Review the current DMA state: identify material topics, assess impact/financial materiality, verify IRO completeness."
+        tools:
+          - strategy.db.get
+          - strategy.db.list
+          - strategy.risk_scan
+        inputs:
+          fiscal_year: "$params.fiscal_year"
+        outputs:
+          - material_topics
+          - iro_completeness
+          - dma_status
+      - role: dma-assurance
+        agent: dma-assurance-gatekeeper
+        plugin: scope3-strategy
+        task: "Verify DMA methodology compliance with ESRS 1. Check stakeholder engagement evidence and threshold documentation."
+        tools:
+          - strategy.db.get
+          - strategy.db.list
+        inputs:
+          fiscal_year: "$params.fiscal_year"
+        outputs:
+          - assurance_status
+          - methodology_gaps
+    merge:
+      strategy: collect
+      output_key: dma_result
+    gate:
+      type: all_agents_succeed
+      on_failure: retry_with_fix
+
+  - id: scope3_data
+    name: "Scope 3 Data Assembly"
+    depends_on:
+      - dma_review
+    timeout_minutes: 15
+    agents:
+      - role: scope3-assembler
+        agent: calculation-orchestrator
+        plugin: scope3-calculation
+        task: "Verify Scope 3 computation is current. Extract emissions by category for ESRS E1 disclosure."
+        tools:
+          - calc.compute
+          - calc.dqs_score
+          - calc.db.get
+          - calc.db.list
+          - calc.export
+        inputs:
+          job_id: "$params.job_id"
+        outputs:
+          - total_scope3_kgco2e
+          - category_breakdown
+          - dqs_score
+          - export_content
+    merge:
+      strategy: collect
+      output_key: scope3_result
+    gate:
+      type: all_agents_succeed
+      on_failure: retry
+
+  - id: scope12_data
+    name: "Scope 1 & 2 Data Assembly"
+    depends_on:
+      - dma_review
+    timeout_minutes: 15
+    agents:
+      - role: scope12-assembler
+        agent: scope12-accounting-orchestrator
+        plugin: scope12-accounting
+        task: "Assemble Scope 1 and 2 emissions data for ESRS E1 disclosure. Include location-based and market-based Scope 2."
+        tools:
+          - calc.db.get
+          - calc.db.list
+        inputs:
+          fiscal_year: "$params.fiscal_year"
+        outputs:
+          - scope1_total
+          - scope2_location
+          - scope2_market
+          - energy_consumption
+    merge:
+      strategy: collect
+      output_key: scope12_result
+    gate:
+      type: all_agents_succeed
+      on_failure: retry_with_fix
+
+  - id: esrs_integrity
+    name: "ESRS Integrity Check"
+    depends_on:
+      - scope3_data
+      - scope12_data
+    timeout_minutes: 20
+    agents:
+      - role: esrs-auditor
+        agent: esrs-integrity-auditor
+        plugin: scope3-strategy
+        task: "Cross-check all assembled data against ESRS E1 disclosure requirements. Verify completeness, consistency, and cross-references."
+        tools:
+          - strategy.db.get
+          - strategy.db.list
+        inputs:
+          scope3_data: "$stages.scope3_data.outputs.total_scope3_kgco2e"
+          scope12_data: "$stages.scope12_data.outputs.scope1_total"
+          dma_topics: "$stages.dma_review.outputs.material_topics"
+        outputs:
+          - compliance_score
+          - missing_disclosures
+          - cross_ref_issues
+      - role: matrix-assurance
+        agent: dma-materiality-matrix-assurance-lead
+        plugin: scope3-strategy
+        task: "Verify the materiality matrix is consistent with disclosed data. Check that all material topics have corresponding metrics."
+        tools:
+          - strategy.db.get
+          - strategy.db.list
+        inputs:
+          material_topics: "$stages.dma_review.outputs.material_topics"
+        outputs:
+          - matrix_valid
+          - topic_metric_gaps
+    merge:
+      strategy: collect
+      output_key: integrity_result
+    gate:
+      type: all_agents_succeed
+      on_failure: escalate
+
+  - id: evidence_package
+    name: "Evidence Package Assembly"
+    depends_on:
+      - esrs_integrity
+    timeout_minutes: 15
+    agents:
+      - role: evidence-assembler
+        agent: export-evidence-auditor
+        plugin: scope3-strategy
+        task: "Assemble the complete evidence package for CSRD disclosure: methodology notes, data sources, calculation records, DMA documentation."
+        tools:
+          - strategy.db.get
+          - strategy.db.list
+          - strategy.snapshot
+        inputs:
+          fiscal_year: "$params.fiscal_year"
+          compliance_score: "$stages.esrs_integrity.outputs.compliance_score"
+        outputs:
+          - evidence_package
+          - document_manifest
+      - role: disclosure-intel
+        agent: public-disclosure-intel-operator
+        plugin: scope3-execution
+        task: "Benchmark the company's disclosure against industry peers. Identify areas where disclosure exceeds or lags peer group."
+        tools:
+          - exec.db.get
+          - exec.db.list
+        inputs:
+          total_emissions: "$stages.scope3_data.outputs.total_scope3_kgco2e"
+        outputs:
+          - peer_comparison
+          - disclosure_gaps
+    merge:
+      strategy: collect
+      output_key: evidence_result
+    gate:
+      type: quorum
+      conditions:
+        quorum_pct: 0.5
+      on_failure: retry
+
+deliverable:
+  name: "CSRD Disclosure Preparation Package"
+  format: json
+  sections:
+    - title: "Double Materiality Assessment"
+      source_stage: dma_review
+      output_key: dma_result
+    - title: "Scope 3 Emissions"
+      source_stage: scope3_data
+      output_key: scope3_result
+    - title: "Scope 1 & 2 Emissions"
+      source_stage: scope12_data
+      output_key: scope12_result
+    - title: "ESRS Integrity"
+      source_stage: esrs_integrity
+      output_key: integrity_result
+    - title: "Evidence Package"
+      source_stage: evidence_package
+      output_key: evidence_result
+  hash: true
+  audit_trail: true

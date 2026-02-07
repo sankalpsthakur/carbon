@@ -1,0 +1,49 @@
+FROM node:20-slim
+
+LABEL maintainer="CarbonKit <carbonkit@example.com>"
+LABEL description="CarbonKit MCP servers (calc, exec, strategy, scope12, swarm, connectors)"
+
+# Install build tools for native modules (better-sqlite3)
+RUN apt-get update && apt-get install -y --no-install-recommends \
+  python3 make g++ && \
+  rm -rf /var/lib/apt/lists/*
+
+# Create app directory
+WORKDIR /app
+
+# Copy package.json first for layer caching
+COPY plugins/package.json /app/package.json
+
+# Install Node dependencies (including better-sqlite3)
+RUN npm install --production 2>/dev/null || true
+
+# Copy all plugins into the container
+COPY plugins/ /app/
+
+# Create data directories for each MCP server
+RUN mkdir -p \
+  /app/scope3-calculation/data \
+  /app/scope3-execution/data \
+  /app/scope3-strategy/data \
+  /app/scope12-accounting/data \
+  /app/connectors/data \
+  /app/swarms/data \
+  /app/blobs
+
+# Ports: calc=8401, exec=8402, strategy=8403, scope12=8404, swarm=8405, connectors=8406
+EXPOSE 8401 8402 8403 8404 8405 8406
+
+# Default: run all MCP servers in HTTP mode via the entrypoint script
+ENV CARBONKIT_MCP_TRANSPORT=http
+ENV CARBONKIT_LOG_LEVEL=info
+ENV NODE_ENV=production
+
+# Health check: verify calc server responds
+HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
+  CMD node -e "const h=require('http');h.get('http://localhost:8401',{timeout:3000},(r)=>{process.exit(r.statusCode===405?0:1)}).on('error',()=>process.exit(1))"
+
+# Entrypoint runs all servers concurrently
+COPY docker/entrypoint.sh /app/entrypoint.sh
+RUN chmod +x /app/entrypoint.sh
+
+CMD ["/app/entrypoint.sh"]

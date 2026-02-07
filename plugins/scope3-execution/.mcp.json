@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "exec-local": {
+      "command": "node",
+      "args": ["tools/exec-mcp.js"],
+      "cwd": "${CLAUDE_PLUGIN_ROOT}"
+    }
+  }
+}

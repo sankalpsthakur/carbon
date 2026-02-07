@@ -1,0 +1,6 @@
+{
+  "name": "connectors",
+  "version": "0.1.0",
+  "description": "Schema-mapping connector plugin that bridges ERP, CRM, expense, and card-spend data sources to CarbonKit's canonical activity-row format for Scope 3 calculation.",
+  "author": { "name": "Sankalp Thakur" }
+}

@@ -1,0 +1,197 @@
+{
+  "_meta": {
+    "source": "EPA AP-42, IPCC 2006 GL Vol2, DEFRA 2024",
+    "version": "combustion-factors-2024-v1",
+    "note": "All gas-specific factors per unit of fuel consumed. Apply GWP to CH4/N2O separately."
+  },
+  "fuels": {
+    "natural_gas": {
+      "name": "Natural Gas",
+      "unit": "m3",
+      "kgCO2_per_unit": 1.885,
+      "kgCH4_per_unit": 0.000037,
+      "kgN2O_per_unit": 0.0000035,
+      "kgCO2_biogenic_per_unit": 0,
+      "source_type": "stationary_combustion",
+      "hhv_MJ_per_unit": 38.3
+    },
+    "natural_gas_mmBtu": {
+      "name": "Natural Gas (per MMBtu)",
+      "unit": "MMBtu",
+      "kgCO2_per_unit": 53.06,
+      "kgCH4_per_unit": 0.001,
+      "kgN2O_per_unit": 0.0001,
+      "kgCO2_biogenic_per_unit": 0,
+      "source_type": "stationary_combustion"
+    },
+    "diesel": {
+      "name": "Diesel / Gas Oil",
+      "unit": "liter",
+      "kgCO2_per_unit": 2.689,
+      "kgCH4_per_unit": 0.000133,
+      "kgN2O_per_unit": 0.000133,
+      "kgCO2_biogenic_per_unit": 0,
+      "source_type": "stationary_combustion",
+      "density_kg_per_liter": 0.837
+    },
+    "diesel_mobile": {
+      "name": "Diesel (road transport)",
+      "unit": "liter",
+      "kgCO2_per_unit": 2.689,
+      "kgCH4_per_unit": 0.0000039,
+      "kgN2O_per_unit": 0.0000390,
+      "kgCO2_biogenic_per_unit": 0,
+      "source_type": "mobile_combustion"
+    },
+    "gasoline": {
+      "name": "Motor Gasoline / Petrol",
+      "unit": "liter",
+      "kgCO2_per_unit": 2.315,
+      "kgCH4_per_unit": 0.000250,
+      "kgN2O_per_unit": 0.000060,
+      "kgCO2_biogenic_per_unit": 0,
+      "source_type": "mobile_combustion",
+      "density_kg_per_liter": 0.745
+    },
+    "gasoline_stationary": {
+      "name": "Motor Gasoline (stationary generators)",
+      "unit": "liter",
+      "kgCO2_per_unit": 2.315,
+      "kgCH4_per_unit": 0.000080,
+      "kgN2O_per_unit": 0.000020,
+      "kgCO2_biogenic_per_unit": 0,
+      "source_type": "stationary_combustion"
+    },
+    "propane": {
+      "name": "Propane / LPG",
+      "unit": "liter",
+      "kgCO2_per_unit": 1.510,
+      "kgCH4_per_unit": 0.000027,
+      "kgN2O_per_unit": 0.0000027,
+      "kgCO2_biogenic_per_unit": 0,
+      "source_type": "stationary_combustion",
+      "density_kg_per_liter": 0.493
+    },
+    "fuel_oil_no2": {
+      "name": "Fuel Oil No. 2 (Heating Oil)",
+      "unit": "liter",
+      "kgCO2_per_unit": 2.689,
+      "kgCH4_per_unit": 0.000120,
+      "kgN2O_per_unit": 0.000020,
+      "kgCO2_biogenic_per_unit": 0,
+      "source_type": "stationary_combustion"
+    },
+    "fuel_oil_no6": {
+      "name": "Fuel Oil No. 6 (Residual)",
+      "unit": "liter",
+      "kgCO2_per_unit": 3.134,
+      "kgCH4_per_unit": 0.000120,
+      "kgN2O_per_unit": 0.000020,
+      "kgCO2_biogenic_per_unit": 0,
+      "source_type": "stationary_combustion"
+    },
+    "kerosene": {
+      "name": "Kerosene",
+      "unit": "liter",
+      "kgCO2_per_unit": 2.537,
+      "kgCH4_per_unit": 0.000120,
+      "kgN2O_per_unit": 0.000020,
+      "kgCO2_biogenic_per_unit": 0,
+      "source_type": "stationary_combustion"
+    },
+    "jet_fuel": {
+      "name": "Jet Fuel (Kerosene-type)",
+      "unit": "liter",
+      "kgCO2_per_unit": 2.537,
+      "kgCH4_per_unit": 0.0000005,
+      "kgN2O_per_unit": 0.0000100,
+      "kgCO2_biogenic_per_unit": 0,
+      "source_type": "mobile_combustion"
+    },
+    "coal_bituminous": {
+      "name": "Bituminous Coal",
+      "unit": "kg",
+      "kgCO2_per_unit": 2.420,
+      "kgCH4_per_unit": 0.000024,
+      "kgN2O_per_unit": 0.000036,
+      "kgCO2_biogenic_per_unit": 0,
+      "source_type": "stationary_combustion"
+    },
+    "coal_sub_bituminous": {
+      "name": "Sub-bituminous Coal",
+      "unit": "kg",
+      "kgCO2_per_unit": 1.680,
+      "kgCH4_per_unit": 0.000024,
+      "kgN2O_per_unit": 0.000036,
+      "kgCO2_biogenic_per_unit": 0,
+      "source_type": "stationary_combustion"
+    },
+    "coke": {
+      "name": "Petroleum Coke",
+      "unit": "kg",
+      "kgCO2_per_unit": 3.190,
+      "kgCH4_per_unit": 0.000024,
+      "kgN2O_per_unit": 0.000036,
+      "kgCO2_biogenic_per_unit": 0,
+      "source_type": "stationary_combustion"
+    },
+    "wood_pellets": {
+      "name": "Wood / Wood Pellets (biomass)",
+      "unit": "kg",
+      "kgCO2_per_unit": 0,
+      "kgCH4_per_unit": 0.000300,
+      "kgN2O_per_unit": 0.000040,
+      "kgCO2_biogenic_per_unit": 1.640,
+      "source_type": "stationary_combustion",
+      "note": "CO2 is biogenic; CH4/N2O are non-biogenic and count in Scope 1"
+    },
+    "biogas": {
+      "name": "Biogas / Landfill Gas",
+      "unit": "m3",
+      "kgCO2_per_unit": 0,
+      "kgCH4_per_unit": 0.000037,
+      "kgN2O_per_unit": 0.0000035,
+      "kgCO2_biogenic_per_unit": 0.997,
+      "source_type": "stationary_combustion",
+      "note": "CO2 is biogenic; CH4/N2O non-biogenic"
+    },
+    "biodiesel_b100": {
+      "name": "Biodiesel (B100)",
+      "unit": "liter",
+      "kgCO2_per_unit": 0,
+      "kgCH4_per_unit": 0.000133,
+      "kgN2O_per_unit": 0.000133,
+      "kgCO2_biogenic_per_unit": 2.500,
+      "source_type": "mobile_combustion",
+      "note": "CO2 is biogenic"
+    },
+    "ethanol_e100": {
+      "name": "Ethanol (E100)",
+      "unit": "liter",
+      "kgCO2_per_unit": 0,
+      "kgCH4_per_unit": 0.000060,
+      "kgN2O_per_unit": 0.000020,
+      "kgCO2_biogenic_per_unit": 1.510,
+      "source_type": "mobile_combustion",
+      "note": "CO2 is biogenic"
+    },
+    "cng": {
+      "name": "Compressed Natural Gas (CNG)",
+      "unit": "kg",
+      "kgCO2_per_unit": 2.743,
+      "kgCH4_per_unit": 0.050,
+      "kgN2O_per_unit": 0.0000260,
+      "kgCO2_biogenic_per_unit": 0,
+      "source_type": "mobile_combustion"
+    },
+    "lng": {
+      "name": "Liquefied Natural Gas (LNG)",
+      "unit": "liter",
+      "kgCO2_per_unit": 1.180,
+      "kgCH4_per_unit": 0.000062,
+      "kgN2O_per_unit": 0.0000023,
+      "kgCO2_biogenic_per_unit": 0,
+      "source_type": "stationary_combustion"
+    }
+  }
+}

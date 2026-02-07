@@ -1,0 +1,27 @@
+{
+  "name": "carbon-monorepo-plugins",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Open-source Claude Code SDK for end-to-end Scope 1/2/3 decarbonisation workflows",
+  "bin": {
+    "carbon": "./shared-services/tools/carbon-cli.js"
+  },
+  "scripts": {
+    "test": "node --test **/__tests__/*.test.js",
+    "test:smoke": "node test-mcp-servers.js",
+    "test:store": "node --test shared-services/tools/__tests__/store-adapter.test.js",
+    "test:calc": "node --test scope3-calculation/tools/__tests__/calc-mcp.test.js",
+    "test:exec": "node --test scope3-execution/tools/__tests__/exec-mcp.test.js",
+    "test:strategy": "node --test scope3-strategy/tools/__tests__/strategy-mcp.test.js",
+    "test:scope12": "node --test scope12-accounting/tools/__tests__/scope12-mcp.test.js",
+    "test:swarm": "node --test swarms/tools/__tests__/swarm-mcp.test.js",
+    "test:connectors": "node --test connectors/tools/__tests__/connectors-mcp.test.js",
+    "validate": "node shared-services/tools/validate.js",
+    "migrate": "node shared-services/tools/migrate-filestore.js"
+  },
+  "dependencies": {
+    "better-sqlite3": "^11.7.0"
+  },
+  "optionalDependencies": {},
+  "license": "Apache-2.0"
+}

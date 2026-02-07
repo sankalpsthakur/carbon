@@ -1,0 +1,167 @@
+apiVersion: carbonkit-swarm/v1
+
+metadata:
+  name: supplier-engagement-blitz
+  version: "1.0.0"
+  description: "Rapid supplier engagement campaign: score supplier maturity, generate outreach, track responses, and compile engagement report."
+  team: esg-scope3
+  tags:
+    - scope3
+    - suppliers
+    - engagement
+    - outreach
+
+params:
+  job_id:
+    type: string
+    description: "Existing calculation job ID with computed inventory"
+    required: true
+  top_n_suppliers:
+    type: number
+    description: "Number of top suppliers to target"
+    default: 20
+  engagement_type:
+    type: string
+    description: "Type of engagement: survey, data_request, or improvement_plan"
+    default: "data_request"
+
+stages:
+  - id: identify
+    name: "Identify Top Suppliers"
+    depends_on: []
+    timeout_minutes: 10
+    agents:
+      - role: hotspot-identifier
+        agent: deep-tech-lca-engineer
+        plugin: scope3-calculation
+        task: "Identify the top N suppliers by emission contribution from the computed inventory. Rank by total_kgco2e descending."
+        tools:
+          - calc.db.get
+          - calc.db.list
+        inputs:
+          job_id: "$params.job_id"
+          top_n: "$params.top_n_suppliers"
+        outputs:
+          - supplier_list
+          - total_supplier_emissions
+    merge:
+      strategy: collect
+      output_key: identify_result
+    gate:
+      type: all_agents_succeed
+      on_failure: abort
+
+  - id: maturity_score
+    name: "Supplier Maturity Scoring"
+    depends_on:
+      - identify
+    timeout_minutes: 20
+    agents:
+      - role: maturity-scorer
+        agent: supplier-maturity-scorecard-operator
+        plugin: scope3-execution
+        task: "Score each identified supplier on carbon maturity: data availability, reduction targets, SBTi alignment, disclosure history."
+        tools:
+          - exec.db.get
+          - exec.db.set
+          - exec.db.list
+        inputs:
+          supplier_list: "$stages.identify.outputs.supplier_list"
+        outputs:
+          - maturity_scores
+          - tier_distribution
+      - role: risk-scanner
+        agent: external-risk-intelligence-analyst
+        plugin: scope3-strategy
+        task: "Screen suppliers for ESG risk signals: regulatory exposure, controversy flags, sector risk."
+        tools:
+          - strategy.risk_scan
+          - strategy.db.get
+        inputs:
+          supplier_list: "$stages.identify.outputs.supplier_list"
+        outputs:
+          - risk_signals
+          - high_risk_suppliers
+    merge:
+      strategy: collect
+      output_key: maturity_result
+    gate:
+      type: quorum
+      conditions:
+        quorum_pct: 0.5
+      on_failure: retry
+
+  - id: outreach
+    name: "Generate Engagement Materials"
+    depends_on:
+      - maturity_score
+    timeout_minutes: 15
+    agents:
+      - role: outreach-generator
+        agent: execution-orchestrator
+        plugin: scope3-execution
+        task: "Generate personalized engagement materials for each supplier based on their maturity score and engagement type."
+        tools:
+          - exec.db.get
+          - exec.db.set
+          - exec.render_page
+        inputs:
+          supplier_list: "$stages.identify.outputs.supplier_list"
+          maturity_scores: "$stages.maturity_score.outputs.maturity_scores"
+          engagement_type: "$params.engagement_type"
+        outputs:
+          - outreach_materials
+          - supplier_actions
+    merge:
+      strategy: collect
+      output_key: outreach_result
+    gate:
+      type: all_agents_succeed
+      on_failure: retry_with_fix
+
+  - id: report
+    name: "Engagement Campaign Report"
+    depends_on:
+      - outreach
+    timeout_minutes: 10
+    agents:
+      - role: reporter
+        agent: reporting-auditor
+        plugin: scope3-execution
+        task: "Compile the supplier engagement report: targeted suppliers, maturity tiers, risk flags, outreach status, and next steps."
+        tools:
+          - exec.db.get
+          - exec.db.list
+        inputs:
+          supplier_list: "$stages.identify.outputs.supplier_list"
+          maturity_scores: "$stages.maturity_score.outputs.maturity_scores"
+          risk_signals: "$stages.maturity_score.outputs.risk_signals"
+          outreach_materials: "$stages.outreach.outputs.outreach_materials"
+        outputs:
+          - engagement_report
+          - summary_stats
+    merge:
+      strategy: collect
+      output_key: report_result
+    gate:
+      type: all_agents_succeed
+      on_failure: escalate
+
+deliverable:
+  name: "Supplier Engagement Campaign Report"
+  format: json
+  sections:
+    - title: "Target Suppliers"
+      source_stage: identify
+      output_key: identify_result
+    - title: "Maturity & Risk Assessment"
+      source_stage: maturity_score
+      output_key: maturity_result
+    - title: "Outreach Materials"
+      source_stage: outreach
+      output_key: outreach_result
+    - title: "Campaign Summary"
+      source_stage: report
+      output_key: report_result
+  hash: true
+  audit_trail: true

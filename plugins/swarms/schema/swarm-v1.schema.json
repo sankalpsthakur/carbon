@@ -1,0 +1,159 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "carbonkit-swarm-v1",
+  "title": "CarbonKit Swarm Workflow Definition",
+  "description": "Declarative DAG-based multi-agent workflow for carbon accounting pipelines.",
+  "type": "object",
+  "required": ["apiVersion", "metadata", "stages", "deliverable"],
+  "additionalProperties": false,
+  "properties": {
+    "apiVersion": {
+      "type": "string",
+      "const": "carbonkit-swarm/v1"
+    },
+    "metadata": {
+      "type": "object",
+      "required": ["name", "version", "description"],
+      "additionalProperties": false,
+      "properties": {
+        "name": { "type": "string", "minLength": 1 },
+        "version": { "type": "string", "pattern": "^\\d+\\.\\d+\\.\\d+$" },
+        "description": { "type": "string" },
+        "team": { "type": "string", "description": "References a key in teams.json" },
+        "tags": {
+          "type": "array",
+          "items": { "type": "string" },
+          "uniqueItems": true
+        }
+      }
+    },
+    "params": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "required": ["type"],
+        "properties": {
+          "type": { "type": "string", "enum": ["string", "number", "boolean", "array"] },
+          "description": { "type": "string" },
+          "default": {},
+          "required": { "type": "boolean" }
+        }
+      }
+    },
+    "stages": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["id", "name", "agents"],
+        "additionalProperties": false,
+        "properties": {
+          "id": { "type": "string", "pattern": "^[a-z0-9_-]+$" },
+          "name": { "type": "string" },
+          "depends_on": {
+            "type": "array",
+            "items": { "type": "string" },
+            "uniqueItems": true,
+            "default": []
+          },
+          "timeout_minutes": { "type": "integer", "minimum": 1, "default": 30 },
+          "agents": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "required": ["role", "agent", "plugin", "task"],
+              "additionalProperties": false,
+              "properties": {
+                "role": { "type": "string" },
+                "agent": { "type": "string", "description": "Agent markdown filename without .md extension" },
+                "plugin": { "type": "string", "description": "Plugin directory name" },
+                "task": { "type": "string", "description": "Natural-language task description" },
+                "tools": {
+                  "type": "array",
+                  "items": { "type": "string" },
+                  "default": []
+                },
+                "inputs": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "description": "Key-value inputs; values may reference $params or $stages.<id>.outputs"
+                },
+                "outputs": {
+                  "type": "array",
+                  "items": { "type": "string" },
+                  "description": "Named output keys this agent produces"
+                }
+              }
+            }
+          },
+          "merge": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "strategy": {
+                "type": "string",
+                "enum": ["collect", "reduce", "vote", "chain"]
+              },
+              "output_key": { "type": "string" }
+            }
+          },
+          "gate": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "type": {
+                "type": "string",
+                "enum": ["all_agents_succeed", "quorum", "unanimous", "custom"]
+              },
+              "conditions": {
+                "type": "object",
+                "additionalProperties": true,
+                "description": "Gate-specific conditions, e.g. { quorum_pct: 0.75 }"
+              },
+              "on_failure": {
+                "type": "string",
+                "enum": ["abort", "retry", "retry_with_fix", "reassign", "escalate", "skip"],
+                "default": "abort"
+              }
+            }
+          }
+        }
+      }
+    },
+    "deliverable": {
+      "type": "object",
+      "required": ["name", "format"],
+      "additionalProperties": false,
+      "properties": {
+        "name": { "type": "string" },
+        "format": {
+          "type": "string",
+          "enum": ["json", "markdown", "pdf_manifest", "csv"]
+        },
+        "sections": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["title", "source_stage"],
+            "properties": {
+              "title": { "type": "string" },
+              "source_stage": { "type": "string" },
+              "output_key": { "type": "string" }
+            }
+          }
+        },
+        "hash": {
+          "type": "boolean",
+          "default": true,
+          "description": "Whether to compute SHA-256 integrity hash of the deliverable"
+        },
+        "audit_trail": {
+          "type": "boolean",
+          "default": true,
+          "description": "Whether to include full execution audit trail"
+        }
+      }
+    }
+  }
+}

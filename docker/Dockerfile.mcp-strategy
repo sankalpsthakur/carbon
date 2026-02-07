@@ -1,0 +1,26 @@
+FROM node:20-alpine
+
+LABEL maintainer="CarbonKit <carbonkit@example.com>"
+LABEL description="CarbonKit Strategy & Decarbonization MCP Server"
+
+WORKDIR /app
+
+# Copy shared services
+COPY plugins/shared-services/tools/ /app/shared-services/
+
+# Copy strategy plugin
+COPY plugins/strategy-decarbonization/ /app/strategy-decarbonization/
+
+RUN mkdir -p /app/strategy-decarbonization/data
+
+ENV NODE_ENV=production
+ENV MCP_TRANSPORT=http
+ENV MCP_HTTP_PORT=8403
+ENV MCP_SERVER_NAME=strategy-mcp
+
+EXPOSE 8403
+
+HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
+  CMD wget -qO- http://localhost:8403/health || exit 1
+
+CMD ["node", "/app/strategy-decarbonization/tools/strategy-mcp.js"]

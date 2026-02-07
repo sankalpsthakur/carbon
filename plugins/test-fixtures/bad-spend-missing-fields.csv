@@ -1,0 +1,11 @@
+vendor,item_description,spend_original,currency_original,quantity,unit,category,date
+,Missing vendor row,5000.00,USD,10,kg,331110,2024-01-15
+Acme Corp,,8200.00,USD,,,,2024-02-01
+Good Vendor,Good description,12000.00,USD,100,units,334413,2024-03-01
+,,,USD,50,kg,,2024-04-01
+Bad Currency Co,Some product,7500.00,XYZ,20,units,325199,2024-05-01
+Zero Spend Inc,Free samples,0.00,USD,0,,561720,2024-06-01
+Negative Corp,Refund item,-5000.00,USD,-10,units,332710,2024-07-01
+,,,,,,,
+Half Data Ltd,Partial entry,3200.00,,25,,,2024-09-01
+OK Supplier,Valid row with all fields,15000.00,EUR,200,kg,325510,2024-10-01

@@ -1,0 +1,12 @@
+{
+  "enabledPlugins": {
+    "ai-engineering@sankalpsthakur-plugins": true,
+    "growth-content@sankalpsthakur-plugins": true,
+    "quality-monitoring@sankalpsthakur-plugins": true,
+    "sales-outreach@sankalpsthakur-plugins": true,
+    "scope3-strategy@sankalpsthakur-plugins": true,
+    "scope3-calculation@sankalpsthakur-plugins": true,
+    "scope3-execution@sankalpsthakur-plugins": true,
+    "scope12-accounting@sankalpsthakur-plugins": true
+  }
+}

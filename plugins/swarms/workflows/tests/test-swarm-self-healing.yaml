@@ -1,0 +1,188 @@
+apiVersion: carbonkit-swarm/v1
+
+metadata:
+  name: test-swarm-self-healing
+  version: "1.0.0"
+  description: "Test workflow: validates recovery from injected failures. Stage 2 is designed to fail, triggering retry_with_fix and skip_with_warning recovery paths."
+  team: esg-full-swarm
+  tags:
+    - test
+    - self-healing
+    - recovery
+    - fault-injection
+
+params:
+  fiscal_year:
+    type: string
+    default: "FY2025"
+  inject_failure:
+    type: boolean
+    description: "When true, stage 2 agents produce error outputs to trigger recovery"
+    default: true
+
+fixtures:
+  healthy_data:
+    - vendor: "StableVendor-A"
+      spend_usd: 10000
+      category: "purchased_goods"
+    - vendor: "StableVendor-B"
+      spend_usd: 5000
+      category: "business_travel"
+  failing_data:
+    - vendor: null
+      spend_usd: -999
+      category: ""
+    - vendor: "BadVendor"
+      spend_usd: 0
+      category: "INVALID_CATEGORY"
+
+stages:
+  - id: setup
+    name: "Test Environment Setup"
+    depends_on: []
+    timeout_minutes: 5
+    agents:
+      - role: setup-agent
+        agent: calculation-orchestrator
+        plugin: scope3-calculation
+        task: "Initialize test environment: seed fixture data, verify MCP server health, confirm store is writable."
+        tools:
+          - calc.health
+          - calc.db.set
+          - calc.db.get
+        inputs:
+          fiscal_year: "$params.fiscal_year"
+        outputs:
+          - env_ready
+          - store_writable
+          - health_status
+    merge:
+      strategy: collect
+      output_key: setup_result
+    gate:
+      type: all_agents_succeed
+      on_failure: abort
+
+  - id: inject_fault
+    name: "Fault Injection Stage"
+    depends_on:
+      - setup
+    timeout_minutes: 5
+    agents:
+      - role: fault-injector
+        agent: calculation-orchestrator
+        plugin: scope3-calculation
+        task: "Attempt to process the failing fixture data. This should produce errors: null vendor, negative spend, empty category, invalid category."
+        tools:
+          - calc.ingest
+          - calc.db.get
+        inputs:
+          inject_failure: "$params.inject_failure"
+        outputs:
+          - error_type
+          - error_message
+          - partial_results
+      - role: secondary-processor
+        agent: traceability-auditor
+        plugin: scope3-calculation
+        task: "Attempt DQS scoring on non-existent job. This should fail with a data_missing error."
+        tools:
+          - calc.dqs_score
+          - calc.db.get
+        inputs:
+          job_id: "non_existent_job_id"
+        outputs:
+          - dqs_error
+    merge:
+      strategy: collect
+      output_key: fault_result
+    gate:
+      type: quorum
+      conditions:
+        quorum_pct: 0.5
+      on_failure: retry_with_fix
+
+  - id: recovery_verify
+    name: "Recovery Verification"
+    depends_on:
+      - inject_fault
+    timeout_minutes: 10
+    agents:
+      - role: recovery-checker
+        agent: spend-baseline-operator
+        plugin: scope3-calculation
+        task: "Verify that the self-healing system correctly: (1) detected the fault type, (2) applied the appropriate recovery action, (3) preserved healthy data from stage 1."
+        tools:
+          - calc.db.get
+          - calc.db.list
+        inputs:
+          setup_result: "$stages.setup.outputs.env_ready"
+        outputs:
+          - recovery_detected
+          - recovery_action_taken
+          - healthy_data_preserved
+    merge:
+      strategy: collect
+      output_key: recovery_result
+    gate:
+      type: all_agents_succeed
+      on_failure: skip
+
+  - id: resilience_report
+    name: "Resilience Test Report"
+    depends_on:
+      - recovery_verify
+    timeout_minutes: 5
+    agents:
+      - role: reporter
+        agent: cfo-ledger-auditor
+        plugin: scope3-calculation
+        task: "Compile the resilience test report: faults injected, recoveries triggered, data integrity post-recovery."
+        tools:
+          - calc.db.get
+          - calc.db.list
+        inputs:
+          fault_result: "$stages.inject_fault.outputs.error_type"
+          recovery_result: "$stages.recovery_verify.outputs.recovery_detected"
+        outputs:
+          - resilience_score
+          - faults_recovered
+          - faults_escalated
+    merge:
+      strategy: collect
+      output_key: report_result
+    gate:
+      type: all_agents_succeed
+      on_failure: escalate
+
+assertions:
+  - stage: setup
+    check: "env_ready == true"
+    description: "Test environment must be ready before fault injection"
+  - stage: inject_fault
+    check: "error_type != null"
+    description: "Fault injection must produce detectable errors"
+  - stage: recovery_verify
+    check: "recovery_detected == true"
+    description: "Self-healing must detect the injected fault"
+  - stage: recovery_verify
+    check: "healthy_data_preserved == true"
+    description: "Healthy data from prior stages must survive recovery"
+  - stage: resilience_report
+    check: "resilience_score != null"
+    description: "Resilience report must produce a score"
+
+deliverable:
+  name: "Self-Healing Test Results"
+  format: json
+  sections:
+    - title: "Environment Setup"
+      source_stage: setup
+    - title: "Fault Injection"
+      source_stage: inject_fault
+    - title: "Recovery Verification"
+      source_stage: recovery_verify
+    - title: "Resilience Report"
+      source_stage: resilience_report
+  hash: true
+  audit_trail: true

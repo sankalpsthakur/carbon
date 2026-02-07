@@ -1,0 +1,6 @@
+{
+  "name": "scope3-strategy",
+  "version": "0.5.1",
+  "description": "Strategy flow plugin with CSRD/DMA-first pre-collection guidance, audit-ready DMA materiality workflows, AI external risk scanning, and constrained exports.",
+  "author": { "name": "Sankalp Thakur" }
+}

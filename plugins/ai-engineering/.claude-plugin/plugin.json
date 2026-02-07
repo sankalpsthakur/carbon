@@ -1,0 +1,6 @@
+{
+  "name": "ai-engineering",
+  "version": "0.1.0",
+  "description": "Model engineering workflows across training, inference, optimization, RAG, and serving.",
+  "author": { "name": "Sankalp Thakur" }
+}

@@ -1,0 +1,40 @@
+{
+  "name": "@sankalpsthakur/carbon",
+  "version": "0.1.0",
+  "description": "Open-source Claude Code SDK for end-to-end Scope 1/2/3 decarbonisation workflows",
+  "license": "Apache-2.0",
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sankalpsthakur/carbon.git"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "bin": {
+    "carbon": "plugins/shared-services/tools/carbon-cli.js"
+  },
+  "scripts": {
+    "test": "npm --prefix plugins test",
+    "test:smoke": "npm --prefix plugins run test:smoke",
+    "validate": "npm --prefix plugins run validate"
+  },
+  "dependencies": {
+    "better-sqlite3": "^11.7.0"
+  },
+  "optionalDependencies": {},
+  "files": [
+    "plugins/",
+    "docs/",
+    "docker/",
+    "docker-compose.yml",
+    "docker-compose.postgres.yml",
+    "docker-compose.ollama.yml",
+    "Makefile",
+    "README.md",
+    ".env.example",
+    "carbon"
+  ]
+}

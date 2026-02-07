@@ -1,0 +1,788 @@
+[
+  {
+    "_id": "ef_spend_services_general",
+    "basis": "spend",
+    "kgco2e_per_unit": 0.18,
+    "category": "services",
+    "description": "General professional services spend-based factor",
+    "source": "USEEIO v2.0",
+    "year": 2024
+  },
+  {
+    "_id": "ef_spend_consulting",
+    "basis": "spend",
+    "kgco2e_per_unit": 0.18,
+    "category": "consulting",
+    "description": "Management and consulting services",
+    "source": "USEEIO v2.0",
+    "year": 2024
+  },
+  {
+    "_id": "ef_spend_it_services",
+    "basis": "spend",
+    "kgco2e_per_unit": 0.15,
+    "category": "it services",
+    "description": "Computer systems design and IT services",
+    "source": "USEEIO v2.0",
+    "year": 2024
+  },
+  {
+    "_id": "ef_spend_cloud_hosting",
+    "basis": "spend",
+    "kgco2e_per_unit": 0.21,
+    "category": "cloud hosting",
+    "description": "Data processing and hosting services",
+    "source": "USEEIO v2.0",
+    "year": 2024
+  },
+  {
+    "_id": "ef_spend_software",
+    "basis": "spend",
+    "kgco2e_per_unit": 0.12,
+    "category": "software",
+    "description": "Software publishers",
+    "source": "USEEIO v2.0",
+    "year": 2024
+  },
+  {
+    "_id": "ef_spend_materials_general",
+    "basis": "spend",
+    "kgco2e_per_unit": 0.95,
+    "category": "materials",
+    "description": "General materials and raw materials",
+    "source": "USEEIO v2.0",
+    "year": 2024
+  },
+  {
+    "_id": "ef_spend_steel",
+    "basis": "spend",
+    "kgco2e_per_unit": 1.67,
+    "category": "steel",
+    "description": "Iron and steel mills",
+    "source": "USEEIO v2.0",
+    "year": 2024
+  },
+  {
+    "_id": "ef_spend_cement",
+    "basis": "spend",
+    "kgco2e_per_unit": 1.82,
+    "category": "cement",
+    "description": "Cement and concrete manufacturing",
+    "source": "USEEIO v2.0",
+    "year": 2024
+  },
+  {
+    "_id": "ef_spend_plastics",
+    "basis": "spend",
+    "kgco2e_per_unit": 1.52,
+    "category": "plastics",
+    "description": "Plastics and rubber products",
+    "source": "USEEIO v2.0",
+    "year": 2024
+  },
+  {
+    "_id": "ef_spend_chemicals",
+    "basis": "spend",
+    "kgco2e_per_unit": 1.31,
+    "category": "chemicals",
+    "description": "Organic chemical manufacturing",
+    "source": "USEEIO v2.0",
+    "year": 2024
+  },
+  {
+    "_id": "ef_spend_paper",
+    "basis": "spend",
+    "kgco2e_per_unit": 0.91,
+    "category": "paper",
+    "description": "Paper manufacturing and products",
+    "source": "USEEIO v2.0",
+    "year": 2024
+  },
+  {
+    "_id": "ef_spend_construction",
+    "basis": "spend",
+    "kgco2e_per_unit": 0.74,
+    "category": "construction",
+    "description": "Building construction services",
+    "source": "USEEIO v2.0",
+    "year": 2024
+  },
+  {
+    "_id": "ef_spend_electronics",
+    "basis": "spend",
+    "kgco2e_per_unit": 0.38,
+    "category": "electronics",
+    "description": "Computer and electronic products",
+    "source": "USEEIO v2.0",
+    "year": 2024
+  },
+  {
+    "_id": "ef_spend_computers",
+    "basis": "spend",
+    "kgco2e_per_unit": 0.35,
+    "category": "computers",
+    "description": "Computer equipment manufacturing",
+    "source": "USEEIO v2.0",
+    "year": 2024
+  },
+  {
+    "_id": "ef_spend_office_supplies",
+    "basis": "spend",
+    "kgco2e_per_unit": 0.48,
+    "category": "office supplies",
+    "description": "Office supplies and stationery",
+    "source": "USEEIO v2.0",
+    "year": 2024
+  },
+  {
+    "_id": "ef_spend_vehicles",
+    "basis": "spend",
+    "kgco2e_per_unit": 0.71,
+    "category": "vehicles",
+    "description": "Motor vehicle manufacturing",
+    "source": "USEEIO v2.0",
+    "year": 2024
+  },
+  {
+    "_id": "ef_spend_vehicle_parts",
+    "basis": "spend",
+    "kgco2e_per_unit": 0.65,
+    "category": "vehicle parts",
+    "description": "Motor vehicle parts and accessories",
+    "source": "USEEIO v2.0",
+    "year": 2024
+  },
+  {
+    "_id": "ef_spend_fuels",
+    "basis": "spend",
+    "kgco2e_per_unit": 2.45,
+    "category": "fuels",
+    "description": "Petroleum refineries and fuel products",
+    "source": "USEEIO v2.0",
+    "year": 2024
+  },
+  {
+    "_id": "ef_spend_oil_gas",
+    "basis": "spend",
+    "kgco2e_per_unit": 2.14,
+    "category": "oil and gas",
+    "description": "Oil and gas extraction",
+    "source": "USEEIO v2.0",
+    "year": 2024
+  },
+  {
+    "_id": "ef_spend_food_beverage",
+    "basis": "spend",
+    "kgco2e_per_unit": 0.82,
+    "category": "food",
+    "description": "Food and beverage manufacturing",
+    "source": "USEEIO v2.0",
+    "year": 2024
+  },
+  {
+    "_id": "ef_spend_meat",
+    "basis": "spend",
+    "kgco2e_per_unit": 2.31,
+    "category": "meat",
+    "description": "Animal slaughtering and processing",
+    "source": "USEEIO v2.0",
+    "year": 2024
+  },
+  {
+    "_id": "ef_spend_dairy",
+    "basis": "spend",
+    "kgco2e_per_unit": 1.45,
+    "category": "dairy",
+    "description": "Dairy product manufacturing",
+    "source": "USEEIO v2.0",
+    "year": 2024
+  },
+  {
+    "_id": "ef_spend_clothing",
+    "basis": "spend",
+    "kgco2e_per_unit": 0.88,
+    "category": "clothing",
+    "description": "Apparel manufacturing",
+    "source": "USEEIO v2.0",
+    "year": 2024
+  },
+  {
+    "_id": "ef_spend_pharmaceuticals",
+    "basis": "spend",
+    "kgco2e_per_unit": 0.32,
+    "category": "pharmaceuticals",
+    "description": "Pharmaceutical and medicine manufacturing",
+    "source": "USEEIO v2.0",
+    "year": 2024
+  },
+  {
+    "_id": "ef_spend_freight",
+    "basis": "spend",
+    "kgco2e_per_unit": 1.26,
+    "category": "freight",
+    "description": "Freight and truck transportation",
+    "source": "USEEIO v2.0",
+    "year": 2024
+  },
+  {
+    "_id": "ef_spend_air_travel",
+    "basis": "spend",
+    "kgco2e_per_unit": 1.08,
+    "category": "air travel",
+    "description": "Passenger air transportation",
+    "source": "USEEIO v2.0",
+    "year": 2024
+  },
+  {
+    "_id": "ef_spend_hotels",
+    "basis": "spend",
+    "kgco2e_per_unit": 0.52,
+    "category": "hotels",
+    "description": "Hotels and accommodation",
+    "source": "USEEIO v2.0",
+    "year": 2024
+  },
+  {
+    "_id": "ef_spend_catering",
+    "basis": "spend",
+    "kgco2e_per_unit": 0.67,
+    "category": "catering",
+    "description": "Restaurants and catering services",
+    "source": "USEEIO v2.0",
+    "year": 2024
+  },
+  {
+    "_id": "ef_spend_cleaning",
+    "basis": "spend",
+    "kgco2e_per_unit": 0.29,
+    "category": "cleaning",
+    "description": "Janitorial and cleaning services",
+    "source": "USEEIO v2.0",
+    "year": 2024
+  },
+  {
+    "_id": "ef_spend_advertising",
+    "basis": "spend",
+    "kgco2e_per_unit": 0.19,
+    "category": "advertising",
+    "description": "Advertising and marketing services",
+    "source": "USEEIO v2.0",
+    "year": 2024
+  },
+  {
+    "_id": "ef_spend_accounting",
+    "basis": "spend",
+    "kgco2e_per_unit": 0.13,
+    "category": "accounting",
+    "description": "Accounting and bookkeeping services",
+    "source": "USEEIO v2.0",
+    "year": 2024
+  },
+  {
+    "_id": "ef_spend_legal",
+    "basis": "spend",
+    "kgco2e_per_unit": 0.16,
+    "category": "legal",
+    "description": "Legal services",
+    "source": "USEEIO v2.0",
+    "year": 2024
+  },
+  {
+    "_id": "ef_spend_staffing",
+    "basis": "spend",
+    "kgco2e_per_unit": 0.14,
+    "category": "staffing",
+    "description": "Temporary staffing and employment services",
+    "source": "USEEIO v2.0",
+    "year": 2024
+  },
+  {
+    "_id": "ef_spend_training",
+    "basis": "spend",
+    "kgco2e_per_unit": 0.16,
+    "category": "training",
+    "description": "Educational and training services",
+    "source": "USEEIO v2.0",
+    "year": 2024
+  },
+  {
+    "_id": "ef_spend_electrical",
+    "basis": "spend",
+    "kgco2e_per_unit": 0.41,
+    "category": "electrical",
+    "description": "Electrical contracting services",
+    "source": "USEEIO v2.0",
+    "year": 2024
+  },
+  {
+    "_id": "ef_spend_machinery",
+    "basis": "spend",
+    "kgco2e_per_unit": 0.49,
+    "category": "machinery",
+    "description": "Industrial machinery manufacturing",
+    "source": "USEEIO v2.0",
+    "year": 2024
+  },
+  {
+    "_id": "ef_spend_hvac",
+    "basis": "spend",
+    "kgco2e_per_unit": 0.69,
+    "category": "hvac",
+    "description": "HVAC equipment manufacturing",
+    "source": "USEEIO v2.0",
+    "year": 2024
+  },
+  {
+    "_id": "ef_spend_batteries",
+    "basis": "spend",
+    "kgco2e_per_unit": 0.84,
+    "category": "batteries",
+    "description": "Battery and cell manufacturing",
+    "source": "USEEIO v2.0",
+    "year": 2024
+  },
+  {
+    "_id": "ef_spend_lighting",
+    "basis": "spend",
+    "kgco2e_per_unit": 0.61,
+    "category": "lighting",
+    "description": "Lighting fixtures and equipment",
+    "source": "USEEIO v2.0",
+    "year": 2024
+  },
+  {
+    "_id": "ef_spend_mining",
+    "basis": "spend",
+    "kgco2e_per_unit": 0.89,
+    "category": "mining",
+    "description": "Minerals and ores extraction",
+    "source": "USEEIO v2.0",
+    "year": 2024
+  },
+  {
+    "_id": "ef_spend_agriculture",
+    "basis": "spend",
+    "kgco2e_per_unit": 0.87,
+    "category": "agriculture",
+    "description": "Crop and animal production",
+    "source": "USEEIO v2.0",
+    "year": 2024
+  },
+  {
+    "_id": "ef_spend_rubber",
+    "basis": "spend",
+    "kgco2e_per_unit": 1.18,
+    "category": "rubber",
+    "description": "Rubber and elastomer products",
+    "source": "USEEIO v2.0",
+    "year": 2024
+  },
+  {
+    "_id": "ef_spend_printing",
+    "basis": "spend",
+    "kgco2e_per_unit": 0.56,
+    "category": "printing",
+    "description": "Printing and publishing",
+    "source": "USEEIO v2.0",
+    "year": 2024
+  },
+  {
+    "_id": "ef_spend_waste",
+    "basis": "spend",
+    "kgco2e_per_unit": 0.63,
+    "category": "waste",
+    "description": "Waste management and remediation services",
+    "source": "USEEIO v2.0",
+    "year": 2024
+  },
+  {
+    "_id": "ef_spend_water_supply",
+    "basis": "spend",
+    "kgco2e_per_unit": 0.34,
+    "category": "water supply",
+    "description": "Water supply and sewerage",
+    "source": "USEEIO v2.0",
+    "year": 2024
+  },
+  {
+    "_id": "ef_spend_insurance",
+    "basis": "spend",
+    "kgco2e_per_unit": 0.11,
+    "category": "insurance",
+    "description": "Insurance carriers and services",
+    "source": "USEEIO v2.0",
+    "year": 2024
+  },
+  {
+    "_id": "ef_spend_telecom",
+    "basis": "spend",
+    "kgco2e_per_unit": 0.19,
+    "category": "telecommunications",
+    "description": "Wired and wireless telecommunications",
+    "source": "USEEIO v2.0",
+    "year": 2024
+  },
+  {
+    "_id": "ef_spend_real_estate",
+    "basis": "spend",
+    "kgco2e_per_unit": 0.08,
+    "category": "real estate",
+    "description": "Real estate and leasing",
+    "source": "USEEIO v2.0",
+    "year": 2024
+  },
+  {
+    "_id": "ef_qty_steel_kg",
+    "basis": "quantity",
+    "kgco2e_per_unit": 2.1,
+    "category": "steel",
+    "unit": "kg",
+    "description": "Hot-rolled steel (BOF route, world average)",
+    "source": "worldsteel Association 2024",
+    "year": 2024
+  },
+  {
+    "_id": "ef_qty_steel_recycled_kg",
+    "basis": "quantity",
+    "kgco2e_per_unit": 0.62,
+    "category": "steel",
+    "unit": "kg",
+    "vendor": "recycled",
+    "description": "Recycled steel (EAF route)",
+    "source": "worldsteel Association 2024",
+    "year": 2024
+  },
+  {
+    "_id": "ef_qty_aluminium_kg",
+    "basis": "quantity",
+    "kgco2e_per_unit": 8.6,
+    "category": "aluminium",
+    "unit": "kg",
+    "description": "Primary aluminium (global average, includes smelting electricity)",
+    "source": "International Aluminium Institute 2024",
+    "year": 2024
+  },
+  {
+    "_id": "ef_qty_aluminium_recycled_kg",
+    "basis": "quantity",
+    "kgco2e_per_unit": 0.5,
+    "category": "aluminium",
+    "unit": "kg",
+    "vendor": "recycled",
+    "description": "Recycled aluminium (secondary)",
+    "source": "International Aluminium Institute 2024",
+    "year": 2024
+  },
+  {
+    "_id": "ef_qty_cement_kg",
+    "basis": "quantity",
+    "kgco2e_per_unit": 0.62,
+    "category": "cement",
+    "unit": "kg",
+    "description": "Portland cement (global average, process + energy emissions)",
+    "source": "GCCA 2024",
+    "year": 2024
+  },
+  {
+    "_id": "ef_qty_concrete_kg",
+    "basis": "quantity",
+    "kgco2e_per_unit": 0.13,
+    "category": "concrete",
+    "unit": "kg",
+    "description": "Ready-mixed concrete (average mix)",
+    "source": "GCCA 2024",
+    "year": 2024
+  },
+  {
+    "_id": "ef_qty_glass_kg",
+    "basis": "quantity",
+    "kgco2e_per_unit": 0.86,
+    "category": "glass",
+    "unit": "kg",
+    "description": "Float glass (container glass ~0.5)",
+    "source": "GPI 2024",
+    "year": 2024
+  },
+  {
+    "_id": "ef_qty_copper_kg",
+    "basis": "quantity",
+    "kgco2e_per_unit": 3.5,
+    "category": "copper",
+    "unit": "kg",
+    "description": "Primary copper cathode (global average)",
+    "source": "ICA 2024",
+    "year": 2024
+  },
+  {
+    "_id": "ef_qty_plastic_pet_kg",
+    "basis": "quantity",
+    "kgco2e_per_unit": 2.73,
+    "category": "plastics",
+    "unit": "kg",
+    "vendor": "PET",
+    "description": "Polyethylene terephthalate (PET) virgin resin",
+    "source": "Plastics Europe 2024",
+    "year": 2024
+  },
+  {
+    "_id": "ef_qty_plastic_hdpe_kg",
+    "basis": "quantity",
+    "kgco2e_per_unit": 1.8,
+    "category": "plastics",
+    "unit": "kg",
+    "vendor": "HDPE",
+    "description": "High-density polyethylene (HDPE) virgin resin",
+    "source": "Plastics Europe 2024",
+    "year": 2024
+  },
+  {
+    "_id": "ef_qty_plastic_pp_kg",
+    "basis": "quantity",
+    "kgco2e_per_unit": 1.63,
+    "category": "plastics",
+    "unit": "kg",
+    "vendor": "PP",
+    "description": "Polypropylene (PP) virgin resin",
+    "source": "Plastics Europe 2024",
+    "year": 2024
+  },
+  {
+    "_id": "ef_qty_plastic_ldpe_kg",
+    "basis": "quantity",
+    "kgco2e_per_unit": 2.08,
+    "category": "plastics",
+    "unit": "kg",
+    "vendor": "LDPE",
+    "description": "Low-density polyethylene (LDPE) virgin resin",
+    "source": "Plastics Europe 2024",
+    "year": 2024
+  },
+  {
+    "_id": "ef_qty_paper_virgin_kg",
+    "basis": "quantity",
+    "kgco2e_per_unit": 1.09,
+    "category": "paper",
+    "unit": "kg",
+    "description": "Virgin printing/writing paper",
+    "source": "CEPI 2024",
+    "year": 2024
+  },
+  {
+    "_id": "ef_qty_paper_recycled_kg",
+    "basis": "quantity",
+    "kgco2e_per_unit": 0.67,
+    "category": "paper",
+    "unit": "kg",
+    "vendor": "recycled",
+    "description": "Recycled paper and board",
+    "source": "CEPI 2024",
+    "year": 2024
+  },
+  {
+    "_id": "ef_qty_cardboard_kg",
+    "basis": "quantity",
+    "kgco2e_per_unit": 0.79,
+    "category": "cardboard",
+    "unit": "kg",
+    "description": "Corrugated cardboard (average recycled content)",
+    "source": "CEPI 2024",
+    "year": 2024
+  },
+  {
+    "_id": "ef_qty_wood_kg",
+    "basis": "quantity",
+    "kgco2e_per_unit": 0.31,
+    "category": "wood",
+    "unit": "kg",
+    "description": "Sawn timber (kiln dried, excluding biogenic carbon)",
+    "source": "CORRIM 2024",
+    "year": 2024
+  },
+  {
+    "_id": "ef_qty_cotton_kg",
+    "basis": "quantity",
+    "kgco2e_per_unit": 5.89,
+    "category": "cotton",
+    "unit": "kg",
+    "description": "Raw cotton fibre (field-to-gin-gate)",
+    "source": "BCI 2024",
+    "year": 2024
+  },
+  {
+    "_id": "ef_qty_polyester_kg",
+    "basis": "quantity",
+    "kgco2e_per_unit": 5.55,
+    "category": "polyester",
+    "unit": "kg",
+    "description": "Polyester fibre (virgin PET-based)",
+    "source": "Textile Exchange 2024",
+    "year": 2024
+  },
+  {
+    "_id": "ef_qty_rubber_kg",
+    "basis": "quantity",
+    "kgco2e_per_unit": 2.85,
+    "category": "rubber",
+    "unit": "kg",
+    "description": "Natural rubber (farm-to-factory gate)",
+    "source": "IRSG 2024",
+    "year": 2024
+  },
+  {
+    "_id": "ef_qty_water_m3",
+    "basis": "quantity",
+    "kgco2e_per_unit": 0.344,
+    "category": "water supply",
+    "unit": "m3",
+    "description": "Municipal water supply (treatment + distribution)",
+    "source": "DEFRA 2024",
+    "year": 2024
+  },
+  {
+    "_id": "ef_qty_wastewater_m3",
+    "basis": "quantity",
+    "kgco2e_per_unit": 0.708,
+    "category": "wastewater",
+    "unit": "m3",
+    "description": "Wastewater treatment (municipal)",
+    "source": "DEFRA 2024",
+    "year": 2024
+  },
+  {
+    "_id": "ef_qty_waste_landfill_kg",
+    "basis": "quantity",
+    "kgco2e_per_unit": 0.586,
+    "category": "waste",
+    "unit": "kg",
+    "vendor": "landfill",
+    "description": "Mixed municipal waste to landfill",
+    "source": "DEFRA 2024",
+    "year": 2024
+  },
+  {
+    "_id": "ef_qty_waste_recycled_kg",
+    "basis": "quantity",
+    "kgco2e_per_unit": 0.021,
+    "category": "waste",
+    "unit": "kg",
+    "vendor": "recycling",
+    "description": "Mixed recyclables (net of avoided burden)",
+    "source": "DEFRA 2024",
+    "year": 2024
+  },
+  {
+    "_id": "ef_qty_waste_incineration_kg",
+    "basis": "quantity",
+    "kgco2e_per_unit": 0.436,
+    "category": "waste",
+    "unit": "kg",
+    "vendor": "incineration",
+    "description": "Mixed waste to energy-from-waste",
+    "source": "DEFRA 2024",
+    "year": 2024
+  },
+  {
+    "_id": "ef_qty_electricity_kwh",
+    "basis": "quantity",
+    "kgco2e_per_unit": 0.436,
+    "category": "electricity",
+    "unit": "kWh",
+    "description": "World average grid electricity",
+    "source": "IEA 2024",
+    "year": 2024
+  },
+  {
+    "_id": "ef_qty_natural_gas_m3",
+    "basis": "quantity",
+    "kgco2e_per_unit": 2.02,
+    "category": "natural gas",
+    "unit": "m3",
+    "description": "Natural gas combustion (CO2+CH4+N2O at AR6 GWP)",
+    "source": "DEFRA 2024 + IPCC AR6",
+    "year": 2024
+  },
+  {
+    "_id": "ef_qty_diesel_liter",
+    "basis": "quantity",
+    "kgco2e_per_unit": 2.70,
+    "category": "diesel",
+    "unit": "liter",
+    "description": "Diesel fuel combustion (direct + WTT)",
+    "source": "DEFRA 2024",
+    "year": 2024
+  },
+  {
+    "_id": "ef_qty_gasoline_liter",
+    "basis": "quantity",
+    "kgco2e_per_unit": 2.33,
+    "category": "gasoline",
+    "unit": "liter",
+    "description": "Motor gasoline combustion (direct + WTT)",
+    "source": "DEFRA 2024",
+    "year": 2024
+  },
+  {
+    "_id": "ef_qty_freight_road_tkm",
+    "basis": "quantity",
+    "kgco2e_per_unit": 0.112,
+    "category": "freight",
+    "unit": "tkm",
+    "vendor": "road",
+    "description": "Road freight, average articulated HGV",
+    "source": "DEFRA 2024",
+    "year": 2024
+  },
+  {
+    "_id": "ef_qty_freight_rail_tkm",
+    "basis": "quantity",
+    "kgco2e_per_unit": 0.025,
+    "category": "freight",
+    "unit": "tkm",
+    "vendor": "rail",
+    "description": "Rail freight, average",
+    "source": "DEFRA 2024",
+    "year": 2024
+  },
+  {
+    "_id": "ef_qty_freight_sea_tkm",
+    "basis": "quantity",
+    "kgco2e_per_unit": 0.016,
+    "category": "freight",
+    "unit": "tkm",
+    "vendor": "sea",
+    "description": "Container ship freight, average",
+    "source": "DEFRA 2024",
+    "year": 2024
+  },
+  {
+    "_id": "ef_qty_freight_air_tkm",
+    "basis": "quantity",
+    "kgco2e_per_unit": 0.602,
+    "category": "freight",
+    "unit": "tkm",
+    "vendor": "air",
+    "description": "Long-haul air freight",
+    "source": "DEFRA 2024",
+    "year": 2024
+  },
+  {
+    "_id": "ef_qty_air_travel_pkm",
+    "basis": "quantity",
+    "kgco2e_per_unit": 0.146,
+    "category": "air travel",
+    "unit": "pkm",
+    "description": "Long-haul economy air travel per passenger-km",
+    "source": "DEFRA 2024",
+    "year": 2024
+  },
+  {
+    "_id": "ef_qty_hotel_night",
+    "basis": "quantity",
+    "kgco2e_per_unit": 20.60,
+    "category": "hotels",
+    "unit": "night",
+    "description": "Hotel accommodation per room-night (global average)",
+    "source": "DEFRA 2024 / Cornell SHA",
+    "year": 2024
+  }
+]

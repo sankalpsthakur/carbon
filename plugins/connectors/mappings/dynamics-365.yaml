@@ -1,0 +1,32 @@
+source: dynamics-365
+version: "1.0"
+api_type: odata
+auth_type: oauth2
+description: Microsoft Dynamics 365 Finance & Operations Purchase Order Lines via OData
+
+canonical_mapping:
+  vendor: "VendorAccountNumber"
+  amount: "PurchasePrice"
+  currency: "CurrencyCode"
+  quantity: "PurchaseQuantity"
+  unit: "PurchaseUnitOfMeasureSymbol"
+  category: "ProcurementCategory"
+  date: "OrderedDate"
+  org_unit: "LegalEntity"
+
+transforms:
+  date: "iso8601"
+  currency: "iso4217_validate"
+
+api_config:
+  entity: "PurchaseOrderLinesV2"
+  select: "VendorAccountNumber,PurchasePrice,CurrencyCode,PurchaseQuantity,PurchaseUnitOfMeasureSymbol,ProcurementCategory,OrderedDate,LegalEntity,ItemNumber,PurchaseOrderNumber"
+  filter: "OrderedDate ge 2024-01-01T00:00:00Z"
+
+notes: |
+  D365 F&O exposes PurchaseOrderLinesV2 as an OData entity.
+  VendorAccountNumber requires a join to vendor master for display name.
+  PurchasePrice is the unit price; total = PurchasePrice * PurchaseQuantity.
+  ProcurementCategory is a D365-specific hierarchy; consider mapping to UNSPSC.
+  LegalEntity is the company/legal entity code.
+  Requires Azure AD OAuth2 app registration with Dynamics API permissions.

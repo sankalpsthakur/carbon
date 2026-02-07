@@ -1,0 +1,117 @@
+version: "3.8"
+
+# CarbonKit MCP Servers - SQLite default (single-image, multi-process)
+# For Postgres: docker compose -f docker-compose.yml -f docker-compose.postgres.yml up
+# For Ollama:   docker compose -f docker-compose.yml -f docker-compose.ollama.yml up
+
+services:
+  mcp-calc:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.mcp-servers
+    command: ["node", "/app/scope3-calculation/tools/calc-mcp.js"]
+    ports:
+      - "8401:8401"
+    volumes:
+      - carbonkit-data:/app/scope3-calculation/data
+      - carbonkit-blobs:/app/blobs
+    env_file:
+      - .env
+    environment:
+      - CARBONKIT_DB_BACKEND=sqlite
+      - CARBONKIT_MCP_TRANSPORT=http
+      - CARBONKIT_MCP_PORT=8401
+    restart: unless-stopped
+
+  mcp-exec:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.mcp-servers
+    command: ["node", "/app/scope3-execution/tools/exec-mcp.js"]
+    ports:
+      - "8402:8402"
+    volumes:
+      - carbonkit-data:/app/scope3-execution/data
+      - carbonkit-blobs:/app/blobs
+    env_file:
+      - .env
+    environment:
+      - CARBONKIT_DB_BACKEND=sqlite
+      - CARBONKIT_MCP_TRANSPORT=http
+      - CARBONKIT_MCP_PORT=8402
+    restart: unless-stopped
+
+  mcp-strategy:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.mcp-servers
+    command: ["node", "/app/scope3-strategy/tools/strategy-mcp.js"]
+    ports:
+      - "8403:8403"
+    volumes:
+      - carbonkit-data:/app/scope3-strategy/data
+      - carbonkit-blobs:/app/blobs
+    env_file:
+      - .env
+    environment:
+      - CARBONKIT_DB_BACKEND=sqlite
+      - CARBONKIT_MCP_TRANSPORT=http
+      - CARBONKIT_MCP_PORT=8403
+    restart: unless-stopped
+
+  mcp-scope12:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.mcp-servers
+    command: ["node", "/app/scope12-accounting/tools/scope12-mcp.js"]
+    ports:
+      - "8404:8404"
+    volumes:
+      - carbonkit-data:/app/scope12-accounting/data
+      - carbonkit-blobs:/app/blobs
+    env_file:
+      - .env
+    environment:
+      - CARBONKIT_DB_BACKEND=sqlite
+      - CARBONKIT_MCP_TRANSPORT=http
+      - CARBONKIT_MCP_PORT=8404
+    restart: unless-stopped
+
+  mcp-swarm:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.mcp-servers
+    command: ["node", "/app/swarms/tools/swarm-mcp.js"]
+    ports:
+      - "8405:8405"
+    volumes:
+      - carbonkit-data:/app/swarms/data
+      - carbonkit-blobs:/app/blobs
+    env_file:
+      - .env
+    environment:
+      - CARBONKIT_DB_BACKEND=sqlite
+      - CARBONKIT_MCP_TRANSPORT=http
+      - CARBONKIT_MCP_PORT=8405
+    restart: unless-stopped
+
+  mcp-connectors:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.mcp-servers
+    command: ["node", "/app/connectors/tools/connectors-mcp.js"]
+    ports:
+      - "8406:8406"
+    volumes:
+      - carbonkit-data:/app/connectors/data
+    env_file:
+      - .env
+    environment:
+      - CARBONKIT_DB_BACKEND=sqlite
+      - CARBONKIT_MCP_TRANSPORT=http
+      - CARBONKIT_MCP_PORT=8406
+    restart: unless-stopped
+
+volumes:
+  carbonkit-data:
+  carbonkit-blobs:

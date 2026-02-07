@@ -1,0 +1,27 @@
+version: "3.8"
+
+# Postgres overlay for CarbonKit (currently disabled)
+# This repo's MCP servers do not support the Postgres store backend yet.
+# Keep this file as a placeholder for future work.
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: carbonkit
+      POSTGRES_USER: carbonkit
+      POSTGRES_PASSWORD: ${CARBONKIT_DB_PASSWORD:-carbonkit_dev}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./docker/init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U carbonkit"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+volumes:
+  pgdata:

@@ -1,0 +1,34 @@
+source: quickbooks
+version: "1.0"
+api_type: rest
+auth_type: oauth2
+description: QuickBooks Online API - Purchase and Bill line items
+
+canonical_mapping:
+  vendor: "VendorRef.name"
+  amount: "Amount"
+  currency: "CurrencyRef.value"
+  quantity: "Qty"
+  unit: "null"
+  category: "AccountRef.name"
+  date: "TxnDate"
+  org_unit: "DepartmentRef.name"
+
+transforms:
+  date: "iso8601"
+  currency: "iso4217_validate"
+
+api_config:
+  endpoint: "/v3/company/{realmId}/query"
+  query: "SELECT * FROM Purchase WHERE TxnDate >= '2024-01-01'"
+  line_item_path: "Line[]"
+
+notes: |
+  QuickBooks exposes Purchase (check/cash/credit card) and Bill entities.
+  VendorRef.name is the display name; VendorRef.value is the internal ID.
+  Amount on Line items is the line total (not per-unit).
+  Qty is only present on ItemBasedExpenseLineDetail lines, not AccountBasedExpenseLineDetail.
+  AccountRef.name maps to the expense account (category proxy).
+  DepartmentRef is optional and depends on company configuration.
+  CurrencyRef.value is at the transaction level (e.g. "USD").
+  Requires OAuth 2.0 with com.intuit.quickbooks.accounting scope.

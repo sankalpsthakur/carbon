@@ -1,0 +1,100 @@
+FROM node:20-alpine
+
+LABEL maintainer="CarbonKit <carbonkit@example.com>"
+LABEL description="CarbonKit Agent Runtime - orchestrates MCP servers and provides unified API"
+
+WORKDIR /app
+
+# Install curl for health checks
+RUN apk add --no-cache curl
+
+# Copy all plugins (agents, commands, skills need to be available)
+COPY plugins/ /app/plugins/
+
+# Copy root-level config files
+COPY package.json* /app/ 2>/dev/null || true
+COPY CARBONKIT_BUILD_SPEC.md /app/ 2>/dev/null || true
+
+RUN mkdir -p /app/data
+
+ENV NODE_ENV=production
+ENV MCP_TRANSPORT=http
+ENV AGENT_RUNTIME_PORT=8420
+
+# MCP server endpoints (internal Docker network)
+ENV CALC_MCP_URL=http://mcp-calc:8401
+ENV EXEC_MCP_URL=http://mcp-exec:8402
+ENV STRATEGY_MCP_URL=http://mcp-strategy:8403
+ENV SCOPE12_MCP_URL=http://mcp-scope12:8404
+
+EXPOSE 8420
+
+HEALTHCHECK --interval=30s --timeout=5s --start-period=15s --retries=3 \
+  CMD curl -sf http://localhost:8420/health || exit 1
+
+# The agent runtime server - a lightweight Express-like HTTP server
+# that proxies to MCP servers and provides unified API
+CMD ["node", "-e", "\
+const http = require('http'); \
+const port = process.env.AGENT_RUNTIME_PORT || 8420; \
+const endpoints = { \
+  calc: process.env.CALC_MCP_URL || 'http://localhost:8401', \
+  exec: process.env.EXEC_MCP_URL || 'http://localhost:8402', \
+  strategy: process.env.STRATEGY_MCP_URL || 'http://localhost:8403', \
+  scope12: process.env.SCOPE12_MCP_URL || 'http://localhost:8404', \
+}; \
+function proxyRequest(targetUrl, body) { \
+  return new Promise((resolve, reject) => { \
+    const url = new URL(targetUrl); \
+    const req = http.request({ hostname: url.hostname, port: url.port, path: '/rpc', method: 'POST', headers: { 'Content-Type': 'application/json' } }, (res) => { \
+      let data = ''; \
+      res.on('data', c => data += c); \
+      res.on('end', () => { try { resolve(JSON.parse(data)); } catch(e) { resolve({ raw: data }); } }); \
+    }); \
+    req.on('error', reject); \
+    req.write(JSON.stringify(body)); \
+    req.end(); \
+  }); \
+} \
+const server = http.createServer(async (req, res) => { \
+  res.setHeader('Access-Control-Allow-Origin', '*'); \
+  res.setHeader('Access-Control-Allow-Methods', 'POST, GET, OPTIONS'); \
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type'); \
+  if (req.method === 'OPTIONS') { res.writeHead(204); res.end(); return; } \
+  if (req.method === 'GET' && (req.url === '/' || req.url === '/health')) { \
+    const checks = {}; \
+    for (const [name, url] of Object.entries(endpoints)) { \
+      try { const r = await proxyRequest(url, { jsonrpc: '2.0', id: 1, method: 'initialize', params: {} }); checks[name] = r.result ? 'ok' : 'error'; } \
+      catch(_e) { checks[name] = 'unreachable'; } \
+    } \
+    res.writeHead(200, { 'Content-Type': 'application/json' }); \
+    res.end(JSON.stringify({ status: 'ok', runtime: 'agent-runtime', services: checks })); \
+    return; \
+  } \
+  if (req.method === 'POST') { \
+    let body = ''; req.on('data', c => body += c); \
+    req.on('end', async () => { \
+      try { \
+        const msg = JSON.parse(body); \
+        const toolName = msg.params && msg.params.name; \
+        let target = 'calc'; \
+        if (toolName) { \
+          if (toolName.startsWith('exec.') || toolName.startsWith('mcp__exec')) target = 'exec'; \
+          else if (toolName.startsWith('strategy.') || toolName.startsWith('mcp__strategy')) target = 'strategy'; \
+          else if (toolName.startsWith('scope12.') || toolName.startsWith('mcp__scope12')) target = 'scope12'; \
+          else if (toolName.startsWith('connectors.')) target = 'calc'; \
+        } \
+        const result = await proxyRequest(endpoints[target], msg); \
+        res.writeHead(200, { 'Content-Type': 'application/json' }); \
+        res.end(JSON.stringify(result)); \
+      } catch(e) { \
+        res.writeHead(500, { 'Content-Type': 'application/json' }); \
+        res.end(JSON.stringify({ error: e.message })); \
+      } \
+    }); \
+    return; \
+  } \
+  res.writeHead(404); res.end('Not found'); \
+}); \
+server.listen(port, () => console.log('Agent runtime on port ' + port)); \
+"]

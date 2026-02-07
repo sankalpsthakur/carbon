@@ -1,0 +1,40 @@
+{
+  "_meta": {
+    "source": "IEA 2024 / EPA eGRID 2022 / AIB residual mix 2023",
+    "unit": "kgCO2e/kWh",
+    "year": 2024,
+    "version": "grid-factors-2024-v1"
+  },
+  "regions": {
+    "US_AVERAGE": { "name": "United States average", "kgco2e_per_kwh": 0.386, "source": "EPA eGRID 2022" },
+    "US_ERCOT": { "name": "ERCOT (Texas)", "kgco2e_per_kwh": 0.395, "source": "EPA eGRID 2022" },
+    "US_WECC": { "name": "WECC (Western US)", "kgco2e_per_kwh": 0.272, "source": "EPA eGRID 2022" },
+    "US_NPCC_NE": { "name": "NPCC New England", "kgco2e_per_kwh": 0.228, "source": "EPA eGRID 2022" },
+    "US_SERC": { "name": "SERC (Southeast US)", "kgco2e_per_kwh": 0.404, "source": "EPA eGRID 2022" },
+    "US_RFC": { "name": "RFC (Midwest/Mid-Atlantic US)", "kgco2e_per_kwh": 0.418, "source": "EPA eGRID 2022" },
+    "US_MRO": { "name": "MRO (Upper Midwest US)", "kgco2e_per_kwh": 0.453, "source": "EPA eGRID 2022" },
+    "US_HIOA": { "name": "Hawaii HECO", "kgco2e_per_kwh": 0.596, "source": "EPA eGRID 2022" },
+    "CA_AVERAGE": { "name": "Canada average", "kgco2e_per_kwh": 0.120, "source": "NIR 2024" },
+    "UK": { "name": "United Kingdom", "kgco2e_per_kwh": 0.207, "source": "DEFRA 2024" },
+    "DE": { "name": "Germany", "kgco2e_per_kwh": 0.385, "source": "UBA 2024" },
+    "FR": { "name": "France", "kgco2e_per_kwh": 0.052, "source": "ADEME 2024" },
+    "ES": { "name": "Spain", "kgco2e_per_kwh": 0.164, "source": "REE 2024" },
+    "IT": { "name": "Italy", "kgco2e_per_kwh": 0.260, "source": "ISPRA 2024" },
+    "NL": { "name": "Netherlands", "kgco2e_per_kwh": 0.328, "source": "CBS 2024" },
+    "SE": { "name": "Sweden", "kgco2e_per_kwh": 0.013, "source": "SCB 2024" },
+    "NO": { "name": "Norway", "kgco2e_per_kwh": 0.008, "source": "NVE 2024" },
+    "DK": { "name": "Denmark", "kgco2e_per_kwh": 0.094, "source": "Energinet 2024" },
+    "PL": { "name": "Poland", "kgco2e_per_kwh": 0.693, "source": "KOBiZE 2024" },
+    "AU": { "name": "Australia average", "kgco2e_per_kwh": 0.680, "source": "DISER 2024" },
+    "JP": { "name": "Japan average", "kgco2e_per_kwh": 0.457, "source": "MOE 2024" },
+    "KR": { "name": "South Korea", "kgco2e_per_kwh": 0.417, "source": "KEEI 2024" },
+    "IN": { "name": "India", "kgco2e_per_kwh": 0.708, "source": "CEA 2024" },
+    "CN": { "name": "China average", "kgco2e_per_kwh": 0.555, "source": "MEE 2024" },
+    "BR": { "name": "Brazil", "kgco2e_per_kwh": 0.074, "source": "SIN 2024" },
+    "MX": { "name": "Mexico", "kgco2e_per_kwh": 0.423, "source": "CRE 2024" },
+    "ZA": { "name": "South Africa", "kgco2e_per_kwh": 0.928, "source": "Eskom 2024" },
+    "SG": { "name": "Singapore", "kgco2e_per_kwh": 0.408, "source": "EMA 2024" },
+    "EU_AVERAGE": { "name": "European Union average", "kgco2e_per_kwh": 0.256, "source": "EEA 2024" },
+    "WORLD_AVERAGE": { "name": "World average", "kgco2e_per_kwh": 0.436, "source": "IEA 2024" }
+  }
+}

@@ -1,0 +1,293 @@
+# CarbonKit Load Test Configuration
+# Tests performance under concurrent load
+#
+# Target: 100 concurrent requests per endpoint
+# Duration: 60 seconds sustained load
+# Expected: p95 < 380ms, p99 < 520ms, no errors
+#
+# Run: artillery run load-test.yml
+
+config:
+  target: "http://localhost:3000/api"
+  phases:
+    # Warm-up phase: 10s, ramp from 0 to 20 users/sec
+    - duration: 10
+      arrivalRate: 5
+      rampTo: 20
+      name: "Warm-up"
+
+    # Sustained load phase: 60s, 100 users/sec
+    - duration: 60
+      arrivalRate: 100
+      name: "Sustained Load"
+
+    # Peak load phase: 10s, 150 users/sec
+    - duration: 10
+      arrivalRate: 150
+      name: "Peak Load"
+
+    # Cool-down phase: 10s, ramp from 150 to 10 users/sec
+    - duration: 10
+      arrivalRate: 150
+      rampTo: 10
+      name: "Cool-down"
+
+  # Performance thresholds
+  ensure:
+    p50: 120   # 50th percentile < 120ms
+    p95: 380   # 95th percentile < 380ms
+    p99: 520   # 99th percentile < 520ms
+    maxErrorRate: 0  # 0% error rate
+
+  # HTTP defaults
+  http:
+    timeout: 10
+    pool: 50
+
+  # Metrics collection
+  plugins:
+    expect: {}
+    metrics-by-endpoint: {}
+
+  # Variables
+  variables:
+    calcJobId: "job_test_{{ $randomString() }}"
+    execSupplierId: "supplier_test_{{ $randomString() }}"
+    strategyAssessmentId: "asmt_test_{{ $randomString() }}"
+
+scenarios:
+  # ==================== CALCULATION MODULE ====================
+  - name: "Calc: Health Check"
+    weight: 5
+    flow:
+      - get:
+          url: "/calc/health"
+          expect:
+            - statusCode: 200
+            - contentType: json
+            - hasProperty: "ok"
+
+  - name: "Calc: Query Emission Factors"
+    weight: 20
+    flow:
+      - post:
+          url: "/calc/db/get"
+          json:
+            collection: "emission_factors"
+            query: {}
+            limit: 100
+          expect:
+            - statusCode: 200
+            - hasProperty: "docs"
+
+  - name: "Calc: FX Normalization"
+    weight: 15
+    flow:
+      - post:
+          url: "/calc/fx-normalize"
+          json:
+            amount: 1000
+            from_currency: "EUR"
+            to_currency: "USD"
+          expect:
+            - statusCode: 200
+            - hasProperty: "converted"
+            - hasProperty: "rate"
+
+  - name: "Calc: Query Inventory Items"
+    weight: 20
+    flow:
+      - post:
+          url: "/calc/db/get"
+          json:
+            collection: "inventory_items"
+            query: {}
+            limit: 50
+          expect:
+            - statusCode: 200
+            - hasProperty: "docs"
+
+  # ==================== EXECUTION MODULE ====================
+  - name: "Exec: Health Check"
+    weight: 5
+    flow:
+      - get:
+          url: "/exec/health"
+          expect:
+            - statusCode: 200
+            - contentType: json
+            - hasProperty: "ok"
+
+  - name: "Exec: List Suppliers"
+    weight: 20
+    flow:
+      - post:
+          url: "/exec/db/get"
+          json:
+            collection: "suppliers"
+            query: {}
+            limit: 100
+          expect:
+            - statusCode: 200
+            - hasProperty: "docs"
+
+  - name: "Exec: List Engagements"
+    weight: 15
+    flow:
+      - post:
+          url: "/exec/db/get"
+          json:
+            collection: "engagements"
+            query: {}
+            limit: 100
+          expect:
+            - statusCode: 200
+            - hasProperty: "docs"
+
+  # ==================== STRATEGY MODULE ====================
+  - name: "Strategy: Health Check"
+    weight: 5
+    flow:
+      - get:
+          url: "/strategy/health"
+          expect:
+            - statusCode: 200
+            - contentType: json
+            - hasProperty: "ok"
+
+  - name: "Strategy: List Organizations"
+    weight: 10
+    flow:
+      - post:
+          url: "/strategy/db/get"
+          json:
+            collection: "orgs"
+            query: {}
+            limit: 100
+          expect:
+            - statusCode: 200
+            - hasProperty: "docs"
+
+  - name: "Strategy: List IROs"
+    weight: 10
+    flow:
+      - post:
+          url: "/strategy/db/get"
+          json:
+            collection: "iros"
+            query: {}
+            limit: 100
+          expect:
+            - statusCode: 200
+            - hasProperty: "docs"
+
+# ==================== MIXED WORKLOAD ====================
+# Simulates realistic usage patterns across all modules
+
+  - name: "Mixed: Dashboard Load (Calc + Exec)"
+    weight: 15
+    flow:
+      # Calc: Fetch summary
+      - post:
+          url: "/calc/db/get"
+          json:
+            collection: "lca_runs"
+            query: {}
+            limit: 10
+          expect:
+            - statusCode: 200
+
+      # Calc: Fetch hotspots
+      - post:
+          url: "/calc/db/get"
+          json:
+            collection: "inventory_items"
+            query: {}
+            limit: 20
+          expect:
+            - statusCode: 200
+
+      # Exec: Fetch suppliers
+      - post:
+          url: "/exec/db/get"
+          json:
+            collection: "suppliers"
+            query: {}
+            limit: 20
+          expect:
+            - statusCode: 200
+
+  - name: "Mixed: Assessment Load (Strategy + Evidence)"
+    weight: 10
+    flow:
+      # Strategy: Fetch assessment
+      - post:
+          url: "/strategy/db/get"
+          json:
+            collection: "dma_assessments"
+            query: {}
+            limit: 10
+          expect:
+            - statusCode: 200
+
+      # Strategy: Fetch IROs
+      - post:
+          url: "/strategy/db/get"
+          json:
+            collection: "iros"
+            query: {}
+            limit: 50
+          expect:
+            - statusCode: 200
+
+      # Strategy: Fetch evidence
+      - post:
+          url: "/strategy/db/get"
+          json:
+            collection: "iro_evidence"
+            query: {}
+            limit: 50
+          expect:
+            - statusCode: 200
+
+# ==================== WRITE OPERATIONS (LOWER WEIGHT) ====================
+
+  - name: "Write: Create Engagement"
+    weight: 5
+    flow:
+      - post:
+          url: "/exec/db/set"
+          json:
+            collection: "engagements"
+            doc:
+              _id: "eng_load_{{ $randomString() }}"
+              supplier_id: "{{ execSupplierId }}"
+              status: "pending"
+              created_at: "{{ $timestamp() }}"
+          expect:
+            - statusCode: 200
+            - hasProperty: "doc"
+
+  - name: "Write: Score IRO"
+    weight: 5
+    flow:
+      - post:
+          url: "/strategy/db/set"
+          json:
+            collection: "iros"
+            doc:
+              _id: "iro_load_{{ $randomString() }}"
+              assessment_id: "{{ strategyAssessmentId }}"
+              type: "impact"
+              topic: "E1-1"
+              title: "Load test IRO"
+              scores:
+                impact_materiality: "{{ $randomNumber(1, 5) }}"
+                financial_materiality: "{{ $randomNumber(1, 5) }}"
+          expect:
+            - statusCode: 200
+            - hasProperty: "doc"
+
+after:
+  flow:
+    - log: "Load test completed. Check results for performance metrics."

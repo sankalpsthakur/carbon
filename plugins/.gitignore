@@ -1,0 +1,66 @@
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Env / secrets
+.env
+.env.*
+
+# Artifacts / runtime state
+artifacts/
+state/
+content/approvals/
+crm/interactions/
+crm/outbox/
+
+# Node
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+coverage/
+
+# Seed data (large / licensed datasets)
+scope3-calculation/data/eeio_factors*.json
+scope3-calculation/data/defra_factors*.json
+scope3-calculation/data/hotel_factors*.json
+scope3-calculation/data/transport_factors*.json
+connectors/data/
+
+# Test fixtures
+test-fixtures/
+**/__tests__/fixtures/
+
+# Test data artifacts (generated during test runs)
+**/data/_audit_log.json
+**/data/test_*.json
+**/data/activity_rows.json
+**/data/jobs.json
+**/data/lca_*.json
+**/data/inventory_*.json
+**/data/emission_factors.json
+**/data/benchmarks.json
+**/data/blobs/
+**/data/documents.json
+**/data/engagements.json
+**/data/ocr_blocks.json
+**/data/pipeline_*.json
+**/data/provenance.json
+**/data/renders.json
+**/data/suppliers.json
+**/data/test_col.json
+**/data/*_test*.json
+
+# Editors
+.vscode/
+.idea/
+

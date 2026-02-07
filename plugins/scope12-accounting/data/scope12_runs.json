@@ -1,0 +1,154 @@
+[
+  {
+    "_id": "4bf69e7c-8f81-467f-b52d-cf545c5639c5",
+    "run_id": "4bf69e7c-8f81-467f-b52d-cf545c5639c5",
+    "org_id": "test-corp",
+    "period": "2024",
+    "gwp_version": "AR6",
+    "computed_at": "2026-02-07T11:32:10.817Z",
+    "scope1": {
+      "stationary": {
+        "category": "stationary",
+        "kgCO2e_fossil": 9434.939,
+        "kgCO2_biogenic": 0,
+        "items": [
+          {
+            "source_id": null,
+            "fuel_type": "natural_gas",
+            "quantity": 5000,
+            "unit": "m3",
+            "kgCO2e_fossil": 9434.939,
+            "kgCO2_biogenic": 0,
+            "breakdown": {
+              "kgCO2_fossil": 9425,
+              "kgCH4_CO2e": 5.1615,
+              "kgN2O_CO2e": 4.7775
+            }
+          }
+        ]
+      },
+      "mobile": {
+        "category": "mobile",
+        "kgCO2e_fossil": 2699.75581,
+        "kgCO2_biogenic": 0,
+        "items": [
+          {
+            "source_id": null,
+            "fuel_type": "diesel_mobile",
+            "quantity": 1000,
+            "unit": "liter",
+            "kgCO2e_fossil": 2699.75581,
+            "kgCO2_biogenic": 0
+          }
+        ]
+      },
+      "process": {
+        "category": "process",
+        "kgCO2e": 52500,
+        "items": [
+          {
+            "source_id": null,
+            "process": "cement_clinker",
+            "quantity": 100,
+            "unit": "tonne",
+            "emission_factor": 525,
+            "kgCO2e": 52500
+          }
+        ]
+      },
+      "fugitive": {
+        "category": "fugitive",
+        "kgCO2e": 27144,
+        "items": [
+          {
+            "source_id": null,
+            "gas": "R-410A",
+            "leakage_kg": 13,
+            "gwp": 2088,
+            "kgCO2e": 27144
+          }
+        ]
+      },
+      "total_kgCO2e": 91778.69481,
+      "total_tCO2e": 91.778695,
+      "biogenic_kgCO2": 0
+    },
+    "scope2": {
+      "location_based": {
+        "method": "location_based",
+        "kgCO2e": 115500,
+        "items": [
+          {
+            "source_id": null,
+            "energy_carrier": "electricity",
+            "region": "DE",
+            "quantity": 300,
+            "unit": "MWh",
+            "net_kwh": 300000,
+            "grid_factor": 0.385,
+            "kgCO2e": 115500
+          }
+        ]
+      },
+      "market_based": {
+        "method": "market_based",
+        "kgCO2e": 115500,
+        "items": [
+          {
+            "source_id": null,
+            "energy_carrier": "electricity",
+            "region": "DE",
+            "net_kwh": 300000,
+            "matched_kwh": 0,
+            "unmatched_kwh": 300000,
+            "contract_factor": 0,
+            "unmatched_factor": 0.385,
+            "kgCO2e_matched": 0,
+            "kgCO2e_unmatched": 115500,
+            "kgCO2e": 115500,
+            "coverage_pct": 0,
+            "evidence_ids": []
+          }
+        ]
+      }
+    },
+    "totals": {
+      "scope12_location_based_kgCO2e": 207278.69481,
+      "scope12_location_based_tCO2e": 207.278695,
+      "scope12_market_based_kgCO2e": 207278.69481,
+      "scope12_market_based_tCO2e": 207.278695
+    },
+    "kpis": [
+      {
+        "name": "tCO2e_per_mUSD_revenue_LB",
+        "value": 10.363935,
+        "scope": "scope12_location_based",
+        "denominator": "revenue_mUSD",
+        "denominator_value": 20
+      },
+      {
+        "name": "tCO2e_per_mUSD_revenue_MB",
+        "value": 10.363935,
+        "scope": "scope12_market_based",
+        "denominator": "revenue_mUSD",
+        "denominator_value": 20
+      },
+      {
+        "name": "tCO2e_per_FTE_LB",
+        "value": 2.072787,
+        "scope": "scope12_location_based",
+        "denominator": "fte",
+        "denominator_value": 100
+      },
+      {
+        "name": "tCO2e_per_FTE_MB",
+        "value": 2.072787,
+        "scope": "scope12_market_based",
+        "denominator": "fte",
+        "denominator_value": 100
+      }
+    ],
+    "_updated_at": "2026-02-07T11:32:10.817Z",
+    "_created_at": "2026-02-07T11:32:10.817Z"
+  }
+]

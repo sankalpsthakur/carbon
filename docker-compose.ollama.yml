@@ -1,0 +1,57 @@
+version: "3.8"
+
+# Ollama GPU overlay for CarbonKit
+# Usage: docker compose -f docker-compose.yml -f docker-compose.ollama.yml up
+# Requires NVIDIA GPU with nvidia-container-toolkit installed.
+
+services:
+  ollama:
+    image: ollama/ollama:latest
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama-models:/root/.ollama
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+    restart: unless-stopped
+
+  # Override MCP services to route LLM calls through Ollama
+  mcp-calc:
+    environment:
+      - CARBONKIT_LLM_BACKEND=ollama
+      - CARBONKIT_LLM_URL=http://ollama:11434
+      - CARBONKIT_LLM_MODEL=llama3.1
+    depends_on:
+      - ollama
+
+  mcp-exec:
+    environment:
+      - CARBONKIT_LLM_BACKEND=ollama
+      - CARBONKIT_LLM_URL=http://ollama:11434
+      - CARBONKIT_LLM_MODEL=llama3.1
+    depends_on:
+      - ollama
+
+  mcp-strategy:
+    environment:
+      - CARBONKIT_LLM_BACKEND=ollama
+      - CARBONKIT_LLM_URL=http://ollama:11434
+      - CARBONKIT_LLM_MODEL=llama3.1
+    depends_on:
+      - ollama
+
+  mcp-swarm:
+    environment:
+      - CARBONKIT_LLM_BACKEND=ollama
+      - CARBONKIT_LLM_URL=http://ollama:11434
+      - CARBONKIT_LLM_MODEL=llama3.1
+    depends_on:
+      - ollama
+
+volumes:
+  ollama-models:

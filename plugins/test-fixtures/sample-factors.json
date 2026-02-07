@@ -1,0 +1,100 @@
+[
+  {
+    "_id": "ef_supplier_001",
+    "basis": "supplier_primary",
+    "vendor": "GreenTech Solutions",
+    "category": "334413",
+    "unit": "units",
+    "kgco2e_per_unit": 85.2,
+    "source": "Supplier CDP disclosure 2024",
+    "year": 2024,
+    "geography": "US"
+  },
+  {
+    "_id": "ef_supplier_002",
+    "basis": "supplier_primary",
+    "vendor": "Samsung SDI",
+    "category": "335911",
+    "unit": "cells",
+    "kgco2e_per_unit": 12.5,
+    "source": "Samsung ESG Report 2024",
+    "year": 2024,
+    "geography": "KR"
+  },
+  {
+    "_id": "ef_quantity_001",
+    "basis": "avg_quantity",
+    "category": "331110",
+    "unit": "kg",
+    "kgco2e_per_unit": 1.85,
+    "source": "World Steel Association 2024",
+    "year": 2024,
+    "geography": "global"
+  },
+  {
+    "_id": "ef_quantity_002",
+    "basis": "avg_quantity",
+    "category": "327320",
+    "unit": "m3",
+    "kgco2e_per_unit": 240.0,
+    "source": "GCCA Concrete CO2 Fact Sheet",
+    "year": 2024,
+    "geography": "global"
+  },
+  {
+    "_id": "ef_quantity_003",
+    "basis": "avg_quantity",
+    "category": "325199",
+    "unit": "liters",
+    "kgco2e_per_unit": 2.1,
+    "source": "DEFRA 2024 Chemical manufacturing",
+    "year": 2024,
+    "geography": "global"
+  },
+  {
+    "_id": "ef_spend_001",
+    "basis": "spend",
+    "category": "484110",
+    "kgco2e_per_usd": 0.741,
+    "source": "EPA EEIO v1.3 - Truck transportation",
+    "year": 2024,
+    "geography": "US"
+  },
+  {
+    "_id": "ef_spend_002",
+    "basis": "spend",
+    "category": "518210",
+    "kgco2e_per_usd": 0.189,
+    "source": "EPA EEIO v1.3 - Data processing and hosting",
+    "year": 2024,
+    "geography": "US"
+  },
+  {
+    "_id": "ef_spend_003",
+    "basis": "spend",
+    "category": "561720",
+    "kgco2e_per_usd": 0.312,
+    "source": "EPA EEIO v1.3 - Janitorial services",
+    "year": 2024,
+    "geography": "US"
+  },
+  {
+    "_id": "ef_spend_004",
+    "basis": "spend",
+    "category": "511210",
+    "kgco2e_per_usd": 0.098,
+    "source": "EPA EEIO v1.3 - Software publishers",
+    "year": 2024,
+    "geography": "US"
+  },
+  {
+    "_id": "ef_none_001",
+    "basis": "none",
+    "category": "532111",
+    "kgco2e_per_usd": 0.0,
+    "source": "No emission factor available",
+    "year": 2024,
+    "geography": "global",
+    "note": "Rental services - zero amount row, no factor applicable"
+  }
+]

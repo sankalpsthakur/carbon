@@ -1,0 +1,51 @@
+vendor,item_description,spend_original,currency_original,quantity,unit,category,date
+Acme Industrial Supplies,Steel reinforcement bars,45000.00,USD,2000,kg,331110,2024-03-15
+GreenTech Solutions,Solar panel modules,128500.00,USD,50,units,334413,2024-04-02
+Pacific Logistics Co,Freight shipping services,8750.00,USD,,,,2024-04-10
+CloudScale Inc,AWS hosting services Q1,24300.00,USD,3,months,518210,2024-03-31
+Mueller GmbH,Precision machined components,67200.00,EUR,500,units,332710,2024-05-01
+Tokyo Electronics Ltd,Semiconductor chips,98500.00,JPY,10000,units,334413,2024-05-15
+CleanPro Services,Office cleaning contract,3600.00,USD,12,months,561720,2024-01-01
+BritPaper Ltd,A4 office paper,2100.00,GBP,500,reams,322121,2024-02-20
+Delta Air Lines,Business travel flights,4250.00,USD,2,trips,481111,2024-06-10
+Marriott International,Hotel accommodations conference,1875.00,USD,5,nights,721110,2024-06-10
+Waste Management Inc,Commercial waste disposal Q2,4500.00,USD,30,tonnes,562111,2024-06-30
+Rajesh Chemicals Pvt Ltd,Industrial solvents,8500.00,INR,2000,liters,325199,2024-04-22
+FedEx Corporation,Express shipping services,12340.00,USD,,,,2024-07-01
+Siemens AG,HVAC control systems,89000.00,EUR,4,systems,334512,2024-07-15
+Local Farmers Cooperative,Cafeteria food supplies,6200.00,USD,,,,2024-08-01
+Salesforce Inc,CRM software licenses annual,36000.00,USD,50,licenses,511210,2024-01-15
+Concrete Solutions Pty,Ready-mix concrete,18500.00,AUD,100,m3,327320,2024-09-01
+Samsung SDI,Lithium-ion battery cells,52000.00,KRW,5000,cells,335911,2024-09-20
+Hertz Rental,Vehicle rental fleet,7800.00,USD,30,days,532111,2024-08-15
+Johnson Controls,Building automation systems,45000.00,USD,2,systems,334512,2024-02-15
+3M Company,Safety equipment PPE,12600.00,USD,200,units,339113,2024-03-01
+Schneider Electric,Power distribution units,34500.00,EUR,6,units,335313,2024-04-15
+Caterpillar Inc,Generator rental,28000.00,USD,3,months,532412,2024-05-20
+BASF SE,Industrial coatings,19200.00,EUR,800,liters,325510,2024-06-01
+Dow Chemical,Polyethylene pellets,31400.00,USD,5000,kg,325211,2024-06-15
+Intel Corporation,Server processors,67800.00,USD,100,units,334413,2024-07-01
+United Parcel Service,Ground shipping Q3,9870.00,USD,,,,2024-07-15
+Hilton Hotels,Employee training retreat,5400.00,USD,12,nights,721110,2024-08-01
+DHL International,International freight,15600.00,EUR,,,,2024-08-15
+Tata Steel Ltd,Hot-rolled steel coils,42000.00,INR,3000,kg,331110,2024-09-01
+Mitsubishi Electric,Variable frequency drives,23400.00,JPY,10,units,335314,2024-09-15
+AstraZeneca,Pharmaceutical supplies,8900.00,GBP,100,units,325411,2024-10-01
+Honeywell,Fire safety systems,56000.00,USD,4,systems,334512,2024-10-15
+Cisco Systems,Network switches,78000.00,USD,50,units,334210,2024-11-01
+Shell Energy,Natural gas supply,15200.00,USD,50000,therms,221210,2024-11-15
+Deloitte Consulting,ESG advisory services,125000.00,USD,1,engagement,541611,2024-01-01
+PwC Advisory,Audit preparation,85000.00,GBP,1,engagement,541211,2024-02-01
+EY Climate Change,Carbon accounting review,45000.00,USD,1,engagement,541620,2024-03-01
+KPMG Sustainability,Assurance services,92000.00,USD,1,engagement,541219,2024-04-01
+Ryder System,Fleet leasing Q2,18500.00,USD,5,vehicles,532120,2024-05-01
+ABB Group,Industrial robots,145000.00,CHF,2,units,333996,2024-06-01
+Thyssenkrupp,Elevator maintenance,8900.00,EUR,4,quarters,811310,2024-07-01
+Veolia Environment,Water treatment services,11200.00,USD,6,months,221310,2024-08-01
+Air Products,Industrial gases,7600.00,USD,500,m3,325120,2024-09-01
+Linde Engineering,Cryogenic equipment,34000.00,EUR,1,system,333999,2024-10-01
+BMW Group,Company vehicle leases,42000.00,EUR,3,vehicles,532112,2024-11-01
+Microsoft Corp,Azure cloud services,58000.00,USD,12,months,518210,2024-01-01
+SAP SE,ERP license renewal,72000.00,EUR,1,license,511210,2024-03-01
+Oracle Corporation,Database licenses,48000.00,USD,1,license,511210,2024-06-01
+Amazon Web Services,S3 storage Q4,15000.00,USD,1,quarter,518210,2024-10-01

@@ -1,0 +1,6 @@
+{
+  "name": "quality-monitoring",
+  "version": "0.1.0",
+  "description": "Workflow wrapper for quality gates, visual testing, human approvals, and persistent quality memory.",
+  "author": { "name": "Sankalp Thakur" }
+}

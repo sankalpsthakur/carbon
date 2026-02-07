@@ -1,0 +1,52 @@
+{
+  "name": "sankalpsthakur-plugins",
+  "owner": {
+    "name": "Sankalp Thakur"
+  },
+  "metadata": {
+    "description": "8 Claude Code plugins orchestrated as an agency — Engineering, Marketing, Sales, and ESG teams.",
+    "version": "1.0.0"
+  },
+  "plugins": [
+    {
+      "name": "ai-engineering",
+      "source": "./ai-engineering",
+      "description": "Model engineering workflows across training, inference, optimization, RAG, and serving. 50 skills."
+    },
+    {
+      "name": "growth-content",
+      "source": "./growth-content",
+      "description": "Content strategy, SEO, campaigns, analytics, and CRO workflows. 10 skills."
+    },
+    {
+      "name": "quality-monitoring",
+      "source": "./quality-monitoring",
+      "description": "LLM evaluation benchmarks and observability tracking. 6 skills."
+    },
+    {
+      "name": "sales-outreach",
+      "source": "./sales-outreach",
+      "description": "Voice qualification and outreach automation. 1 skill."
+    },
+    {
+      "name": "scope3-strategy",
+      "source": "./scope3-strategy",
+      "description": "CSRD/DMA strategy, materiality workflows, AI risk scanning, regulatory evidence. 7 domain skills."
+    },
+    {
+      "name": "scope3-calculation",
+      "source": "./scope3-calculation",
+      "description": "Scope 3 carbon calculation, spend baselines, factor mapping, ingestion pipelines. 12 domain skills."
+    },
+    {
+      "name": "scope3-execution",
+      "source": "./scope3-execution",
+      "description": "Execution pipelines, disclosure intel, supplier scorecards, survey cascade. 8 domain skills."
+    },
+    {
+      "name": "scope12-accounting",
+      "source": "./scope12-accounting",
+      "description": "Scope 1 and 2 accounting — method rules, KPI normalization, reporting assurance. 4 domain skills."
+    }
+  ]
+}

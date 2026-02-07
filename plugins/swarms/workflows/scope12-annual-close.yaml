@@ -1,0 +1,148 @@
+apiVersion: carbonkit-swarm/v1
+
+metadata:
+  name: scope12-annual-close
+  version: "1.0.0"
+  description: "Annual close for Scope 1 and 2: verify ledger entries, normalize KPIs, reconcile energy attributes, and produce the annual report pack."
+  team: esg-scope12
+  tags:
+    - scope1
+    - scope2
+    - annual-close
+    - reporting
+
+params:
+  fiscal_year:
+    type: string
+    default: "FY2025"
+  reporting_currency:
+    type: string
+    default: "USD"
+
+stages:
+  - id: ledger_verify
+    name: "Scope 1 Ledger Verification"
+    depends_on: []
+    timeout_minutes: 15
+    agents:
+      - role: ledger-engineer
+        agent: scope1-ledger-engineer
+        plugin: scope12-accounting
+        task: "Verify all Scope 1 emission entries: stationary combustion, mobile sources, fugitive emissions, process emissions. Check completeness against facility list."
+        tools:
+          - calc.db.get
+          - calc.db.list
+        inputs:
+          fiscal_year: "$params.fiscal_year"
+        outputs:
+          - scope1_entries
+          - scope1_total_kgco2e
+          - facility_coverage
+          - missing_facilities
+    merge:
+      strategy: collect
+      output_key: ledger_result
+    gate:
+      type: all_agents_succeed
+      on_failure: retry_with_fix
+
+  - id: energy_attributes
+    name: "Scope 2 Energy Attribute Reconciliation"
+    depends_on: []
+    timeout_minutes: 15
+    agents:
+      - role: energy-analyst
+        agent: scope2-energy-attribute-analyst
+        plugin: scope12-accounting
+        task: "Reconcile Scope 2 emissions: verify EACs/RECs/GOs, compute location-based and market-based totals, check residual mix factors."
+        tools:
+          - calc.db.get
+          - calc.db.list
+        inputs:
+          fiscal_year: "$params.fiscal_year"
+        outputs:
+          - scope2_location_kgco2e
+          - scope2_market_kgco2e
+          - eac_coverage
+          - residual_mix_applied
+    merge:
+      strategy: collect
+      output_key: energy_result
+    gate:
+      type: all_agents_succeed
+      on_failure: retry_with_fix
+
+  - id: kpi_normalization
+    name: "KPI Normalization"
+    depends_on:
+      - ledger_verify
+      - energy_attributes
+    timeout_minutes: 10
+    agents:
+      - role: kpi-auditor
+        agent: kpi-normalization-auditor
+        plugin: scope12-accounting
+        task: "Normalize emissions KPIs: per revenue, per employee, per square meter, per unit produced. Verify denominators are current."
+        tools:
+          - calc.db.get
+          - calc.db.list
+        inputs:
+          scope1_total: "$stages.ledger_verify.outputs.scope1_total_kgco2e"
+          scope2_location: "$stages.energy_attributes.outputs.scope2_location_kgco2e"
+          scope2_market: "$stages.energy_attributes.outputs.scope2_market_kgco2e"
+        outputs:
+          - normalized_kpis
+          - denominator_sources
+    merge:
+      strategy: collect
+      output_key: kpi_result
+    gate:
+      type: all_agents_succeed
+      on_failure: retry
+
+  - id: report_pack
+    name: "Annual Report Pack"
+    depends_on:
+      - kpi_normalization
+    timeout_minutes: 15
+    agents:
+      - role: report-controller
+        agent: reporting-pack-controller
+        plugin: scope12-accounting
+        task: "Assemble the annual Scope 1 & 2 report pack: executive summary, detailed emissions by source, YoY comparison, normalized KPIs, methodology notes."
+        tools:
+          - calc.db.get
+          - calc.db.list
+        inputs:
+          scope1_total: "$stages.ledger_verify.outputs.scope1_total_kgco2e"
+          scope2_location: "$stages.energy_attributes.outputs.scope2_location_kgco2e"
+          scope2_market: "$stages.energy_attributes.outputs.scope2_market_kgco2e"
+          normalized_kpis: "$stages.kpi_normalization.outputs.normalized_kpis"
+        outputs:
+          - report_pack
+          - yoy_comparison
+    merge:
+      strategy: collect
+      output_key: report_result
+    gate:
+      type: all_agents_succeed
+      on_failure: escalate
+
+deliverable:
+  name: "Scope 1 & 2 Annual Close Report"
+  format: json
+  sections:
+    - title: "Scope 1 Ledger"
+      source_stage: ledger_verify
+      output_key: ledger_result
+    - title: "Scope 2 Energy Attributes"
+      source_stage: energy_attributes
+      output_key: energy_result
+    - title: "Normalized KPIs"
+      source_stage: kpi_normalization
+      output_key: kpi_result
+    - title: "Annual Report Pack"
+      source_stage: report_pack
+      output_key: report_result
+  hash: true
+  audit_trail: true

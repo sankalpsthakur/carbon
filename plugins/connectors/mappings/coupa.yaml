@@ -1,0 +1,39 @@
+source: coupa
+version: "1.0"
+api_type: rest
+auth_type: oauth2
+description: Coupa Procurement API - Purchase Order lines and invoice lines
+
+canonical_mapping:
+  vendor: "supplier.name"
+  amount: "total"
+  currency: "currency.code"
+  quantity: "quantity"
+  unit: "uom.name"
+  category: "commodity.name"
+  date: "order-date"
+  org_unit: "account.name"
+
+transforms:
+  date: "iso8601"
+  currency: "iso4217_validate"
+  category_lookup: "coupa_taxonomy_to_unspsc"
+
+api_config:
+  endpoint: "/api/purchase_order_lines"
+  params:
+    fields: '["id","supplier{name}","total","currency{code}","quantity","uom{name}","commodity{name}","order-date","account{name}"]'
+  pagination:
+    type: offset
+    param: offset
+    limit: 50
+
+notes: |
+  Coupa uses nested object syntax in field selection: supplier{name}.
+  supplier.name is the display name from the linked supplier record.
+  commodity.name is Coupa's commodity/category taxonomy.
+  Use coupa_taxonomy_to_unspsc lookup for UNSPSC mapping.
+  uom.name is the unit of measure display name.
+  account.name maps to the chart of accounts segment (org_unit proxy).
+  order-date uses hyphenated field naming (Coupa convention).
+  Requires OAuth 2.0 client credentials or API key with read permissions.

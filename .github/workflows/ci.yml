@@ -1,0 +1,96 @@
+name: CarbonKit CI
+
+on:
+  push:
+    branches: [main, build]
+  pull_request:
+    branches: [main]
+
+jobs:
+  smoke-test:
+    name: MCP Server Smoke Tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Smoke-test all 6 MCP servers
+        working-directory: plugins
+        run: node test-mcp-servers.js
+
+  unit-tests:
+    name: Unit Tests
+    runs-on: ubuntu-latest
+    needs: smoke-test
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        working-directory: plugins
+        run: npm install --if-present
+
+      - name: Store adapter tests
+        working-directory: plugins
+        run: node --test shared-services/tools/__tests__/store-adapter.test.js
+
+      - name: Calc MCP tests
+        working-directory: plugins
+        run: node --test scope3-calculation/tools/__tests__/calc-mcp.test.js
+
+      - name: Exec MCP tests
+        working-directory: plugins
+        run: node --test scope3-execution/tools/__tests__/exec-mcp.test.js
+
+      - name: Strategy MCP tests
+        working-directory: plugins
+        run: node --test scope3-strategy/tools/__tests__/strategy-mcp.test.js
+
+      - name: Scope 1/2 MCP tests
+        working-directory: plugins
+        run: node --test scope12-accounting/tools/__tests__/scope12-mcp.test.js
+
+      - name: Swarm MCP tests
+        working-directory: plugins
+        run: node --test swarms/tools/__tests__/swarm-mcp.test.js
+
+      - name: Connectors MCP tests
+        working-directory: plugins
+        run: node --test connectors/tools/__tests__/connectors-mcp.test.js
+
+  lint:
+    name: Lint & Validate
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Check plugin manifests parse
+        working-directory: plugins
+        run: |
+          for f in */\.claude-plugin/plugin.json; do
+            echo "Validating $f ..."
+            node -e "JSON.parse(require('fs').readFileSync('$f','utf8'))"
+          done
+
+      - name: Check MCP configs parse
+        working-directory: plugins
+        run: |
+          for f in */\.mcp.json; do
+            echo "Validating $f ..."
+            node -e "JSON.parse(require('fs').readFileSync('$f','utf8'))"
+          done
+
+      - name: Check no secrets committed
+        run: |
+          if grep -r "ANTHROPIC_API_KEY\|sk-ant-\|sk_live_" plugins/ --include="*.js" --include="*.json" -l 2>/dev/null; then
+            echo "ERROR: Potential secrets found in committed files"
+            exit 1
+          fi
+          echo "No secrets found"

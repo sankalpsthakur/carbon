@@ -1,0 +1,166 @@
+apiVersion: carbonkit-swarm/v1
+
+metadata:
+  name: cross-scope-reconciliation
+  version: "1.0.0"
+  description: "Cross-scope reconciliation: verify Scope 1, 2, and 3 totals are consistent, identify boundary overlaps, and produce a unified emissions inventory."
+  team: esg-full-swarm
+  tags:
+    - scope1
+    - scope2
+    - scope3
+    - reconciliation
+    - cross-scope
+
+params:
+  fiscal_year:
+    type: string
+    default: "FY2025"
+  scope3_job_id:
+    type: string
+    description: "Existing Scope 3 calculation job ID"
+    required: true
+  reporting_currency:
+    type: string
+    default: "USD"
+
+stages:
+  - id: scope3_extract
+    name: "Scope 3 Data Extraction"
+    depends_on: []
+    timeout_minutes: 10
+    agents:
+      - role: scope3-extractor
+        agent: calculation-orchestrator
+        plugin: scope3-calculation
+        task: "Extract Scope 3 emissions totals by category from the computed inventory. Include methodology breakdown."
+        tools:
+          - calc.db.get
+          - calc.db.list
+          - calc.export
+        inputs:
+          job_id: "$params.scope3_job_id"
+        outputs:
+          - scope3_total_kgco2e
+          - category_breakdown
+          - methodology_counts
+    merge:
+      strategy: collect
+      output_key: scope3_result
+    gate:
+      type: all_agents_succeed
+      on_failure: abort
+
+  - id: scope12_extract
+    name: "Scope 1 & 2 Data Extraction"
+    depends_on: []
+    timeout_minutes: 10
+    agents:
+      - role: scope12-extractor
+        agent: scope12-accounting-orchestrator
+        plugin: scope12-accounting
+        task: "Extract Scope 1 and Scope 2 (location and market-based) emissions totals for the fiscal year."
+        tools:
+          - calc.db.get
+          - calc.db.list
+        inputs:
+          fiscal_year: "$params.fiscal_year"
+        outputs:
+          - scope1_total_kgco2e
+          - scope2_location_kgco2e
+          - scope2_market_kgco2e
+    merge:
+      strategy: collect
+      output_key: scope12_result
+    gate:
+      type: all_agents_succeed
+      on_failure: retry
+
+  - id: boundary_check
+    name: "Organizational Boundary Check"
+    depends_on:
+      - scope3_extract
+      - scope12_extract
+    timeout_minutes: 15
+    agents:
+      - role: boundary-auditor
+        agent: governance-controller
+        plugin: scope3-calculation
+        task: "Check for boundary overlaps between Scope 1/2 and Scope 3. Verify no double-counting of upstream energy or downstream transport."
+        tools:
+          - calc.db.get
+          - calc.db.list
+        inputs:
+          scope3_categories: "$stages.scope3_extract.outputs.category_breakdown"
+          scope1_total: "$stages.scope12_extract.outputs.scope1_total_kgco2e"
+        outputs:
+          - boundary_issues
+          - overlap_categories
+          - double_count_risk
+      - role: strategy-reviewer
+        agent: strategy-flow-orchestrator
+        plugin: scope3-strategy
+        task: "Review the organizational boundary definition against GHG Protocol guidance. Flag any ambiguous entities."
+        tools:
+          - strategy.db.get
+          - strategy.db.list
+        inputs:
+          fiscal_year: "$params.fiscal_year"
+        outputs:
+          - boundary_definition
+          - ambiguous_entities
+    merge:
+      strategy: collect
+      output_key: boundary_result
+    gate:
+      type: all_agents_succeed
+      on_failure: retry_with_fix
+
+  - id: unified_inventory
+    name: "Unified Emissions Inventory"
+    depends_on:
+      - boundary_check
+    timeout_minutes: 10
+    agents:
+      - role: inventory-assembler
+        agent: cfo-ledger-auditor
+        plugin: scope3-calculation
+        task: "Assemble the unified emissions inventory: Scope 1 + 2 (location) + 2 (market) + 3, with boundary-adjusted totals."
+        tools:
+          - calc.db.get
+          - calc.db.list
+        inputs:
+          scope1: "$stages.scope12_extract.outputs.scope1_total_kgco2e"
+          scope2_location: "$stages.scope12_extract.outputs.scope2_location_kgco2e"
+          scope2_market: "$stages.scope12_extract.outputs.scope2_market_kgco2e"
+          scope3: "$stages.scope3_extract.outputs.scope3_total_kgco2e"
+          boundary_issues: "$stages.boundary_check.outputs.boundary_issues"
+        outputs:
+          - unified_total_location
+          - unified_total_market
+          - scope_breakdown
+    merge:
+      strategy: collect
+      output_key: inventory_result
+    gate:
+      type: all_agents_succeed
+      on_failure: escalate
+
+deliverable:
+  name: "Cross-Scope Reconciliation Report"
+  format: json
+  sections:
+    - title: "Scope 3 Emissions"
+      source_stage: scope3_extract
+      output_key: scope3_result
+    - title: "Scope 1 & 2 Emissions"
+      source_stage: scope12_extract
+      output_key: scope12_result
+    - title: "Boundary Analysis"
+      source_stage: boundary_check
+      output_key: boundary_result
+    - title: "Unified Inventory"
+      source_stage: unified_inventory
+      output_key: inventory_result
+  hash: true
+  audit_trail: true

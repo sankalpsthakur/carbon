@@ -1,0 +1,122 @@
+{
+  "_meta": {
+    "description": "Distance-based and spend-based emission factors for business travel (Scope 3 Category 6 & 7)",
+    "sources": ["UK DEFRA 2024 conversion factors", "EPA emission factors for GHG inventories", "ICAO Carbon Emissions Calculator"],
+    "year": 2024
+  },
+  "flights": {
+    "_unit": "kgCO2e per passenger-km (includes radiative forcing uplift 1.9x for non-CO2 effects)",
+    "short_haul": {
+      "_distance": "under 1500 km",
+      "economy": 0.156,
+      "premium_economy": 0.234,
+      "business": 0.312,
+      "first": 0.468
+    },
+    "medium_haul": {
+      "_distance": "1500-4000 km",
+      "economy": 0.131,
+      "premium_economy": 0.197,
+      "business": 0.380,
+      "first": 0.524
+    },
+    "long_haul": {
+      "_distance": "over 4000 km",
+      "economy": 0.102,
+      "premium_economy": 0.166,
+      "business": 0.296,
+      "first": 0.408
+    },
+    "domestic_us": {
+      "_distance": "US domestic average",
+      "economy": 0.147,
+      "premium_economy": 0.221,
+      "business": 0.294,
+      "first": 0.441
+    }
+  },
+  "hotels": {
+    "_unit": "kgCO2e per room-night",
+    "north_america": 21.26,
+    "europe_western": 13.90,
+    "europe_eastern": 18.42,
+    "asia_pacific_developed": 16.75,
+    "asia_pacific_developing": 22.31,
+    "middle_east": 28.64,
+    "africa": 24.10,
+    "latin_america": 19.85,
+    "global_average": 20.60
+  },
+  "rail": {
+    "_unit": "kgCO2e per passenger-km",
+    "national_rail_uk": 0.035,
+    "eurostar_international": 0.006,
+    "tgv_france": 0.003,
+    "ice_germany": 0.029,
+    "amtrak_us": 0.089,
+    "shinkansen_japan": 0.007,
+    "light_rail_tram": 0.029,
+    "subway_metro": 0.025,
+    "commuter_rail": 0.041,
+    "global_average": 0.037
+  },
+  "rental_cars": {
+    "_unit": "kgCO2e per vehicle-day (average daily distance 80 km assumed)",
+    "small_petrol": 10.40,
+    "medium_petrol": 13.60,
+    "large_petrol": 18.40,
+    "small_diesel": 8.80,
+    "medium_diesel": 11.20,
+    "large_diesel": 15.20,
+    "hybrid": 7.20,
+    "phev": 4.80,
+    "bev": 2.40,
+    "suv_petrol": 20.00,
+    "suv_diesel": 16.80,
+    "global_average": 12.80
+  },
+  "taxi_rideshare": {
+    "_unit": "kgCO2e per passenger-km",
+    "regular_taxi": 0.209,
+    "black_car_suv": 0.280,
+    "rideshare_pool": 0.105,
+    "rideshare_solo": 0.175,
+    "ev_taxi": 0.053
+  },
+  "bus": {
+    "_unit": "kgCO2e per passenger-km",
+    "local_bus": 0.103,
+    "coach_long_distance": 0.027,
+    "minibus": 0.071
+  },
+  "ferry": {
+    "_unit": "kgCO2e per passenger-km",
+    "foot_passenger": 0.019,
+    "car_passenger": 0.130
+  },
+  "commuting": {
+    "_unit": "kgCO2e per passenger-km (for Scope 3 Category 7 employee commuting)",
+    "car_petrol_solo": 0.171,
+    "car_diesel_solo": 0.142,
+    "car_hybrid_solo": 0.112,
+    "car_ev_solo": 0.047,
+    "carpool_2_person": 0.086,
+    "motorcycle": 0.114,
+    "bus": 0.089,
+    "rail": 0.041,
+    "cycling": 0.000,
+    "walking": 0.000,
+    "work_from_home": 0.800
+  },
+  "spend_based_fallback": {
+    "_unit": "kgCO2e per USD spent (when distance data unavailable)",
+    "_note": "Use only when itinerary/distance data is not available",
+    "airfare": 1.08,
+    "hotel": 0.52,
+    "rail": 0.37,
+    "rental_car": 0.68,
+    "taxi_rideshare": 0.45,
+    "meals": 0.67,
+    "other_travel": 0.40
+  }
+}

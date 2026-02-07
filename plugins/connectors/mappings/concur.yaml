@@ -1,0 +1,38 @@
+source: concur
+version: "1.0"
+api_type: rest
+auth_type: oauth2
+description: SAP Concur Expense API v4 - Expense report entries for travel and general expenses
+
+canonical_mapping:
+  vendor: "VendorDescription"
+  amount: "TransactionAmount"
+  currency: "TransactionCurrencyCode"
+  quantity: "null"
+  unit: "null"
+  category: "ExpenseTypeName"
+  date: "TransactionDate"
+  org_unit: "OrgUnit1"
+
+transforms:
+  date: "iso8601"
+  currency: "iso4217_validate"
+
+api_config:
+  endpoint: "/api/v4.0/expensereports"
+  entry_endpoint: "/api/v4.0/expensereports/{reportId}/entries"
+  params:
+    modifiedDateAfter: "2024-01-01T00:00:00Z"
+
+notes: |
+  Concur expense entries typically lack quantity/unit (spend-based only).
+  VendorDescription is free-text merchant name from the expense entry.
+  ExpenseTypeName categorizes spend (Airfare, Hotel, Meals, Ground Transport, etc.).
+  Map ExpenseTypeName to GHG Protocol Scope 3 categories:
+    - Airfare, Rail, Car Rental -> Category 6 (Business Travel)
+    - Hotel -> Category 6 (Business Travel)
+    - Meals, Entertainment -> Category 6 or exclude
+  OrgUnit1-5 are configurable custom org hierarchy fields.
+  TransactionAmount is the original currency amount before reimbursement.
+  For travel emissions, use distance-based factors where itinerary data is available.
+  Requires Company JWT + User UUID OAuth 2.0 flow.

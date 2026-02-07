@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "swarm-local": {
+      "command": "node",
+      "args": ["tools/swarm-mcp.js"],
+      "cwd": "${CLAUDE_PLUGIN_ROOT}"
+    }
+  }
+}

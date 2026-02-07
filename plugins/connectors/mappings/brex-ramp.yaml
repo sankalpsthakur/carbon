@@ -1,0 +1,38 @@
+source: brex-ramp
+version: "1.0"
+api_type: rest
+auth_type: api_key
+description: Brex and Ramp corporate card transaction APIs - MCC-based spend classification
+
+canonical_mapping:
+  vendor: "merchant_name"
+  amount: "amount"
+  currency: "currency"
+  quantity: "null"
+  unit: "null"
+  category: "merchant_category_code"
+  date: "transaction_date"
+  org_unit: "card_id"
+
+transforms:
+  date: "iso8601"
+  currency: "iso4217_validate"
+  category_lookup: "mcc_to_naics"
+
+api_config:
+  brex_endpoint: "/v2/transactions/card/primary"
+  ramp_endpoint: "/developer/v1/transactions"
+  params:
+    posted_at_start: "2024-01-01T00:00:00Z"
+
+notes: |
+  Corporate card transactions use MCC (Merchant Category Code) for classification.
+  merchant_category_code is a 4-digit ISO 18245 code (e.g. 4511=Airlines, 7011=Hotels).
+  Use mcc_to_naics lookup to map MCC -> NAICS sector -> EEIO emission factors.
+  Card transactions never have quantity/unit (pure spend-based method).
+  amount may be in cents (Brex) or dollars (Ramp) -- check API docs.
+  card_id identifies the virtual/physical card; map to employee or department.
+  merchant_name is the raw merchant descriptor from the card network.
+  For Brex: API key via dashboard. For Ramp: OAuth 2.0 or API key.
+  Brex amount field is nested: amount.amount (cents) and amount.currency.
+  Ramp amount field is a decimal dollar value.

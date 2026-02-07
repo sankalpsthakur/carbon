@@ -1,0 +1,10 @@
+{
+  "mcpServers": {
+    "scope12-local": {
+      "command": "node",
+      "args": ["tools/scope12-mcp.js"],
+      "cwd": "."
+    }
+  }
+}
+

@@ -1,0 +1,13 @@
+{
+  "name": "shared-services",
+  "version": "0.2.0",
+  "description": "Shared infrastructure for CarbonKit — FileStore DB adapter, CarbonKit CLI, MCP connectors (sequential-thinking, nano-banana), and cross-plugin utilities.",
+  "author": { "name": "Sankalp Thakur" },
+  "provides": {
+    "db-adapter": "tools/db-adapter.js",
+    "carbonkit-cli": "tools/carbonkit-cli.js"
+  },
+  "exports": {
+    "FileStore": "tools/db-adapter.js"
+  }
+}

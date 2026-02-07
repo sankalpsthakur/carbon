@@ -1,0 +1,234 @@
+apiVersion: carbonkit-swarm/v1
+
+metadata:
+  name: test-quality-gate-rejection
+  version: "1.0.0"
+  description: "Test workflow: validates that quality gates correctly block bad data from advancing. Tests all_agents_succeed, quorum, and unanimous gate types with both passing and failing scenarios."
+  team: esg-full-swarm
+  tags:
+    - test
+    - quality-gates
+    - rejection
+    - validation
+
+params:
+  fiscal_year:
+    type: string
+    default: "FY2025"
+  dqs_threshold:
+    type: number
+    description: "Minimum DQS score to pass the quality gate"
+    default: 2.5
+
+fixtures:
+  high_quality_data:
+    - vendor: "QualityVendor-A"
+      category: "purchased_goods"
+      spend_usd: 50000
+      methodology: "supplier_primary"
+      data_source: "verified_invoice"
+      dqs_score: 4.2
+    - vendor: "QualityVendor-B"
+      category: "business_travel"
+      spend_usd: 12000
+      methodology: "average_quantity"
+      data_source: "travel_agency_report"
+      dqs_score: 3.8
+  low_quality_data:
+    - vendor: "BadVendor-X"
+      category: "unknown"
+      spend_usd: 99999
+      methodology: "spend"
+      data_source: "estimate"
+      dqs_score: 1.2
+    - vendor: "BadVendor-Y"
+      category: "purchased_goods"
+      spend_usd: 0
+      methodology: "none"
+      data_source: "missing"
+      dqs_score: 0.5
+
+stages:
+  - id: gate_all_succeed
+    name: "Test: all_agents_succeed Gate"
+    depends_on: []
+    timeout_minutes: 10
+    agents:
+      - role: quality-agent-1
+        agent: traceability-auditor
+        plugin: scope3-calculation
+        task: "Process the high-quality fixture data. Report DQS score and completion status."
+        tools:
+          - calc.dqs_score
+          - calc.db.get
+        inputs:
+          data_quality: "high"
+        outputs:
+          - dqs_score
+          - status
+          - data_completeness
+      - role: quality-agent-2
+        agent: governance-controller
+        plugin: scope3-calculation
+        task: "Verify governance compliance on high-quality data. Should pass all checks."
+        tools:
+          - calc.db.get
+          - calc.db.list
+        inputs:
+          data_quality: "high"
+        outputs:
+          - governance_passed
+          - violations_count
+    merge:
+      strategy: collect
+      output_key: all_succeed_result
+    gate:
+      type: all_agents_succeed
+      on_failure: abort
+
+  - id: gate_quorum_pass
+    name: "Test: Quorum Gate (Should Pass)"
+    depends_on:
+      - gate_all_succeed
+    timeout_minutes: 10
+    agents:
+      - role: scorer-1
+        agent: traceability-auditor
+        plugin: scope3-calculation
+        task: "Score the high-quality data. Expected to succeed."
+        tools:
+          - calc.dqs_score
+          - calc.db.get
+        inputs:
+          data_set: "high_quality"
+        outputs:
+          - score
+          - passed
+      - role: scorer-2
+        agent: factor-governance-analyst
+        plugin: scope3-calculation
+        task: "Score factor quality. Expected to succeed."
+        tools:
+          - calc.db.get
+          - calc.db.list
+        inputs:
+          data_set: "high_quality"
+        outputs:
+          - factor_score
+          - factor_passed
+      - role: scorer-3
+        agent: deep-tech-lca-engineer
+        plugin: scope3-calculation
+        task: "Intentionally return a marginal score to test quorum (not full consensus)."
+        tools:
+          - calc.db.get
+        inputs:
+          data_set: "mixed"
+        outputs:
+          - lca_score
+          - lca_passed
+    merge:
+      strategy: vote
+      output_key: quorum_pass_result
+    gate:
+      type: quorum
+      conditions:
+        quorum_pct: 0.66
+      on_failure: retry
+
+  - id: gate_unanimous_fail
+    name: "Test: Unanimous Gate (Should Fail)"
+    depends_on:
+      - gate_quorum_pass
+    timeout_minutes: 10
+    agents:
+      - role: agree-agent-1
+        agent: traceability-auditor
+        plugin: scope3-calculation
+        task: "Classify the low-quality data. Expected to flag issues."
+        tools:
+          - calc.dqs_score
+          - calc.db.get
+        inputs:
+          data_set: "low_quality"
+        outputs:
+          - classification
+          - quality_ok
+      - role: agree-agent-2
+        agent: governance-controller
+        plugin: scope3-calculation
+        task: "Independently classify the same low-quality data. Expected to disagree with agent-1 on some fields to test unanimous failure."
+        tools:
+          - calc.db.get
+          - calc.db.list
+        inputs:
+          data_set: "low_quality"
+        outputs:
+          - classification
+          - quality_ok
+    merge:
+      strategy: vote
+      output_key: unanimous_result
+    gate:
+      type: unanimous
+      on_failure: skip
+
+  - id: rejection_report
+    name: "Gate Rejection Test Report"
+    depends_on:
+      - gate_unanimous_fail
+    timeout_minutes: 5
+    agents:
+      - role: reporter
+        agent: cfo-ledger-auditor
+        plugin: scope3-calculation
+        task: "Compile gate test results: which gates passed, which failed, and whether rejections correctly blocked bad data."
+        tools:
+          - calc.db.get
+          - calc.db.list
+        inputs:
+          all_succeed_result: "$stages.gate_all_succeed.outputs.dqs_score"
+          quorum_result: "$stages.gate_quorum_pass.outputs.score"
+        outputs:
+          - gates_tested
+          - gates_passed
+          - gates_rejected
+          - bad_data_blocked
+    merge:
+      strategy: collect
+      output_key: report_result
+    gate:
+      type: all_agents_succeed
+      on_failure: escalate
+
+assertions:
+  - stage: gate_all_succeed
+    check: "dqs_score >= 2.5"
+    description: "High-quality data must produce DQS above threshold"
+  - stage: gate_all_succeed
+    check: "governance_passed == true"
+    description: "Governance check must pass for high-quality data"
+  - stage: gate_quorum_pass
+    check: "score != null"
+    description: "Quorum gate must produce merged scores"
+  - stage: gate_unanimous_fail
+    check: "quality_ok == false || quality_ok == null"
+    description: "Low-quality data must not pass unanimous gate"
+  - stage: rejection_report
+    check: "bad_data_blocked == true"
+    description: "Bad data must be blocked by at least one gate"
+
+deliverable:
+  name: "Quality Gate Rejection Test Results"
+  format: json
+  sections:
+    - title: "all_agents_succeed Gate"
+      source_stage: gate_all_succeed
+    - title: "Quorum Gate"
+      source_stage: gate_quorum_pass
+    - title: "Unanimous Gate"
+      source_stage: gate_unanimous_fail
+    - title: "Rejection Report"
+      source_stage: rejection_report
+  hash: true
+  audit_trail: true

@@ -1,0 +1,10 @@
+{
+  "mcpServers": {
+    "sequential-thinking": {
+      "command": "bash -lc 'set -euo pipefail; : \"${MCP_ROOT:?set MCP_ROOT}\"; cd \"${MCP_ROOT}/sequential-thinking-mcp-server\" && node index.js'"
+    },
+    "nano-banana": {
+      "command": "bash -lc 'set -euo pipefail; : \"${MCP_ROOT:?set MCP_ROOT}\"; : \"${GOOGLE_API_KEY:?set GOOGLE_API_KEY}\"; cd \"${MCP_ROOT}/nano-banana-mcp-server\" && GEMINI_API_KEY=\"${GOOGLE_API_KEY}\" node dist/index.js'"
+    }
+  }
+}

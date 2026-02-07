@@ -1,0 +1,10 @@
+{
+  "mcpServers": {
+    "retell": {
+      "command": "bash -lc 'set -euo pipefail; : \"${MCP_ROOT:?set MCP_ROOT}\"; : \"${RETELL_API_KEY:?set RETELL_API_KEY}\"; cd \"${MCP_ROOT}/retell-mcp-server\" && RETELL_API_KEY=\"${RETELL_API_KEY}\" node index.js'"
+    },
+    "hunter-io": {
+      "command": "bash -lc 'set -euo pipefail; : \"${MCP_ROOT:?set MCP_ROOT}\"; : \"${HUNTER_API_KEY:?set HUNTER_API_KEY}\"; cd \"${MCP_ROOT}/hunter-io-mcp-server\" && HUNTER_API_KEY=\"${HUNTER_API_KEY}\" node dist/index.js'"
+    }
+  }
+}

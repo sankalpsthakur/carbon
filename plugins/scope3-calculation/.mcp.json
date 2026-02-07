@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "calc-local": {
+      "command": "node",
+      "args": ["tools/calc-mcp.js"],
+      "cwd": "${CLAUDE_PLUGIN_ROOT}"
+    }
+  }
+}

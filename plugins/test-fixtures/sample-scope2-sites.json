@@ -1,0 +1,90 @@
+{
+  "metadata": {
+    "org_id": "test-org-001",
+    "reporting_year": 2024,
+    "notes": "2 sites: one grid-only (location-based), one with PPA evidence (market-based = 0)"
+  },
+  "sites": [
+    {
+      "site_id": "office-HQ",
+      "name": "Corporate Headquarters",
+      "location": "Atlanta, GA",
+      "grid_region": "SRSO",
+      "energy_sources": [
+        {
+          "type": "electricity",
+          "consumed": 500,
+          "unit": "MWh",
+          "grid_factor_kgco2e_per_kwh": 0.385,
+          "notes": "SRSO (Southern Company) eGRID 2024 factor"
+        }
+      ],
+      "contractual_instruments": [],
+      "expected_results": {
+        "location_based_kgco2e": 192500.0,
+        "market_based_kgco2e": 192500.0,
+        "market_based_hierarchy_tier": "fallback",
+        "notes": "500 MWh * 0.385 kgCO2e/kWh = 192,500 kgCO2e. No contractual instruments, so MB = LB."
+      }
+    },
+    {
+      "site_id": "factory-TX",
+      "name": "Texas Manufacturing Plant",
+      "location": "Houston, TX",
+      "grid_region": "ERCT",
+      "energy_sources": [
+        {
+          "type": "electricity",
+          "consumed": 300,
+          "unit": "MWh",
+          "grid_factor_kgco2e_per_kwh": 0.366,
+          "notes": "ERCT (ERCOT) eGRID 2024 factor"
+        },
+        {
+          "type": "steam",
+          "consumed": 50,
+          "unit": "GJ",
+          "emission_factor_kgco2e_per_gj": 66.5,
+          "notes": "Natural gas steam boiler factor"
+        }
+      ],
+      "contractual_instruments": [
+        {
+          "type": "PPA",
+          "certificate_id": "PPA-TX-WIND-2024-0042",
+          "issuer": "Enel Green Power",
+          "generation_source": "Rattlesnake Creek Wind Farm",
+          "generation_period_start": "2024-01-01",
+          "generation_period_end": "2024-12-31",
+          "generation_mwh": 400,
+          "technology": "wind",
+          "location": "US-TX-ERCOT",
+          "grid_region": "ERCT",
+          "retirement_date": "2025-01-20",
+          "retirement_registry": "M-RETS",
+          "ownership_status": "owned_and_retired",
+          "beneficiary": "Test Org Inc",
+          "vintage_year": 2024,
+          "tracking_system": "M-RETS",
+          "verification_standard": "Green-e Energy",
+          "contractual_factor_kgco2e_per_kwh": 0.0,
+          "covers_mwh": 300,
+          "notes": "PPA covers all 300 MWh electricity, factor = 0 (100% renewable)"
+        }
+      ],
+      "expected_results": {
+        "location_based_kgco2e": 113125.0,
+        "market_based_kgco2e": 3325.0,
+        "market_based_hierarchy_tier": "contractual",
+        "notes": "LB: 300*0.366*1000 + 50*277.778*0.366 = 109800 + 3325 = 113125. MB: electricity covered by PPA = 0 kgCO2e, steam = 50*66.5 = 3325 kgCO2e. Total MB = 3325."
+      }
+    }
+  ],
+  "expected_totals": {
+    "location_based_kgco2e": 305625.0,
+    "location_based_tco2e": 305.625,
+    "market_based_kgco2e": 195825.0,
+    "market_based_tco2e": 195.825,
+    "notes": "LB: 192500 + 113125 = 305625. MB: 192500 + 3325 = 195825."
+  }
+}

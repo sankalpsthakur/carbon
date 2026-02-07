@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "connectors-local": {
+      "command": "node",
+      "args": ["tools/connectors-mcp.js"],
+      "cwd": "${CLAUDE_PLUGIN_ROOT}"
+    }
+  }
+}

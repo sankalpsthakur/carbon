@@ -1,0 +1,214 @@
+[
+  {
+    "_id": "bench_cdp_a_2024",
+    "name": "CDP A-List 2024 Average Scope 3 Intensity",
+    "type": "intensity",
+    "metric": "tCO2e_per_M_usd_revenue",
+    "value": 142,
+    "source": "CDP Global Supply Chain Report 2024",
+    "sector": "cross-sector",
+    "year": 2024,
+    "note": "Average Scope 3 emission intensity of CDP A-List companies"
+  },
+  {
+    "_id": "bench_sbti_15c_2030",
+    "name": "SBTi 1.5C-aligned 2030 reduction target",
+    "type": "reduction_target",
+    "metric": "pct_reduction_from_base_year",
+    "value": 42,
+    "source": "Science Based Targets initiative",
+    "sector": "cross-sector",
+    "year": 2024,
+    "note": "Minimum 42% absolute reduction in Scope 1+2 by 2030 (from 2020 base)"
+  },
+  {
+    "_id": "bench_sbti_scope3_2030",
+    "name": "SBTi Scope 3 2030 target",
+    "type": "reduction_target",
+    "metric": "pct_reduction_from_base_year",
+    "value": 25,
+    "source": "Science Based Targets initiative",
+    "sector": "cross-sector",
+    "year": 2024,
+    "note": "Minimum 25% Scope 3 reduction for 1.5C pathway (within boundary)"
+  },
+  {
+    "_id": "bench_tech_scope3_intensity",
+    "name": "Technology sector Scope 3 intensity benchmark",
+    "type": "intensity",
+    "metric": "tCO2e_per_M_usd_revenue",
+    "value": 85,
+    "source": "CDP / MSCI sector average 2024",
+    "sector": "technology",
+    "year": 2024
+  },
+  {
+    "_id": "bench_manufacturing_scope3_intensity",
+    "name": "Manufacturing sector Scope 3 intensity benchmark",
+    "type": "intensity",
+    "metric": "tCO2e_per_M_usd_revenue",
+    "value": 320,
+    "source": "CDP / MSCI sector average 2024",
+    "sector": "manufacturing",
+    "year": 2024
+  },
+  {
+    "_id": "bench_retail_scope3_intensity",
+    "name": "Retail sector Scope 3 intensity benchmark",
+    "type": "intensity",
+    "metric": "tCO2e_per_M_usd_revenue",
+    "value": 195,
+    "source": "CDP / MSCI sector average 2024",
+    "sector": "retail",
+    "year": 2024
+  },
+  {
+    "_id": "bench_financial_scope3_intensity",
+    "name": "Financial services Scope 3 intensity benchmark",
+    "type": "intensity",
+    "metric": "tCO2e_per_M_usd_revenue",
+    "value": 62,
+    "source": "CDP / MSCI sector average 2024",
+    "sector": "financial services",
+    "year": 2024,
+    "note": "Excludes financed emissions (Scope 3 Cat 15)"
+  },
+  {
+    "_id": "bench_energy_scope3_intensity",
+    "name": "Energy sector Scope 3 intensity benchmark",
+    "type": "intensity",
+    "metric": "tCO2e_per_M_usd_revenue",
+    "value": 1250,
+    "source": "CDP / Carbon Tracker 2024",
+    "sector": "energy",
+    "year": 2024,
+    "note": "Includes downstream use of sold products (Cat 11)"
+  },
+  {
+    "_id": "bench_chemicals_scope3_intensity",
+    "name": "Chemicals sector Scope 3 intensity benchmark",
+    "type": "intensity",
+    "metric": "tCO2e_per_M_usd_revenue",
+    "value": 480,
+    "source": "CDP sector average 2024",
+    "sector": "chemicals",
+    "year": 2024
+  },
+  {
+    "_id": "bench_automotive_scope3_intensity",
+    "name": "Automotive sector Scope 3 intensity benchmark",
+    "type": "intensity",
+    "metric": "tCO2e_per_M_usd_revenue",
+    "value": 680,
+    "source": "CDP / TPI sector average 2024",
+    "sector": "automotive",
+    "year": 2024,
+    "note": "Dominated by Cat 11 (use of sold products)"
+  },
+  {
+    "_id": "bench_healthcare_scope3_intensity",
+    "name": "Healthcare sector Scope 3 intensity benchmark",
+    "type": "intensity",
+    "metric": "tCO2e_per_M_usd_revenue",
+    "value": 110,
+    "source": "CDP sector average 2024",
+    "sector": "healthcare",
+    "year": 2024
+  },
+  {
+    "_id": "bench_construction_scope3_intensity",
+    "name": "Construction sector Scope 3 intensity benchmark",
+    "type": "intensity",
+    "metric": "tCO2e_per_M_usd_revenue",
+    "value": 410,
+    "source": "CDP sector average 2024",
+    "sector": "construction",
+    "year": 2024
+  },
+  {
+    "_id": "bench_food_scope3_intensity",
+    "name": "Food and beverage sector Scope 3 intensity benchmark",
+    "type": "intensity",
+    "metric": "tCO2e_per_M_usd_revenue",
+    "value": 540,
+    "source": "CDP sector average 2024",
+    "sector": "food and beverage",
+    "year": 2024,
+    "note": "Dominated by Cat 1 (purchased goods - agriculture)"
+  },
+  {
+    "_id": "bench_telecom_scope3_intensity",
+    "name": "Telecommunications sector Scope 3 intensity benchmark",
+    "type": "intensity",
+    "metric": "tCO2e_per_M_usd_revenue",
+    "value": 92,
+    "source": "CDP sector average 2024",
+    "sector": "telecommunications",
+    "year": 2024
+  },
+  {
+    "_id": "bench_transport_scope3_intensity",
+    "name": "Transportation and logistics sector Scope 3 intensity benchmark",
+    "type": "intensity",
+    "metric": "tCO2e_per_M_usd_revenue",
+    "value": 380,
+    "source": "CDP / TPI sector average 2024",
+    "sector": "transportation",
+    "year": 2024
+  },
+  {
+    "_id": "bench_dqs_good",
+    "name": "Data quality score threshold: Good",
+    "type": "quality_threshold",
+    "metric": "dqs_score",
+    "value": 0.7,
+    "source": "PCAF Global GHG Standard",
+    "sector": "cross-sector",
+    "year": 2024,
+    "note": "DQS >= 0.7 considered good quality for reporting"
+  },
+  {
+    "_id": "bench_dqs_acceptable",
+    "name": "Data quality score threshold: Acceptable",
+    "type": "quality_threshold",
+    "metric": "dqs_score",
+    "value": 0.5,
+    "source": "PCAF Global GHG Standard",
+    "sector": "cross-sector",
+    "year": 2024,
+    "note": "DQS 0.5-0.7 is acceptable but improvement recommended"
+  },
+  {
+    "_id": "bench_supplier_engagement_target",
+    "name": "CDP supplier engagement rate benchmark",
+    "type": "engagement",
+    "metric": "pct_suppliers_responding",
+    "value": 70,
+    "source": "CDP Supply Chain Program 2024",
+    "sector": "cross-sector",
+    "year": 2024,
+    "note": "Top-quartile companies achieve 70%+ supplier response rate"
+  },
+  {
+    "_id": "bench_sbti_coverage",
+    "name": "SBTi Scope 3 coverage requirement",
+    "type": "coverage",
+    "metric": "pct_scope3_covered",
+    "value": 67,
+    "source": "Science Based Targets initiative",
+    "sector": "cross-sector",
+    "year": 2024,
+    "note": "At least 67% of Scope 3 emissions must be covered by SBT"
+  },
+  {
+    "_id": "bench_net_zero_2050",
+    "name": "SBTi Net-Zero Standard 2050 target",
+    "type": "reduction_target",
+    "metric": "pct_reduction_from_base_year",
+    "value": 90,
+    "source": "Science Based Targets initiative Net-Zero Standard",
+    "sector": "cross-sector",
+    "year": 2024,
+    "note": "90% absolute reduction across all scopes by 2050; residual 10% offset via removals"
+  }
+]

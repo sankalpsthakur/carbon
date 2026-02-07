@@ -1,0 +1,7 @@
+{
+  "mcpServers": {},
+  "_note": "No mandatory MCP server. Uses local test runners and filesystem artifacts.",
+  "_optional_servers": {
+    "local-shell": "Optional shell MCP if your runtime disallows direct Bash execution"
+  }
+}

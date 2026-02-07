@@ -1,0 +1,224 @@
+apiVersion: carbonkit-swarm/v1
+
+metadata:
+  name: full-scope3-audit
+  version: "1.0.0"
+  description: "Comprehensive Scope 3 audit: ingest, compute, factor governance, traceability, hotspot analysis, and CFO-ready export."
+  team: esg-scope3
+  tags:
+    - scope3
+    - audit
+    - comprehensive
+    - traceability
+
+params:
+  reporting_currency:
+    type: string
+    default: "USD"
+  fiscal_year:
+    type: string
+    default: "FY2025"
+  filename:
+    type: string
+    required: true
+  export_format:
+    type: string
+    default: "csv"
+
+stages:
+  - id: ingest
+    name: "Data Ingestion"
+    depends_on: []
+    timeout_minutes: 15
+    agents:
+      - role: ingester
+        agent: spend-baseline-operator
+        plugin: scope3-calculation
+        task: "Ingest activity data with full reconciliation and quality flagging."
+        tools:
+          - calc.ingest
+          - calc.db.get
+          - calc.db.set
+        inputs:
+          filename: "$params.filename"
+          reporting_currency: "$params.reporting_currency"
+        outputs:
+          - job_id
+          - row_count
+          - reconciliation
+    merge:
+      strategy: collect
+      output_key: ingest_result
+    gate:
+      type: all_agents_succeed
+      on_failure: abort
+
+  - id: factor_governance
+    name: "Emission Factor Governance"
+    depends_on:
+      - ingest
+    timeout_minutes: 15
+    agents:
+      - role: factor-analyst
+        agent: factor-governance-analyst
+        plugin: scope3-calculation
+        task: "Review emission factors for completeness, currency, and source quality. Flag any factors older than 2 years or from non-authoritative sources."
+        tools:
+          - calc.db.get
+          - calc.db.list
+          - calc.db.set
+        inputs:
+          job_id: "$stages.ingest.outputs.job_id"
+        outputs:
+          - factor_count
+          - factors_flagged
+          - governance_status
+    merge:
+      strategy: collect
+      output_key: factor_governance_result
+    gate:
+      type: all_agents_succeed
+      on_failure: retry_with_fix
+
+  - id: compute
+    name: "Emissions Computation"
+    depends_on:
+      - factor_governance
+    timeout_minutes: 20
+    agents:
+      - role: calculator
+        agent: calculation-orchestrator
+        plugin: scope3-calculation
+        task: "Execute full compute with method hierarchy. Ensure all FX conversions succeed."
+        tools:
+          - calc.compute
+          - calc.fx_normalize
+          - calc.db.get
+          - calc.db.list
+        inputs:
+          job_id: "$stages.ingest.outputs.job_id"
+        outputs:
+          - run_id
+          - total_emissions_kgco2e
+          - methodology_counts
+    merge:
+      strategy: collect
+      output_key: compute_result
+    gate:
+      type: all_agents_succeed
+      on_failure: retry
+
+  - id: traceability
+    name: "Traceability & DQS Audit"
+    depends_on:
+      - compute
+    timeout_minutes: 15
+    agents:
+      - role: trace-auditor
+        agent: traceability-auditor
+        plugin: scope3-calculation
+        task: "Run DQS scoring. Verify every inventory item traces back to source rows and factors. Check for orphaned records."
+        tools:
+          - calc.dqs_score
+          - calc.db.get
+          - calc.db.list
+        inputs:
+          job_id: "$stages.ingest.outputs.job_id"
+        outputs:
+          - final_dqs
+          - trace_issues
+          - orphaned_count
+      - role: governance-check
+        agent: governance-controller
+        plugin: scope3-calculation
+        task: "Verify compute governance: no closed-period violations, all runs logged, version snapshots exist."
+        tools:
+          - calc.db.get
+          - calc.db.list
+        inputs:
+          job_id: "$stages.ingest.outputs.job_id"
+          run_id: "$stages.compute.outputs.run_id"
+        outputs:
+          - governance_passed
+          - violations
+    merge:
+      strategy: collect
+      output_key: traceability_result
+    gate:
+      type: all_agents_succeed
+      on_failure: escalate
+
+  - id: hotspots
+    name: "Hotspot Analysis"
+    depends_on:
+      - compute
+    timeout_minutes: 15
+    agents:
+      - role: hotspot-analyst
+        agent: deep-tech-lca-engineer
+        plugin: scope3-calculation
+        task: "Identify top emission hotspots by vendor, category, and method. Recommend reduction campaigns."
+        tools:
+          - calc.db.get
+          - calc.db.list
+        inputs:
+          job_id: "$stages.ingest.outputs.job_id"
+          run_id: "$stages.compute.outputs.run_id"
+        outputs:
+          - top_vendors
+          - top_categories
+          - campaign_recommendations
+    merge:
+      strategy: collect
+      output_key: hotspot_result
+    gate:
+      type: all_agents_succeed
+      on_failure: skip
+
+  - id: export
+    name: "CFO-Ready Export"
+    depends_on:
+      - traceability
+      - hotspots
+    timeout_minutes: 10
+    agents:
+      - role: exporter
+        agent: cfo-ledger-auditor
+        plugin: scope3-calculation
+        task: "Export final inventory in the requested format. Include methodology summary, DQS, and hotspot highlights."
+        tools:
+          - calc.export
+          - calc.db.get
+          - calc.db.list
+        inputs:
+          job_id: "$stages.ingest.outputs.job_id"
+          format: "$params.export_format"
+          dqs: "$stages.traceability.outputs.final_dqs"
+        outputs:
+          - export_content
+          - item_count
+    merge:
+      strategy: collect
+      output_key: export_result
+    gate:
+      type: all_agents_succeed
+      on_failure: escalate
+
+deliverable:
+  name: "Full Scope 3 Audit Report"
+  format: json
+  sections:
+    - title: "Data Ingestion"
+      source_stage: ingest
+    - title: "Factor Governance"
+      source_stage: factor_governance
+    - title: "Emissions Computation"
+      source_stage: compute
+    - title: "Traceability & DQS"
+      source_stage: traceability
+    - title: "Hotspot Analysis"
+      source_stage: hotspots
+    - title: "Export"
+      source_stage: export
+  hash: true
+  audit_trail: true

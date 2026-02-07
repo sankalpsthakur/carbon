@@ -1,0 +1,38 @@
+{
+  "teams": {
+    "esg-scope3": {
+      "description": "End-to-end Scope 3: DMA/strategy, calculation, execution controls, and quality gates.",
+      "plugins": [
+        "scope3-strategy",
+        "scope3-calculation",
+        "scope3-execution",
+        "quality-monitoring"
+      ]
+    },
+    "esg-scope12": {
+      "description": "Scope 1/2 accounting + KPI normalization + reporting, with quality gates.",
+      "plugins": ["scope12-accounting", "quality-monitoring"]
+    },
+    "revops": {
+      "description": "Revenue execution with approvals and quality gates.",
+      "plugins": ["sales-outreach", "quality-monitoring"]
+    },
+    "growth": {
+      "description": "Growth/content workflows with optional AI engineering support.",
+      "plugins": ["growth-content", "ai-engineering", "quality-monitoring"]
+    },
+    "esg-full-swarm": {
+      "description": "Full ESG swarm: all Scope 1/2/3 plugins with connectors, swarm orchestration, and quality gates.",
+      "plugins": [
+        "scope3-strategy",
+        "scope3-calculation",
+        "scope3-execution",
+        "scope12-accounting",
+        "connectors",
+        "swarms",
+        "quality-monitoring"
+      ]
+    }
+  }
+}
+

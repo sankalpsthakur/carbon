@@ -1,0 +1,158 @@
+apiVersion: carbonkit-swarm/v1
+
+metadata:
+  name: rapid-baseline
+  version: "1.0.0"
+  description: "Quick spend-based Scope 3 baseline: ingest, compute, DQS, and summary report in a single pass."
+  team: esg-scope3
+  tags:
+    - scope3
+    - baseline
+    - spend-based
+    - quick-start
+
+params:
+  reporting_currency:
+    type: string
+    description: "Target reporting currency"
+    default: "USD"
+  fiscal_year:
+    type: string
+    description: "Fiscal year label"
+    default: "FY2025"
+  filename:
+    type: string
+    description: "Source data filename"
+    required: true
+
+stages:
+  - id: ingest
+    name: "Data Ingestion & Quality Check"
+    depends_on: []
+    timeout_minutes: 10
+    agents:
+      - role: ingester
+        agent: spend-baseline-operator
+        plugin: scope3-calculation
+        task: "Ingest the activity data file, run reconciliation, flag data quality issues. Use reporting_currency from params."
+        tools:
+          - calc.ingest
+          - calc.db.get
+          - calc.db.set
+          - calc.health
+        inputs:
+          filename: "$params.filename"
+          reporting_currency: "$params.reporting_currency"
+        outputs:
+          - job_id
+          - row_count
+          - reconciliation
+    merge:
+      strategy: collect
+      output_key: ingest_result
+    gate:
+      type: all_agents_succeed
+      on_failure: abort
+
+  - id: compute
+    name: "Emissions Computation"
+    depends_on:
+      - ingest
+    timeout_minutes: 15
+    agents:
+      - role: calculator
+        agent: calculation-orchestrator
+        plugin: scope3-calculation
+        task: "Run the emissions compute engine for the ingested job. Apply method hierarchy: supplier_primary > average_quantity > spend."
+        tools:
+          - calc.compute
+          - calc.db.get
+          - calc.db.list
+          - calc.fx_normalize
+        inputs:
+          job_id: "$stages.ingest.outputs.job_id"
+        outputs:
+          - run_id
+          - total_emissions_kgco2e
+          - total_emissions_tco2e
+          - methodology_counts
+    merge:
+      strategy: collect
+      output_key: compute_result
+    gate:
+      type: all_agents_succeed
+      on_failure: retry
+
+  - id: quality
+    name: "Data Quality Scoring"
+    depends_on:
+      - compute
+    timeout_minutes: 10
+    agents:
+      - role: quality-scorer
+        agent: traceability-auditor
+        plugin: scope3-calculation
+        task: "Compute the Data Quality Score for the job. Assess base score, method score, and final DQS."
+        tools:
+          - calc.dqs_score
+          - calc.db.get
+        inputs:
+          job_id: "$stages.ingest.outputs.job_id"
+        outputs:
+          - final_dqs
+          - base_score
+          - method_score
+    merge:
+      strategy: collect
+      output_key: quality_result
+    gate:
+      type: all_agents_succeed
+      on_failure: skip
+
+  - id: report
+    name: "Baseline Summary Report"
+    depends_on:
+      - compute
+      - quality
+    timeout_minutes: 10
+    agents:
+      - role: reporter
+        agent: cfo-ledger-auditor
+        plugin: scope3-calculation
+        task: "Assemble a baseline summary report with total emissions, methodology breakdown, DQS score, and top hotspots."
+        tools:
+          - calc.db.get
+          - calc.db.list
+          - calc.export
+        inputs:
+          job_id: "$stages.ingest.outputs.job_id"
+          run_id: "$stages.compute.outputs.run_id"
+          dqs: "$stages.quality.outputs.final_dqs"
+        outputs:
+          - summary_report
+          - hotspot_list
+    merge:
+      strategy: collect
+      output_key: report_result
+    gate:
+      type: all_agents_succeed
+      on_failure: escalate
+
+deliverable:
+  name: "Rapid Scope 3 Baseline Report"
+  format: json
+  sections:
+    - title: "Ingestion Summary"
+      source_stage: ingest
+      output_key: ingest_result
+    - title: "Emissions Computation"
+      source_stage: compute
+      output_key: compute_result
+    - title: "Data Quality Assessment"
+      source_stage: quality
+      output_key: quality_result
+    - title: "Baseline Report"
+      source_stage: report
+      output_key: report_result
+  hash: true
+  audit_trail: true

@@ -1,0 +1,31 @@
+source: oracle-netsuite
+version: "1.0"
+api_type: rest
+auth_type: oauth2
+description: Oracle NetSuite SuiteQL / REST Web Services for vendor bill line items
+
+canonical_mapping:
+  vendor: "vendor.companyName"
+  amount: "amount"
+  currency: "currency.refName"
+  quantity: "quantity"
+  unit: "units.refName"
+  category: "item.refName"
+  date: "tranDate"
+  org_unit: "subsidiary.refName"
+
+transforms:
+  date: "iso8601"
+  currency: "iso4217_validate"
+
+api_config:
+  endpoint: "/services/rest/record/v1/vendorBill"
+  suiteql: "SELECT vb.tranId, vbl.amount, vbl.quantity, vb.tranDate, vb.entity AS vendor, vbl.item FROM vendorBill vb JOIN vendorBillLine vbl ON vb.id = vbl.vendorBill"
+
+notes: |
+  NetSuite exposes vendor bills via REST Web Services or SuiteQL.
+  vendor.companyName is a nested reference field on the bill header.
+  currency.refName and units.refName are display names from reference fields.
+  item.refName provides the item description used as category proxy.
+  subsidiary.refName maps to the organizational unit/legal entity.
+  Requires OAuth 2.0 with Token-Based Authentication (TBA) or OAuth 2.0 M2M.

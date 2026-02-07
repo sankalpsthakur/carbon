@@ -1,0 +1,170 @@
+apiVersion: carbonkit-swarm/v1
+
+metadata:
+  name: risk-intelligence-sweep
+  version: "1.0.0"
+  description: "Multi-source ESG risk intelligence sweep: regulatory horizon scanning, supplier risk, transition risk assessment, and mitigation planning."
+  team: esg-scope3
+  tags:
+    - risk
+    - intelligence
+    - regulatory
+    - transition-risk
+
+params:
+  fiscal_year:
+    type: string
+    default: "FY2025"
+  scope3_job_id:
+    type: string
+    description: "Scope 3 job ID for emission-weighted risk analysis"
+    required: true
+  risk_threshold:
+    type: string
+    description: "Minimum risk level to flag: low, medium, high, critical"
+    default: "medium"
+
+stages:
+  - id: regulatory_scan
+    name: "Regulatory Horizon Scan"
+    depends_on: []
+    timeout_minutes: 15
+    agents:
+      - role: risk-analyst
+        agent: external-risk-intelligence-analyst
+        plugin: scope3-strategy
+        task: "Scan for upcoming regulatory changes affecting carbon reporting: CBAM, SEC climate rules, EU taxonomy updates, national carbon pricing."
+        tools:
+          - strategy.risk_scan
+          - strategy.db.get
+          - strategy.db.set
+        inputs:
+          fiscal_year: "$params.fiscal_year"
+        outputs:
+          - regulatory_risks
+          - compliance_deadlines
+          - jurisdiction_exposure
+    merge:
+      strategy: collect
+      output_key: regulatory_result
+    gate:
+      type: all_agents_succeed
+      on_failure: retry
+
+  - id: supplier_risk
+    name: "Supplier Risk Assessment"
+    depends_on: []
+    timeout_minutes: 20
+    agents:
+      - role: supplier-risk-scorer
+        agent: supplier-maturity-scorecard-operator
+        plugin: scope3-execution
+        task: "Assess supplier carbon risk: concentration risk, transition exposure, data quality gaps, engagement readiness."
+        tools:
+          - exec.db.get
+          - exec.db.list
+          - calc.db.get
+        inputs:
+          job_id: "$params.scope3_job_id"
+        outputs:
+          - supplier_risk_scores
+          - concentration_risk
+          - high_risk_suppliers
+      - role: tier2-risk
+        agent: tier2-survey-cascade-operator
+        plugin: scope3-execution
+        task: "Evaluate Tier 2 supplier data availability and cascading survey response rates."
+        tools:
+          - exec.db.get
+          - exec.db.list
+        inputs:
+          job_id: "$params.scope3_job_id"
+        outputs:
+          - tier2_coverage
+          - survey_response_rate
+    merge:
+      strategy: collect
+      output_key: supplier_risk_result
+    gate:
+      type: quorum
+      conditions:
+        quorum_pct: 0.5
+      on_failure: retry
+
+  - id: transition_risk
+    name: "Transition Risk Assessment"
+    depends_on:
+      - regulatory_scan
+      - supplier_risk
+    timeout_minutes: 15
+    agents:
+      - role: transition-analyst
+        agent: strategy-flow-orchestrator
+        plugin: scope3-strategy
+        task: "Assess transition risk exposure: carbon price sensitivity, stranded asset risk, market shift vulnerability. Weight by emission contribution."
+        tools:
+          - strategy.db.get
+          - strategy.db.list
+          - strategy.risk_scan
+          - calc.db.get
+        inputs:
+          regulatory_risks: "$stages.regulatory_scan.outputs.regulatory_risks"
+          supplier_risks: "$stages.supplier_risk.outputs.supplier_risk_scores"
+          job_id: "$params.scope3_job_id"
+        outputs:
+          - transition_risk_score
+          - carbon_price_sensitivity
+          - mitigation_priorities
+    merge:
+      strategy: collect
+      output_key: transition_result
+    gate:
+      type: all_agents_succeed
+      on_failure: retry_with_fix
+
+  - id: mitigation_plan
+    name: "Risk Mitigation Planning"
+    depends_on:
+      - transition_risk
+    timeout_minutes: 15
+    agents:
+      - role: mitigation-planner
+        agent: csrd-dma-precollection-strategist
+        plugin: scope3-strategy
+        task: "Develop a risk mitigation plan: prioritize actions by risk severity and emission impact, assign ownership, set timelines."
+        tools:
+          - strategy.db.get
+          - strategy.db.set
+        inputs:
+          transition_risk: "$stages.transition_risk.outputs.transition_risk_score"
+          mitigation_priorities: "$stages.transition_risk.outputs.mitigation_priorities"
+          regulatory_deadlines: "$stages.regulatory_scan.outputs.compliance_deadlines"
+        outputs:
+          - mitigation_plan
+          - action_items
+          - timeline
+    merge:
+      strategy: collect
+      output_key: mitigation_result
+    gate:
+      type: all_agents_succeed
+      on_failure: escalate
+
+deliverable:
+  name: "ESG Risk Intelligence Report"
+  format: json
+  sections:
+    - title: "Regulatory Horizon"
+      source_stage: regulatory_scan
+      output_key: regulatory_result
+    - title: "Supplier Risk"
+      source_stage: supplier_risk
+      output_key: supplier_risk_result
+    - title: "Transition Risk"
+      source_stage: transition_risk
+      output_key: transition_result
+    - title: "Mitigation Plan"
+      source_stage: mitigation_plan
+      output_key: mitigation_result
+  hash: true
+  audit_trail: true

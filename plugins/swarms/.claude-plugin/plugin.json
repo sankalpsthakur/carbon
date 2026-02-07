@@ -1,0 +1,6 @@
+{
+  "name": "swarms",
+  "version": "0.1.0",
+  "description": "Declarative DAG-based multi-agent swarm orchestration for CarbonKit. Parses YAML workflow definitions, resolves stage dependencies, dispatches agent teams, evaluates gates, merges results, and assembles auditable deliverables.",
+  "author": { "name": "Sankalp Thakur" }
+}

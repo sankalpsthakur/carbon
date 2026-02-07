@@ -1,0 +1,202 @@
+[
+  {
+    "vendor": "Acme Industrial Supplies",
+    "description": "Steel reinforcement bars",
+    "amount": 45000.00,
+    "currency": "USD",
+    "quantity": 2000,
+    "unit": "kg",
+    "category": "331110",
+    "date": "2024-03-15"
+  },
+  {
+    "vendor": "GreenTech Solutions",
+    "description": "Solar panel modules",
+    "amount": 128500.00,
+    "currency": "USD",
+    "quantity": 50,
+    "unit": "units",
+    "category": "334413",
+    "date": "2024-04-02"
+  },
+  {
+    "vendor": "Pacific Logistics Co",
+    "description": "Freight shipping services",
+    "amount": 8750.00,
+    "currency": "USD",
+    "quantity": null,
+    "unit": null,
+    "category": "484110",
+    "date": "2024-04-10"
+  },
+  {
+    "vendor": "CloudScale Inc",
+    "description": "AWS hosting services Q1",
+    "amount": 24300.00,
+    "currency": "USD",
+    "quantity": 3,
+    "unit": "months",
+    "category": "518210",
+    "date": "2024-03-31"
+  },
+  {
+    "vendor": "Mueller GmbH",
+    "description": "Precision machined components",
+    "amount": 67200.00,
+    "currency": "EUR",
+    "quantity": 500,
+    "unit": "units",
+    "category": "332710",
+    "date": "2024-05-01"
+  },
+  {
+    "vendor": "Tokyo Electronics Ltd",
+    "description": "Semiconductor chips",
+    "amount": 9850000,
+    "currency": "JPY",
+    "quantity": 10000,
+    "unit": "units",
+    "category": "334413",
+    "date": "2024-05-15"
+  },
+  {
+    "vendor": "CleanPro Services",
+    "description": "Office cleaning contract",
+    "amount": 3600.00,
+    "currency": "USD",
+    "quantity": 12,
+    "unit": "months",
+    "category": "561720",
+    "date": "2024-01-01"
+  },
+  {
+    "vendor": "BritPaper Ltd",
+    "description": "A4 office paper",
+    "amount": 2100.00,
+    "currency": "GBP",
+    "quantity": 500,
+    "unit": "reams",
+    "category": "322121",
+    "date": "2024-02-20"
+  },
+  {
+    "vendor": "",
+    "description": "Miscellaneous office supplies",
+    "amount": 890.50,
+    "currency": "USD",
+    "quantity": null,
+    "unit": null,
+    "category": "424120",
+    "date": "2024-03-05"
+  },
+  {
+    "vendor": "Delta Air Lines",
+    "description": "",
+    "amount": 4250.00,
+    "currency": "USD",
+    "quantity": 2,
+    "unit": "trips",
+    "category": "481111",
+    "date": "2024-06-10"
+  },
+  {
+    "vendor": "Marriott International",
+    "description": "Hotel accommodations conference",
+    "amount": 1875.00,
+    "currency": "USD",
+    "quantity": 5,
+    "unit": "nights",
+    "category": "721110",
+    "date": "2024-06-10"
+  },
+  {
+    "vendor": "Waste Management Inc",
+    "description": "Commercial waste disposal Q2",
+    "amount": 4500.00,
+    "currency": "USD",
+    "quantity": 30,
+    "unit": "tonnes",
+    "category": "562111",
+    "date": "2024-06-30"
+  },
+  {
+    "vendor": "Rajesh Chemicals Pvt Ltd",
+    "description": "Industrial solvents",
+    "amount": 850000,
+    "currency": "INR",
+    "quantity": 2000,
+    "unit": "liters",
+    "category": "325199",
+    "date": "2024-04-22"
+  },
+  {
+    "vendor": "FedEx Corporation",
+    "description": "Express shipping services",
+    "amount": 12340.00,
+    "currency": "USD",
+    "quantity": null,
+    "unit": null,
+    "category": "492110",
+    "date": "2024-07-01"
+  },
+  {
+    "vendor": "Siemens AG",
+    "description": "HVAC control systems",
+    "amount": 89000.00,
+    "currency": "EUR",
+    "quantity": 4,
+    "unit": "systems",
+    "category": "334512",
+    "date": "2024-07-15"
+  },
+  {
+    "vendor": "Local Farmers Cooperative",
+    "description": "Cafeteria food supplies",
+    "amount": 6200.00,
+    "currency": "USD",
+    "quantity": null,
+    "unit": null,
+    "category": "311999",
+    "date": "2024-08-01"
+  },
+  {
+    "vendor": "Hertz Rental",
+    "description": "Vehicle rental fleet",
+    "amount": 0.00,
+    "currency": "USD",
+    "quantity": 0,
+    "unit": "days",
+    "category": "532111",
+    "date": "2024-08-15"
+  },
+  {
+    "vendor": "Salesforce Inc",
+    "description": "CRM software licenses annual",
+    "amount": 36000.00,
+    "currency": "USD",
+    "quantity": 50,
+    "unit": "licenses",
+    "category": "511210",
+    "date": "2024-01-15"
+  },
+  {
+    "vendor": "Concrete Solutions Pty",
+    "description": "Ready-mix concrete",
+    "amount": 18500.00,
+    "currency": "AUD",
+    "quantity": 100,
+    "unit": "m3",
+    "category": "327320",
+    "date": "2024-09-01"
+  },
+  {
+    "vendor": "Samsung SDI",
+    "description": "Lithium-ion battery cells",
+    "amount": 52000000,
+    "currency": "KRW",
+    "quantity": 5000,
+    "unit": "cells",
+    "category": "335911",
+    "date": "2024-09-20"
+  }
+]

@@ -1,0 +1,16 @@
+# Keep npm tarball small and avoid shipping local artifacts.
+.DS_Store
+**/.DS_Store
+
+backups/
+**/*.tgz
+
+plugins/node_modules/
+plugins/**/node_modules/
+
+plugins/**/data/_audit_log.json
+plugins/**/data/export_*.json
+
+plugins/**/__pycache__/
+plugins/**/.pytest_cache/
+

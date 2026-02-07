@@ -1,0 +1,12 @@
+{
+  "name": "scope12-accounting",
+  "version": "0.2.0",
+  "description": "Plugin for Scope 1/2 carbon accounting, KPI normalization, and reporting controls.",
+  "author": { "name": "Sankalp Thakur" },
+  "mcpServers": {
+    "scope12-local": {
+      "command": "node",
+      "args": ["tools/scope12-mcp.js"]
+    }
+  }
+}

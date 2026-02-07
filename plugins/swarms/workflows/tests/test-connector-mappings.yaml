@@ -1,0 +1,164 @@
+apiVersion: carbonkit-swarm/v1
+
+metadata:
+  name: test-connector-mappings
+  version: "1.0.0"
+  description: "Test workflow: validates connector schema mappings by ingesting sample ERP data through connectors and verifying the output conforms to CarbonKit canonical schema."
+  team: esg-full-swarm
+  tags:
+    - test
+    - connectors
+    - schema-mapping
+    - integration
+
+params:
+  source_system:
+    type: string
+    description: "Source ERP system to test"
+    default: "sap"
+  fiscal_year:
+    type: string
+    default: "FY2025"
+
+fixtures:
+  sap_spend_extract:
+    - BUKRS: "1000"
+      LIFNR: "V-001"
+      MATKL: "RAW-MATERIAL"
+      NETWR: 25000
+      WAERS: "EUR"
+      BUDAT: "2025-03-15"
+    - BUKRS: "1000"
+      LIFNR: "V-002"
+      MATKL: "PACKAGING"
+      NETWR: 8000
+      WAERS: "EUR"
+      BUDAT: "2025-04-20"
+    - BUKRS: "2000"
+      LIFNR: "V-003"
+      MATKL: "LOGISTICS"
+      NETWR: 15000
+      WAERS: "USD"
+      BUDAT: "2025-05-10"
+  expected_canonical:
+    - vendor_id: "V-001"
+      category: "purchased_goods"
+      amount: 25000
+      currency: "EUR"
+    - vendor_id: "V-002"
+      category: "purchased_goods"
+      amount: 8000
+      currency: "EUR"
+    - vendor_id: "V-003"
+      category: "upstream_transport"
+      amount: 15000
+      currency: "USD"
+
+stages:
+  - id: connector_health
+    name: "Connector Health Check"
+    depends_on: []
+    timeout_minutes: 5
+    agents:
+      - role: health-checker
+        agent: connector-operator
+        plugin: connectors
+        task: "Verify the connector for the source system is healthy and the schema mapping is loaded."
+        tools:
+          - connector.health
+          - connector.list_connectors
+        inputs:
+          source_system: "$params.source_system"
+        outputs:
+          - connector_status
+          - schema_loaded
+    merge:
+      strategy: collect
+      output_key: health_result
+    gate:
+      type: all_agents_succeed
+      on_failure: abort
+
+  - id: schema_transform
+    name: "Schema Mapping Transform"
+    depends_on:
+      - connector_health
+    timeout_minutes: 10
+    agents:
+      - role: mapper
+        agent: connector-operator
+        plugin: connectors
+        task: "Transform the SAP fixture data through the connector schema mapping to CarbonKit canonical format. Verify field mappings: LIFNR->vendor_id, MATKL->category, NETWR->amount, WAERS->currency."
+        tools:
+          - connector.transform
+          - connector.db.get
+          - connector.db.set
+        inputs:
+          source_system: "$params.source_system"
+          source_data: "fixture:sap_spend_extract"
+        outputs:
+          - transformed_rows
+          - row_count
+          - mapping_errors
+    merge:
+      strategy: collect
+      output_key: transform_result
+    gate:
+      type: all_agents_succeed
+      on_failure: retry_with_fix
+
+  - id: validate_output
+    name: "Output Validation"
+    depends_on:
+      - schema_transform
+    timeout_minutes: 5
+    agents:
+      - role: validator
+        agent: connector-operator
+        plugin: connectors
+        task: "Validate the transformed output matches the expected canonical schema. Check all required fields are present and values are correctly mapped."
+        tools:
+          - connector.validate
+          - connector.db.get
+        inputs:
+          transformed_rows: "$stages.schema_transform.outputs.transformed_rows"
+        outputs:
+          - validation_passed
+          - field_coverage
+          - unmapped_fields
+    merge:
+      strategy: collect
+      output_key: validation_result
+    gate:
+      type: all_agents_succeed
+      on_failure: abort
+
+assertions:
+  - stage: connector_health
+    check: "connector_status == 'healthy'"
+    description: "Connector must report healthy status"
+  - stage: schema_transform
+    check: "row_count == 3"
+    description: "All 3 fixture rows must be transformed"
+  - stage: schema_transform
+    check: "mapping_errors == 0 || mapping_errors == null"
+    description: "No mapping errors allowed"
+  - stage: validate_output
+    check: "validation_passed == true"
+    description: "Transformed output must pass validation"
+  - stage: validate_output
+    check: "unmapped_fields == null || unmapped_fields.length == 0"
+    description: "No unmapped fields allowed in canonical output"
+
+deliverable:
+  name: "Connector Mapping Test Results"
+  format: json
+  sections:
+    - title: "Health Check"
+      source_stage: connector_health
+    - title: "Schema Transform"
+      source_stage: schema_transform
+    - title: "Validation"
+      source_stage: validate_output
+  hash: true
+  audit_trail: true

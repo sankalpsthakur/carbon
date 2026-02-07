@@ -1,0 +1,1439 @@
+openapi: 3.0.3
+info:
+  title: CarbonKit MCP Server API
+  description: |
+    CarbonKit MCP (Model Context Protocol) Server API for Scope 1/2/3 carbon accounting.
+
+    This API exposes three domain-specific MCP servers:
+    - **calc-mcp**: Scope 3 calculation engine (emissions compute, FX, DQS, ingestion)
+    - **exec-mcp**: Execution module (supplier engagement, PDF evidence, quality gates)
+    - **strategy-mcp**: Strategy module (DMA, IRO scoring, materiality matrix, ESRS sequencing)
+
+    ## Transport
+    - **stdio**: LSP-style message framing with Content-Length headers
+    - **HTTP** (coming soon): REST-style JSON endpoints
+
+    ## Authentication
+    - None required for stdio transport
+    - API key or JWT for HTTP transport (TBD)
+
+    ## Rate Limits
+    - stdio: No limits
+    - HTTP: 100 req/sec per client (TBD)
+  version: 1.0.0
+  contact:
+    name: CarbonKit Support
+    url: https://github.com/carbonkit/carbonkit
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+
+servers:
+  - url: http://localhost:3000/api
+    description: Local development server
+  - url: https://api.carbonkit.io/v1
+    description: Production server (future)
+
+tags:
+  - name: calc
+    description: Scope 3 calculation engine
+  - name: exec
+    description: Execution module (supplier engagement, evidence)
+  - name: strategy
+    description: Strategy module (DMA, materiality)
+  - name: health
+    description: Health checks and diagnostics
+
+paths:
+  # ==================== CALCULATION MODULE ====================
+  /calc/health:
+    get:
+      tags: [calc, health]
+      summary: Calc MCP server health check
+      operationId: calcHealth
+      responses:
+        '200':
+          description: Server is healthy
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthResponse'
+
+  /calc/compute:
+    post:
+      tags: [calc]
+      summary: Compute emissions for a job
+      operationId: calcCompute
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [job_id]
+              properties:
+                job_id:
+                  type: string
+                  description: Ingestion job ID to compute emissions for
+                refresh:
+                  type: boolean
+                  default: false
+                  description: Force refresh emission factors from DB
+                force:
+                  type: boolean
+                  default: false
+                  description: Force recompute even if already computed
+      responses:
+        '200':
+          description: Emissions computed successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ComputeResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /calc/ingest:
+    post:
+      tags: [calc]
+      summary: Ingest spend data CSV
+      operationId: calcIngest
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [filename, rows]
+              properties:
+                filename:
+                  type: string
+                  description: CSV filename
+                rows:
+                  type: array
+                  description: Array of activity row objects
+                  items:
+                    $ref: '#/components/schemas/ActivityRow'
+                reporting_currency:
+                  type: string
+                  default: USD
+                  description: Reporting currency for normalization
+      responses:
+        '201':
+          description: Ingestion job created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IngestionJobResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+
+  /calc/export:
+    post:
+      tags: [calc]
+      summary: Export inventory items for a job
+      operationId: calcExport
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [job_id]
+              properties:
+                job_id:
+                  type: string
+                  description: Job ID to export
+                format:
+                  type: string
+                  enum: [csv, json]
+                  default: json
+                  description: Output format
+      responses:
+        '200':
+          description: Export successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExportResponse'
+            text/csv:
+              schema:
+                type: string
+                description: CSV content
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /calc/fx-normalize:
+    post:
+      tags: [calc]
+      summary: Convert currency amount using FX rates
+      operationId: calcFxNormalize
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [amount, from_currency, to_currency]
+              properties:
+                amount:
+                  type: number
+                  description: Amount to convert
+                from_currency:
+                  type: string
+                  description: Source currency code (ISO 4217)
+                to_currency:
+                  type: string
+                  description: Target currency code (ISO 4217)
+      responses:
+        '200':
+          description: Currency converted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FxNormalizeResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+
+  /calc/dqs-score:
+    post:
+      tags: [calc]
+      summary: Compute Data Quality Score for a job
+      operationId: calcDqsScore
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [job_id]
+              properties:
+                job_id:
+                  type: string
+                  description: Job ID to score
+      responses:
+        '200':
+          description: DQS computed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DqsScoreResponse'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /calc/db/get:
+    post:
+      tags: [calc]
+      summary: Get documents from calc DB collection
+      operationId: calcDbGet
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [collection]
+              properties:
+                collection:
+                  type: string
+                  description: Collection name
+                query:
+                  type: object
+                  description: Key-value query filter
+                limit:
+                  type: integer
+                  description: Max documents to return
+      responses:
+        '200':
+          description: Documents retrieved
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DbGetResponse'
+
+  /calc/db/set:
+    post:
+      tags: [calc]
+      summary: Upsert document in calc DB collection
+      operationId: calcDbSet
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [collection, doc]
+              properties:
+                collection:
+                  type: string
+                  description: Collection name
+                doc:
+                  type: object
+                  description: Document to upsert (include _id to update)
+      responses:
+        '200':
+          description: Document saved
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DbSetResponse'
+
+  /calc/db/delete:
+    post:
+      tags: [calc]
+      summary: Delete documents from calc DB collection
+      operationId: calcDbDelete
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [collection, query]
+              properties:
+                collection:
+                  type: string
+                  description: Collection name
+                query:
+                  type: object
+                  description: Key-value query filter
+      responses:
+        '200':
+          description: Documents deleted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DbDeleteResponse'
+
+  # ==================== EXECUTION MODULE ====================
+  /exec/health:
+    get:
+      tags: [exec, health]
+      summary: Exec MCP server health check
+      operationId: execHealth
+      responses:
+        '200':
+          description: Server is healthy
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthResponse'
+
+  /exec/pipeline/run:
+    post:
+      tags: [exec]
+      summary: Run full execution pipeline
+      operationId: execPipelineRun
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                period:
+                  type: string
+                  default: latest
+                  description: Period identifier
+      responses:
+        '200':
+          description: Pipeline completed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PipelineRunResponse'
+
+  /exec/pipeline/stage:
+    post:
+      tags: [exec]
+      summary: Run single pipeline stage
+      operationId: execPipelineStage
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [stage]
+              properties:
+                stage:
+                  type: string
+                  enum: [seed, sources, ingest, seed_data, generate]
+                  description: Pipeline stage to run
+      responses:
+        '200':
+          description: Stage completed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PipelineStageResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+
+  /exec/upload-pdf:
+    post:
+      tags: [exec]
+      summary: Upload PDF document metadata
+      operationId: execUploadPdf
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [filename]
+              properties:
+                filename:
+                  type: string
+                  description: PDF filename
+                supplier_id:
+                  type: string
+                  description: Optional supplier ID linkage
+                tags:
+                  type: array
+                  items:
+                    type: string
+                  description: Document tags
+      responses:
+        '201':
+          description: Document metadata created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UploadPdfResponse'
+
+  /exec/render-page:
+    post:
+      tags: [exec]
+      summary: Render PDF page to image (requires poppler-utils)
+      operationId: execRenderPage
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [doc_id]
+              properties:
+                doc_id:
+                  type: string
+                  description: Document ID
+                page_number:
+                  type: integer
+                  default: 1
+                  description: Page number to render
+                zoom:
+                  type: number
+                  default: 1.0
+                  description: Zoom factor
+      responses:
+        '200':
+          description: Page rendered (or stub message if tools missing)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RenderPageResponse'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /exec/ocr:
+    post:
+      tags: [exec]
+      summary: Run OCR on rendered page (requires tesseract)
+      operationId: execOcr
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [doc_id]
+              properties:
+                doc_id:
+                  type: string
+                  description: Document ID
+                page_number:
+                  type: integer
+                  default: 1
+                  description: Page number to OCR
+      responses:
+        '200':
+          description: OCR completed (or stub message if tools missing)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OcrResponse'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /exec/provenance/save:
+    post:
+      tags: [exec]
+      summary: Save field provenance link
+      operationId: execProvenanceSave
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [entity_type, entity_id, field_name, doc_id, page_number]
+              properties:
+                entity_type:
+                  type: string
+                  description: Entity type (e.g., supplier, engagement)
+                entity_id:
+                  type: string
+                  description: Entity ID
+                field_name:
+                  type: string
+                  description: Field name being evidenced
+                doc_id:
+                  type: string
+                  description: Document ID
+                page_number:
+                  type: integer
+                  description: Page number
+                bbox:
+                  type: object
+                  description: Bounding box coordinates
+      responses:
+        '201':
+          description: Provenance saved
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProvenanceSaveResponse'
+
+  /exec/provenance/list:
+    get:
+      tags: [exec]
+      summary: List field provenance for entity
+      operationId: execProvenanceList
+      parameters:
+        - name: entity_type
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: entity_id
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Provenance list retrieved
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProvenanceListResponse'
+
+  /exec/engagement/update:
+    put:
+      tags: [exec]
+      summary: Update supplier engagement status
+      operationId: execEngagementUpdate
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [engagement_id, status]
+              properties:
+                engagement_id:
+                  type: string
+                  description: Engagement ID
+                status:
+                  type: string
+                  enum: [pending, active, completed, stalled]
+                  description: New status
+                notes:
+                  type: string
+                  description: Optional notes
+      responses:
+        '200':
+          description: Engagement updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EngagementUpdateResponse'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /exec/quality-gates:
+    post:
+      tags: [exec]
+      summary: Run quality gate checks
+      operationId: execQualityGates
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                entity_type:
+                  type: string
+                  description: Entity type to audit
+                entity_id:
+                  type: string
+                  description: Entity ID to audit
+      responses:
+        '200':
+          description: Quality gates executed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QualityGatesResponse'
+
+  /exec/export:
+    post:
+      tags: [exec]
+      summary: Export execution data (CSRD, GHG Protocol, PDF)
+      operationId: execExport
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [format]
+              properties:
+                format:
+                  type: string
+                  enum: [csrd, ghg_protocol, pdf]
+                  description: Export format
+                period:
+                  type: string
+                  description: Period filter
+      responses:
+        '200':
+          description: Export successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExecExportResponse'
+
+  # ==================== STRATEGY MODULE ====================
+  /strategy/health:
+    get:
+      tags: [strategy, health]
+      summary: Strategy MCP server health check
+      operationId: strategyHealth
+      responses:
+        '200':
+          description: Server is healthy
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthResponse'
+
+  /strategy/assessment/create:
+    post:
+      tags: [strategy]
+      summary: Create DMA assessment
+      operationId: strategyAssessmentCreate
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [org_id, year]
+              properties:
+                org_id:
+                  type: string
+                  description: Organization ID
+                year:
+                  type: integer
+                  description: Assessment year
+      responses:
+        '201':
+          description: Assessment created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AssessmentResponse'
+        '409':
+          description: Active assessment already exists for org+year
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /strategy/assessment/get:
+    get:
+      tags: [strategy]
+      summary: Get DMA assessment by ID
+      operationId: strategyAssessmentGet
+      parameters:
+        - name: assessment_id
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Assessment retrieved
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AssessmentResponse'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /strategy/iro/list:
+    get:
+      tags: [strategy]
+      summary: List IROs for assessment
+      operationId: strategyIroList
+      parameters:
+        - name: assessment_id
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: IROs retrieved
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IroListResponse'
+
+  /strategy/iro/create:
+    post:
+      tags: [strategy]
+      summary: Create IRO (Impact, Risk, Opportunity)
+      operationId: strategyIroCreate
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [assessment_id, type, topic, title]
+              properties:
+                assessment_id:
+                  type: string
+                type:
+                  type: string
+                  enum: [impact, risk, opportunity]
+                topic:
+                  type: string
+                  description: ESRS topic (e.g., E1-1, S1-2)
+                title:
+                  type: string
+                  description: IRO title
+      responses:
+        '201':
+          description: IRO created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IroResponse'
+        '409':
+          description: Assessment is finalized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /strategy/iro/score:
+    put:
+      tags: [strategy]
+      summary: Score IRO with materiality values
+      operationId: strategyIroScore
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [iro_id, impact_materiality, financial_materiality]
+              properties:
+                iro_id:
+                  type: string
+                impact_materiality:
+                  type: integer
+                  minimum: 1
+                  maximum: 5
+                  description: Impact materiality score (1-5)
+                financial_materiality:
+                  type: integer
+                  minimum: 1
+                  maximum: 5
+                  description: Financial materiality score (1-5)
+                likelihood:
+                  type: integer
+                  minimum: 1
+                  maximum: 5
+                  description: Optional likelihood score (1-5)
+                confidence:
+                  type: string
+                  enum: [low, medium, high]
+                  description: Optional confidence level
+      responses:
+        '200':
+          description: IRO scored
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IroResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '409':
+          description: Assessment is finalized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /strategy/evidence/add:
+    post:
+      tags: [strategy]
+      summary: Attach stakeholder evidence to IRO
+      operationId: strategyEvidenceAdd
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [iro_id, source, stakeholder_type, description]
+              properties:
+                iro_id:
+                  type: string
+                source:
+                  type: string
+                  description: Evidence source reference
+                stakeholder_type:
+                  type: string
+                  enum: [internal, external]
+                description:
+                  type: string
+                  description: Evidence description
+      responses:
+        '201':
+          description: Evidence attached
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EvidenceResponse'
+        '409':
+          description: Evidence already attached or assessment finalized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /strategy/materiality-matrix:
+    post:
+      tags: [strategy]
+      summary: Generate materiality matrix for assessment
+      operationId: strategyMaterialityMatrix
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [assessment_id]
+              properties:
+                assessment_id:
+                  type: string
+                impact_threshold:
+                  type: number
+                  default: 3.0
+                  description: Impact materiality threshold
+                financial_threshold:
+                  type: number
+                  default: 3.0
+                  description: Financial materiality threshold
+      responses:
+        '200':
+          description: Materiality matrix generated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MaterialityMatrixResponse'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /strategy/esrs-sequence:
+    post:
+      tags: [strategy]
+      summary: Compute ESRS materiality sequencing
+      operationId: strategyEsrsSequence
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [assessment_id]
+              properties:
+                assessment_id:
+                  type: string
+      responses:
+        '200':
+          description: ESRS sequence computed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EsrsSequenceResponse'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /strategy/snapshot:
+    post:
+      tags: [strategy]
+      summary: Create immutable assessment snapshot
+      operationId: strategySnapshot
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [assessment_id]
+              properties:
+                assessment_id:
+                  type: string
+                finalize:
+                  type: boolean
+                  default: false
+                  description: Lock assessment for further mutations
+      responses:
+        '201':
+          description: Snapshot created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SnapshotResponse'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /strategy/snapshot/verify:
+    post:
+      tags: [strategy]
+      summary: Verify snapshot integrity (SHA-256)
+      operationId: strategySnapshotVerify
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [snapshot_id]
+              properties:
+                snapshot_id:
+                  type: string
+      responses:
+        '200':
+          description: Snapshot verified
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SnapshotVerifyResponse'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          description: Verification not implemented
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /strategy/risk-scan:
+    post:
+      tags: [strategy]
+      summary: Scan for external ESG risk signals (STUB)
+      operationId: strategyRiskScan
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [org_id]
+              properties:
+                org_id:
+                  type: string
+      responses:
+        '200':
+          description: Risk scan completed (returns 6 hardcoded signals)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RiskScanResponse'
+
+  /strategy/export:
+    post:
+      tags: [strategy]
+      summary: Export assessment data
+      operationId: strategyExport
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [assessment_id, format]
+              properties:
+                assessment_id:
+                  type: string
+                format:
+                  type: string
+                  enum: [json, evidence_pack]
+                  description: Export format
+      responses:
+        '200':
+          description: Export successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StrategyExportResponse'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+components:
+  schemas:
+    # ==================== COMMON SCHEMAS ====================
+    HealthResponse:
+      type: object
+      properties:
+        ok:
+          type: boolean
+        name:
+          type: string
+        version:
+          type: string
+        timestamp:
+          type: string
+          format: date-time
+        data_dir:
+          type: string
+
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: boolean
+          default: true
+        code:
+          type: integer
+        message:
+          type: string
+        details:
+          type: object
+
+    # ==================== CALC SCHEMAS ====================
+    ActivityRow:
+      type: object
+      required: [vendor, item_description, spend_original, currency_original]
+      properties:
+        vendor:
+          type: string
+        item_description:
+          type: string
+        spend_original:
+          type: number
+        currency_original:
+          type: string
+        quantity:
+          type: number
+        unit:
+          type: string
+        category:
+          type: string
+        subcategory:
+          type: string
+
+    IngestionJobResponse:
+      type: object
+      properties:
+        error:
+          type: boolean
+        job_id:
+          type: string
+        filename:
+          type: string
+        row_count:
+          type: integer
+        reporting_currency:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+
+    ComputeResponse:
+      type: object
+      properties:
+        error:
+          type: boolean
+        job_id:
+          type: string
+        run_id:
+          type: string
+        item_count:
+          type: integer
+        total_emissions_tco2e:
+          type: number
+        dqs_score:
+          type: number
+        method_breakdown:
+          type: object
+        computed_at:
+          type: string
+          format: date-time
+
+    ExportResponse:
+      type: object
+      properties:
+        error:
+          type: boolean
+        format:
+          type: string
+        job_id:
+          type: string
+        item_count:
+          type: integer
+        data:
+          type: object
+
+    FxNormalizeResponse:
+      type: object
+      properties:
+        original:
+          type: number
+        from_currency:
+          type: string
+        to_currency:
+          type: string
+        rate:
+          type: number
+        converted:
+          type: number
+
+    DqsScoreResponse:
+      type: object
+      properties:
+        job_id:
+          type: string
+        row_count:
+          type: integer
+        base_score:
+          type: number
+        method_score:
+          type: number
+        final_dqs:
+          type: number
+        missing_rates:
+          type: object
+        formula:
+          type: string
+
+    DbGetResponse:
+      type: object
+      properties:
+        collection:
+          type: string
+        count:
+          type: integer
+        docs:
+          type: array
+          items:
+            type: object
+
+    DbSetResponse:
+      type: object
+      properties:
+        collection:
+          type: string
+        doc:
+          type: object
+
+    DbDeleteResponse:
+      type: object
+      properties:
+        collection:
+          type: string
+        removed:
+          type: integer
+
+    # ==================== EXEC SCHEMAS ====================
+    PipelineRunResponse:
+      type: object
+      properties:
+        run_id:
+          type: string
+        period:
+          type: string
+        stages:
+          type: array
+          items:
+            type: object
+        message:
+          type: string
+
+    PipelineStageResponse:
+      type: object
+      properties:
+        run_id:
+          type: string
+        stage:
+          type: string
+        status:
+          type: string
+        detail:
+          type: string
+        started_at:
+          type: string
+          format: date-time
+        completed_at:
+          type: string
+          format: date-time
+
+    UploadPdfResponse:
+      type: object
+      properties:
+        ok:
+          type: boolean
+        doc:
+          type: object
+        note:
+          type: string
+
+    RenderPageResponse:
+      type: object
+      properties:
+        ok:
+          type: boolean
+        render:
+          type: object
+        note:
+          type: string
+
+    OcrResponse:
+      type: object
+      properties:
+        ok:
+          type: boolean
+        ocr:
+          type: object
+        note:
+          type: string
+
+    ProvenanceSaveResponse:
+      type: object
+      properties:
+        ok:
+          type: boolean
+        provenance:
+          type: object
+
+    ProvenanceListResponse:
+      type: object
+      properties:
+        count:
+          type: integer
+        provenance:
+          type: array
+          items:
+            type: object
+
+    EngagementUpdateResponse:
+      type: object
+      properties:
+        ok:
+          type: boolean
+        engagement:
+          type: object
+
+    QualityGatesResponse:
+      type: object
+      properties:
+        ok:
+          type: boolean
+        anomalies_detected:
+          type: integer
+        anomalies:
+          type: array
+          items:
+            type: object
+
+    ExecExportResponse:
+      type: object
+      properties:
+        format:
+          type: string
+        data:
+          type: object
+
+    # ==================== STRATEGY SCHEMAS ====================
+    AssessmentResponse:
+      type: object
+      properties:
+        ok:
+          type: boolean
+        assessment:
+          type: object
+          properties:
+            _id:
+              type: string
+            org_id:
+              type: string
+            year:
+              type: integer
+            status:
+              type: string
+            finalized:
+              type: boolean
+            created_at:
+              type: string
+              format: date-time
+
+    IroListResponse:
+      type: object
+      properties:
+        count:
+          type: integer
+        iros:
+          type: array
+          items:
+            type: object
+
+    IroResponse:
+      type: object
+      properties:
+        ok:
+          type: boolean
+        iro:
+          type: object
+          properties:
+            _id:
+              type: string
+            assessment_id:
+              type: string
+            type:
+              type: string
+            topic:
+              type: string
+            title:
+              type: string
+            scores:
+              type: object
+
+    EvidenceResponse:
+      type: object
+      properties:
+        ok:
+          type: boolean
+        evidence:
+          type: object
+
+    MaterialityMatrixResponse:
+      type: object
+      properties:
+        ok:
+          type: boolean
+        matrix:
+          type: object
+          properties:
+            assessment_id:
+              type: string
+            quadrants:
+              type: object
+            thresholds:
+              type: object
+
+    EsrsSequenceResponse:
+      type: object
+      properties:
+        ok:
+          type: boolean
+        sequence:
+          type: object
+
+    SnapshotResponse:
+      type: object
+      properties:
+        ok:
+          type: boolean
+        snapshot:
+          type: object
+          properties:
+            _id:
+              type: string
+            assessment_id:
+              type: string
+            hash:
+              type: string
+            finalized:
+              type: boolean
+            created_at:
+              type: string
+              format: date-time
+
+    SnapshotVerifyResponse:
+      type: object
+      properties:
+        ok:
+          type: boolean
+        verified:
+          type: boolean
+        message:
+          type: string
+
+    RiskScanResponse:
+      type: object
+      properties:
+        ok:
+          type: boolean
+        signals:
+          type: array
+          items:
+            type: object
+        note:
+          type: string
+
+    StrategyExportResponse:
+      type: object
+      properties:
+        format:
+          type: string
+        data:
+          type: object
+
+  responses:
+    BadRequest:
+      description: Bad request (invalid params)
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-Key
+      description: API key for HTTP transport (future)
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: JWT token for HTTP transport (future)
+
+security:
+  - ApiKeyAuth: []
+  - BearerAuth: []

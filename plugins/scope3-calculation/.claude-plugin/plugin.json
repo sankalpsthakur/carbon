@@ -1,0 +1,6 @@
+{
+  "name": "scope3-calculation",
+  "version": "0.4.1",
+  "description": "Detailed Scope 3 calculation plugin for ingestion, mapping, compute hierarchy, DQS/traceability, controls, hotspot/campaign workflows, and screenshot-ready baseline/ledger/engineering capability packs.",
+  "author": { "name": "Sankalp Thakur" }
+}

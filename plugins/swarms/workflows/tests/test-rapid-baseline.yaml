@@ -1,0 +1,183 @@
+apiVersion: carbonkit-swarm/v1
+
+metadata:
+  name: test-rapid-baseline
+  version: "1.0.0"
+  description: "Test workflow: validates spend-based baseline pipeline end-to-end with fixture data."
+  team: esg-scope3
+  tags:
+    - test
+    - baseline
+    - spend-based
+
+params:
+  reporting_currency:
+    type: string
+    default: "USD"
+  fiscal_year:
+    type: string
+    default: "FY2025"
+  filename:
+    type: string
+    default: "test-spend-data.csv"
+
+fixtures:
+  activity_data:
+    - vendor: "Acme Corp"
+      category: "purchased_goods"
+      spend_usd: 50000
+      currency: "USD"
+    - vendor: "Beta Inc"
+      category: "business_travel"
+      spend_usd: 12000
+      currency: "USD"
+    - vendor: "Gamma LLC"
+      category: "upstream_transport"
+      spend_usd: 8000
+      currency: "EUR"
+  emission_factors:
+    - basis: "spend"
+      category: "purchased_goods"
+      factor_kgco2e_per_usd: 0.45
+    - basis: "spend"
+      category: "business_travel"
+      factor_kgco2e_per_usd: 0.28
+    - basis: "spend"
+      category: "upstream_transport"
+      factor_kgco2e_per_usd: 0.62
+
+stages:
+  - id: ingest
+    name: "Test Data Ingestion"
+    depends_on: []
+    timeout_minutes: 5
+    agents:
+      - role: ingester
+        agent: spend-baseline-operator
+        plugin: scope3-calculation
+        task: "Ingest the test fixture activity data and run reconciliation."
+        tools:
+          - calc.ingest
+          - calc.db.get
+          - calc.db.set
+        inputs:
+          filename: "$params.filename"
+          reporting_currency: "$params.reporting_currency"
+        outputs:
+          - job_id
+          - row_count
+          - reconciliation
+    merge:
+      strategy: collect
+      output_key: ingest_result
+    gate:
+      type: all_agents_succeed
+      on_failure: abort
+
+  - id: compute
+    name: "Test Emissions Compute"
+    depends_on:
+      - ingest
+    timeout_minutes: 5
+    agents:
+      - role: calculator
+        agent: calculation-orchestrator
+        plugin: scope3-calculation
+        task: "Compute emissions for the test data using spend-based factors."
+        tools:
+          - calc.compute
+          - calc.db.get
+          - calc.fx_normalize
+        inputs:
+          job_id: "$stages.ingest.outputs.job_id"
+        outputs:
+          - run_id
+          - total_emissions_kgco2e
+          - methodology_counts
+    merge:
+      strategy: collect
+      output_key: compute_result
+    gate:
+      type: all_agents_succeed
+      on_failure: abort
+
+  - id: quality
+    name: "Test DQS Scoring"
+    depends_on:
+      - compute
+    timeout_minutes: 5
+    agents:
+      - role: quality-scorer
+        agent: traceability-auditor
+        plugin: scope3-calculation
+        task: "Score data quality for the test computation."
+        tools:
+          - calc.dqs_score
+          - calc.db.get
+        inputs:
+          job_id: "$stages.ingest.outputs.job_id"
+        outputs:
+          - final_dqs
+          - base_score
+    merge:
+      strategy: collect
+      output_key: quality_result
+    gate:
+      type: all_agents_succeed
+      on_failure: skip
+
+  - id: report
+    name: "Test Summary Report"
+    depends_on:
+      - compute
+      - quality
+    timeout_minutes: 5
+    agents:
+      - role: reporter
+        agent: cfo-ledger-auditor
+        plugin: scope3-calculation
+        task: "Generate a test baseline summary report."
+        tools:
+          - calc.db.get
+          - calc.export
+        inputs:
+          job_id: "$stages.ingest.outputs.job_id"
+          run_id: "$stages.compute.outputs.run_id"
+          dqs: "$stages.quality.outputs.final_dqs"
+        outputs:
+          - summary_report
+    merge:
+      strategy: collect
+      output_key: report_result
+    gate:
+      type: all_agents_succeed
+      on_failure: abort
+
+assertions:
+  - stage: ingest
+    check: "row_count >= 3"
+    description: "All 3 fixture rows must be ingested"
+  - stage: compute
+    check: "total_emissions_kgco2e > 0"
+    description: "Total emissions must be positive"
+  - stage: quality
+    check: "final_dqs >= 0 && final_dqs <= 5"
+    description: "DQS score must be between 0 and 5"
+  - stage: report
+    check: "summary_report != null"
+    description: "Summary report must be produced"
+
+deliverable:
+  name: "Test Rapid Baseline Result"
+  format: json
+  sections:
+    - title: "Ingestion"
+      source_stage: ingest
+    - title: "Computation"
+      source_stage: compute
+    - title: "Quality"
+      source_stage: quality
+    - title: "Report"
+      source_stage: report
+  hash: true
+  audit_trail: true

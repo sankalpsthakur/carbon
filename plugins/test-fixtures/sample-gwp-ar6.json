@@ -1,0 +1,105 @@
+{
+  "metadata": {
+    "source": "IPCC Sixth Assessment Report (AR6), 2021",
+    "metric": "GWP-100 (100-year Global Warming Potential)",
+    "notes": "Values from IPCC AR6 WG1 Chapter 7, Table 7.15"
+  },
+  "gases": [
+    {
+      "gas": "Carbon dioxide",
+      "formula": "CO2",
+      "gwp_100": 1,
+      "category": "well_mixed",
+      "lifetime_years": null,
+      "notes": "Reference gas"
+    },
+    {
+      "gas": "Methane (fossil)",
+      "formula": "CH4",
+      "gwp_100": 29.8,
+      "category": "well_mixed",
+      "lifetime_years": 11.8,
+      "notes": "Fossil CH4 includes climate-carbon feedback. AR5 value was 28."
+    },
+    {
+      "gas": "Methane (biogenic)",
+      "formula": "CH4",
+      "gwp_100": 27.2,
+      "category": "well_mixed",
+      "lifetime_years": 11.8,
+      "notes": "Non-fossil CH4. AR5 value was 28 (no fossil/biogenic distinction)."
+    },
+    {
+      "gas": "Nitrous oxide",
+      "formula": "N2O",
+      "gwp_100": 273,
+      "category": "well_mixed",
+      "lifetime_years": 109,
+      "notes": "AR5 value was 265"
+    },
+    {
+      "gas": "HFC-32",
+      "formula": "CH2F2",
+      "gwp_100": 771,
+      "category": "hfc",
+      "lifetime_years": 5.4,
+      "notes": "Common in newer AC systems. AR5 value was 677."
+    },
+    {
+      "gas": "HFC-134a",
+      "formula": "CH2FCF3",
+      "gwp_100": 1526,
+      "category": "hfc",
+      "lifetime_years": 14.0,
+      "notes": "Most common automotive refrigerant. AR5 value was 1300."
+    },
+    {
+      "gas": "HFC-143a",
+      "formula": "CH3CF3",
+      "gwp_100": 5810,
+      "category": "hfc",
+      "lifetime_years": 51.0,
+      "notes": "Component of R-507A blend. AR5 value was 4800."
+    },
+    {
+      "gas": "R-410A",
+      "formula": "R-410A",
+      "gwp_100": 2256,
+      "category": "hfc_blend",
+      "lifetime_years": null,
+      "notes": "50/50 blend HFC-32/HFC-125. Calculated: 0.5*771 + 0.5*3740 = 2256"
+    },
+    {
+      "gas": "Sulfur hexafluoride",
+      "formula": "SF6",
+      "gwp_100": 25200,
+      "category": "pfc",
+      "lifetime_years": 3200,
+      "notes": "Electrical switchgear insulation. AR5 value was 23500."
+    },
+    {
+      "gas": "Nitrogen trifluoride",
+      "formula": "NF3",
+      "gwp_100": 17400,
+      "category": "pfc",
+      "lifetime_years": 569,
+      "notes": "Semiconductor manufacturing. AR5 value was 16100."
+    },
+    {
+      "gas": "PFC-14",
+      "formula": "CF4",
+      "gwp_100": 7380,
+      "category": "pfc",
+      "lifetime_years": 50000,
+      "notes": "Aluminum smelting. AR5 value was 6630."
+    },
+    {
+      "gas": "PFC-116",
+      "formula": "C2F6",
+      "gwp_100": 12400,
+      "category": "pfc",
+      "lifetime_years": 10000,
+      "notes": "Aluminum smelting. AR5 value was 11100."
+    }
+  ]
+}

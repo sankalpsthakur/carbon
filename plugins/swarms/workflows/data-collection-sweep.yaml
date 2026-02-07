@@ -1,0 +1,183 @@
+apiVersion: carbonkit-swarm/v1
+
+metadata:
+  name: data-collection-sweep
+  version: "1.0.0"
+  description: "Systematic data collection sweep across all scopes: identify gaps, dispatch collection agents, validate responses, and compile the data readiness report."
+  team: esg-full-swarm
+  tags:
+    - data-collection
+    - gaps
+    - quality
+    - all-scopes
+
+params:
+  fiscal_year:
+    type: string
+    default: "FY2025"
+  scope3_job_id:
+    type: string
+    description: "Existing Scope 3 job for gap analysis"
+    required: true
+
+stages:
+  - id: gap_analysis
+    name: "Data Gap Analysis"
+    depends_on: []
+    timeout_minutes: 15
+    agents:
+      - role: scope3-gap-analyst
+        agent: traceability-auditor
+        plugin: scope3-calculation
+        task: "Analyze the Scope 3 job for data gaps: missing vendors, incomplete spend, absent quantities, uncategorized rows. Produce a gap inventory."
+        tools:
+          - calc.dqs_score
+          - calc.db.get
+          - calc.db.list
+        inputs:
+          job_id: "$params.scope3_job_id"
+        outputs:
+          - gap_inventory
+          - gap_count
+          - gap_by_category
+          - dqs_before
+      - role: scope12-gap-analyst
+        agent: scope12-accounting-orchestrator
+        plugin: scope12-accounting
+        task: "Identify Scope 1 and 2 data gaps: missing facility data, expired grid factors, unreconciled EACs."
+        tools:
+          - calc.db.get
+          - calc.db.list
+        inputs:
+          fiscal_year: "$params.fiscal_year"
+        outputs:
+          - scope12_gaps
+          - facilities_missing
+          - eac_gaps
+    merge:
+      strategy: collect
+      output_key: gap_result
+    gate:
+      type: all_agents_succeed
+      on_failure: retry
+
+  - id: collection_plan
+    name: "Collection Plan Generation"
+    depends_on:
+      - gap_analysis
+    timeout_minutes: 10
+    agents:
+      - role: collection-planner
+        agent: execution-orchestrator
+        plugin: scope3-execution
+        task: "Generate a data collection plan: prioritize gaps by emission impact, assign collection methods (survey, API, manual), set deadlines."
+        tools:
+          - exec.db.get
+          - exec.db.set
+        inputs:
+          scope3_gaps: "$stages.gap_analysis.outputs.gap_inventory"
+          scope12_gaps: "$stages.gap_analysis.outputs.scope12_gaps"
+        outputs:
+          - collection_plan
+          - priority_items
+          - collection_methods
+    merge:
+      strategy: collect
+      output_key: plan_result
+    gate:
+      type: all_agents_succeed
+      on_failure: retry_with_fix
+
+  - id: evidence_collection
+    name: "Evidence Collection"
+    depends_on:
+      - collection_plan
+    timeout_minutes: 30
+    agents:
+      - role: supplier-collector
+        agent: tier2-survey-cascade-operator
+        plugin: scope3-execution
+        task: "Dispatch data collection surveys to suppliers for Scope 3 gaps. Track response status."
+        tools:
+          - exec.db.get
+          - exec.db.set
+          - exec.db.list
+        inputs:
+          collection_plan: "$stages.collection_plan.outputs.collection_plan"
+        outputs:
+          - surveys_sent
+          - responses_received
+          - response_rate
+      - role: evidence-validator
+        agent: evidence-integrity-operator
+        plugin: scope3-execution
+        task: "Validate collected evidence: check data format, verify against expected ranges, flag anomalies."
+        tools:
+          - exec.db.get
+          - exec.db.set
+        inputs:
+          collection_plan: "$stages.collection_plan.outputs.collection_plan"
+        outputs:
+          - validated_count
+          - anomalies_flagged
+          - data_quality_improvement
+    merge:
+      strategy: collect
+      output_key: evidence_result
+    gate:
+      type: quorum
+      conditions:
+        quorum_pct: 0.5
+      on_failure: retry
+
+  - id: readiness_report
+    name: "Data Readiness Report"
+    depends_on:
+      - evidence_collection
+    timeout_minutes: 10
+    agents:
+      - role: readiness-reporter
+        agent: reporting-auditor
+        plugin: scope3-execution
+        task: "Compile the data readiness report: gaps closed, remaining gaps, DQS improvement, collection status, recommendations."
+        tools:
+          - exec.db.get
+          - exec.db.list
+          - calc.dqs_score
+          - calc.db.get
+        inputs:
+          gap_before: "$stages.gap_analysis.outputs.gap_count"
+          dqs_before: "$stages.gap_analysis.outputs.dqs_before"
+          evidence_collected: "$stages.evidence_collection.outputs.validated_count"
+          response_rate: "$stages.evidence_collection.outputs.response_rate"
+          job_id: "$params.scope3_job_id"
+        outputs:
+          - readiness_score
+          - gaps_closed
+          - gaps_remaining
+          - dqs_after
+    merge:
+      strategy: collect
+      output_key: readiness_result
+    gate:
+      type: all_agents_succeed
+      on_failure: escalate
+
+deliverable:
+  name: "Data Collection Readiness Report"
+  format: json
+  sections:
+    - title: "Gap Analysis"
+      source_stage: gap_analysis
+      output_key: gap_result
+    - title: "Collection Plan"
+      source_stage: collection_plan
+      output_key: plan_result
+    - title: "Evidence Collection"
+      source_stage: evidence_collection
+      output_key: evidence_result
+    - title: "Readiness Assessment"
+      source_stage: readiness_report
+      output_key: readiness_result
+  hash: true
+  audit_trail: true

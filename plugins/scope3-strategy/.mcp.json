@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "strategy-local": {
+      "command": "node",
+      "args": ["tools/strategy-mcp.js"],
+      "cwd": "${CLAUDE_PLUGIN_ROOT}"
+    }
+  }
+}

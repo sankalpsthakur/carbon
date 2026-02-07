@@ -1,0 +1,47 @@
+source: generic-excel
+version: "1.0"
+api_type: excel
+auth_type: none
+description: Configurable Excel file mapping - specify sheet name, header row, and column mapping
+
+canonical_mapping:
+  vendor: "vendor"
+  amount: "amount"
+  currency: "currency"
+  quantity: "quantity"
+  unit: "unit"
+  category: "category"
+  date: "date"
+  org_unit: "org_unit"
+
+transforms:
+  date: "iso8601"
+  currency: "iso4217_validate"
+  amount: "to_number"
+  quantity: "to_number"
+
+excel_config:
+  sheet_name: "Sheet1"
+  header_row: 1
+  data_start_row: 2
+  max_rows: 50000
+
+column_aliases:
+  vendor: ["vendor", "supplier", "vendor_name", "supplier_name", "Vendor", "Supplier"]
+  amount: ["amount", "spend", "total", "cost", "Amount", "Spend", "Total", "net_amount", "line_total"]
+  currency: ["currency", "currency_code", "Currency", "CurrencyCode", "ccy"]
+  quantity: ["quantity", "qty", "Quantity", "Qty", "volume"]
+  unit: ["unit", "uom", "unit_of_measure", "Unit", "UOM"]
+  category: ["category", "description", "item", "Category", "Description", "Item", "gl_code", "account"]
+  date: ["date", "transaction_date", "invoice_date", "Date", "TxnDate", "InvoiceDate", "order_date"]
+  org_unit: ["org_unit", "department", "cost_center", "entity", "Department", "CostCenter"]
+
+notes: |
+  Generic Excel connector reads .xlsx files (not .xls).
+  sheet_name specifies which worksheet to read (default "Sheet1").
+  header_row is 1-indexed row number containing column headers.
+  data_start_row is where actual data begins (row after headers).
+  Column matching uses the same alias system as generic-csv.
+  For Excel files with merged cells or complex layouts, pre-process to flat table format.
+  Excel date serial numbers are auto-converted to ISO 8601 dates.
+  max_rows prevents memory issues on very large spreadsheets.

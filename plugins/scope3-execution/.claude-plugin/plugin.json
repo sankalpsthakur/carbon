@@ -1,0 +1,6 @@
+{
+  "name": "scope3-execution",
+  "version": "0.4.1",
+  "description": "Execution plugin for Scope3 pipeline orchestration, screenshot/OCR provenance, supplier maturity scorecards, and tiered survey cascade controls.",
+  "author": { "name": "Sankalp Thakur" }
+}

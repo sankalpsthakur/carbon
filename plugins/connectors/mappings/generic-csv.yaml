@@ -1,0 +1,43 @@
+source: generic-csv
+version: "1.0"
+api_type: csv
+auth_type: none
+description: Configurable CSV file mapping - specify column names or indices to map to canonical fields
+
+canonical_mapping:
+  vendor: "vendor"
+  amount: "amount"
+  currency: "currency"
+  quantity: "quantity"
+  unit: "unit"
+  category: "category"
+  date: "date"
+  org_unit: "org_unit"
+
+transforms:
+  date: "iso8601"
+  currency: "iso4217_validate"
+  amount: "to_number"
+  quantity: "to_number"
+
+column_aliases:
+  vendor: ["vendor", "supplier", "vendor_name", "supplier_name", "Vendor", "Supplier"]
+  amount: ["amount", "spend", "total", "cost", "Amount", "Spend", "Total", "net_amount", "line_total"]
+  currency: ["currency", "currency_code", "Currency", "CurrencyCode", "ccy"]
+  quantity: ["quantity", "qty", "Quantity", "Qty", "volume"]
+  unit: ["unit", "uom", "unit_of_measure", "Unit", "UOM"]
+  category: ["category", "description", "item", "Category", "Description", "Item", "gl_code", "account"]
+  date: ["date", "transaction_date", "invoice_date", "Date", "TxnDate", "InvoiceDate", "order_date"]
+  org_unit: ["org_unit", "department", "cost_center", "entity", "Department", "CostCenter"]
+
+notes: |
+  Generic CSV connector auto-detects column names from the header row.
+  If column names match any alias, the mapping is applied automatically.
+  For CSVs with non-standard headers, override via column_index mapping:
+    column_index:
+      vendor: 0
+      amount: 3
+      currency: 4
+  Supports both comma and semicolon delimiters (auto-detected).
+  Date formats are normalized to ISO 8601 via the iso8601 transform.
+  Numeric fields (amount, quantity) are coerced via to_number transform.

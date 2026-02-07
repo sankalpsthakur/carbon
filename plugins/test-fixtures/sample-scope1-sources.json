@@ -1,0 +1,82 @@
+{
+  "metadata": {
+    "org_id": "test-org-001",
+    "reporting_year": 2024,
+    "gwp_table": "AR6",
+    "notes": "4 source types with known expected results for test verification"
+  },
+  "sources": [
+    {
+      "source_type": "stationary",
+      "source_id": "boiler-HQ-01",
+      "description": "Natural gas boiler at headquarters",
+      "fuel_type": "natural_gas",
+      "fuel_consumed": 100,
+      "fuel_unit": "m3",
+      "expected_results": {
+        "co2_kg": 185.6,
+        "ch4_kg": 0.0037,
+        "n2o_kg": 0.00035,
+        "co2e_kg": 185.8,
+        "biogenic_co2_kg": 0,
+        "notes": "100 m3 NG at 1.856 kgCO2/m3 + trace CH4/N2O. GWP_CH4=29.8, GWP_N2O=273"
+      }
+    },
+    {
+      "source_type": "mobile",
+      "source_id": "fleet-truck-07",
+      "description": "Diesel delivery truck fleet",
+      "fuel_type": "diesel",
+      "fuel_consumed": 1000,
+      "fuel_unit": "liters",
+      "expected_results": {
+        "co2_kg": 2678.0,
+        "ch4_kg": 0.004,
+        "n2o_kg": 0.044,
+        "co2e_kg": 2690.1,
+        "biogenic_co2_kg": 0,
+        "notes": "1000 L diesel at 2.678 kgCO2/L + mobile CH4/N2O factors"
+      }
+    },
+    {
+      "source_type": "process",
+      "source_id": "kiln-plant-A",
+      "description": "Cement clinker production kiln",
+      "process_type": "cement_clinker",
+      "activity_data": 1.0,
+      "activity_unit": "tonnes",
+      "expected_results": {
+        "co2_kg": 525.0,
+        "ch4_kg": 0,
+        "n2o_kg": 0,
+        "co2e_kg": 525.0,
+        "biogenic_co2_kg": 0,
+        "notes": "1 tonne clinker at 0.525 tCO2/tonne (IPCC default)"
+      }
+    },
+    {
+      "source_type": "fugitive",
+      "source_id": "chiller-DC-03",
+      "description": "Data center chiller using R-134a refrigerant",
+      "equipment_type": "chiller",
+      "refrigerant_type": "R-134a",
+      "charge_kg": 10.0,
+      "recovery_rate": 0.50,
+      "expected_results": {
+        "co2_kg": 0,
+        "ch4_kg": 0,
+        "n2o_kg": 0,
+        "co2e_kg": 7630.0,
+        "biogenic_co2_kg": 0,
+        "notes": "10 kg R-134a * (1-0.50) * GWP 1526 = 7630 kgCO2e"
+      }
+    }
+  ],
+  "expected_totals": {
+    "total_co2e_kg": 11030.9,
+    "total_co2e_tonnes": 11.03,
+    "biogenic_co2_kg": 0,
+    "source_count": 4,
+    "notes": "Sum of all 4 sources: 185.8 + 2690.1 + 525.0 + 7630.0 = 11030.9 kgCO2e"
+  }
+}
