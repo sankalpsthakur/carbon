@@ -1,6 +1,6 @@
 {
   "name": "@sankalpsthakur/carbon",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Open-source Claude Code SDK for end-to-end Scope 1/2/3 decarbonisation workflows",
   "license": "Apache-2.0",
   "publishConfig": {
@@ -22,6 +22,7 @@
     "validate": "npm --prefix plugins run validate"
   },
   "dependencies": {
+    "@anthropic-ai/claude-agent-sdk": "^0.1.0",
     "better-sqlite3": "^11.7.0"
   },
   "optionalDependencies": {},

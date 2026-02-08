@@ -464,36 +464,46 @@ function cmdList() {
 
 const [,, cmd, ...args] = process.argv;
 
-switch (cmd) {
-  case 'init':
-    cmdInit(args[0]);
-    break;
-  case 'run':
-    cmdRun(args[0]);
-    break;
-  case 'validate':
-    cmdValidate(args[0]);
-    break;
-  case 'export':
-    cmdExport(args[0]);
-    break;
-  case 'list':
-    cmdList();
-    break;
-  case 'help':
-  case '--help':
-  case '-h':
-  case undefined:
-    info('Carbon — Claude Code SDK for Scope 1/2/3 decarbonisation workflows\n');
-    info('Usage: carbon <command> [args]\n');
-    info('Commands:');
-    info('  init <name>              Scaffold a new plugin directory');
-    info('  run <plugin>:<command>   Spawn MCP server and send tools/call');
-    info('  validate <plugin-dir>    Check plugin.json, commands, MCP health');
-    info('  export <plugin>:<job_id> Create audit bundle (inputs, outputs, hashes)');
-    info('  list                     List all installed plugins');
-    info('  help                     Show this help');
-    break;
-  default:
-    die(`unknown command: ${cmd}. Run "carbon help" for usage.`);
+// Interactive agent mode: no args or 'chat' command
+if (!cmd || cmd === 'chat') {
+  const { startAgent } = require('./carbon-agent');
+  startAgent({ resume: cmd === 'chat' ? args[0] : null }).catch((err) => {
+    die(err.message);
+  });
+} else {
+  switch (cmd) {
+    case 'init':
+      cmdInit(args[0]);
+      break;
+    case 'run':
+      cmdRun(args[0]);
+      break;
+    case 'validate':
+      cmdValidate(args[0]);
+      break;
+    case 'export':
+      cmdExport(args[0]);
+      break;
+    case 'list':
+      cmdList();
+      break;
+    case 'help':
+    case '--help':
+    case '-h':
+      info('Carbon — AI agent for Scope 1/2/3 carbon accounting\n');
+      info('Usage:\n');
+      info('  carbon                     Launch interactive agent (requires ANTHROPIC_API_KEY)');
+      info('  carbon chat [session-id]   Launch agent (optionally resume a session)\n');
+      info('  carbon <command> [args]    Run a utility command\n');
+      info('Commands:');
+      info('  init <name>              Scaffold a new plugin directory');
+      info('  run <plugin>:<command>   Spawn MCP server and send tools/call');
+      info('  validate <plugin-dir>    Check plugin.json, commands, MCP health');
+      info('  export <plugin>:<job_id> Create audit bundle (inputs, outputs, hashes)');
+      info('  list                     List all installed plugins');
+      info('  help                     Show this help');
+      break;
+    default:
+      die(`unknown command: ${cmd}. Run "carbon help" for usage.`);
+  }
 }

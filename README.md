@@ -1,20 +1,42 @@
 # Carbon
 
-Open-source Claude Code SDK layer for end-to-end Scope 1/2/3 decarbonisation workflows.
+AI agent for end-to-end Scope 1/2/3 carbon accounting and decarbonisation workflows.
 
 11 plugins, 6 MCP servers (105 tools), 74 slash commands, 52 agents, 118 skills.
 
-Implementation note: this SDK layer is delivered as a bundle of Claude Code plugins plus MCP servers (usable from Claude Code and other MCP clients).
-
-Not to be confused with Anthropic's separate "Claude Agent SDK" library.
+Built on the [Claude Agent SDK](https://platform.claude.com/docs/en/agent-sdk/overview) — type `carbon` to get an interactive AI agent with all 6 MCP servers as tools, or use it as a bundle of Claude Code plugins and MCP servers.
 
 ## Quick Start
+
+```bash
+# Install from npm
+npm i -g @sankalpsthakur/carbon
+
+# Set your API key
+export ANTHROPIC_API_KEY=sk-ant-...
+
+# Launch interactive agent
+carbon
+
+# Resume a previous session
+carbon chat <session-id>
+
+# Or use utility commands
+carbon list
+carbon validate scope3-calculation
+carbon help
+```
+
+### From source
 
 ```bash
 git clone <repo-url> carbon && cd carbon
 
 # Install dependencies
 cd plugins && npm install
+
+# Launch interactive agent
+ANTHROPIC_API_KEY=sk-ant-... node shared-services/tools/carbon-cli.js
 
 # Run smoke tests (6 MCP servers, 105 tools)
 node test-mcp-servers.js
@@ -65,25 +87,41 @@ All 6 servers speak JSON-RPC 2.0 over stdio (default) or HTTP.
 ```bash
 # Install from npm (recommended)
 npm i -g @sankalpsthakur/carbon
+
+# Launch interactive agent (requires ANTHROPIC_API_KEY)
+carbon
+
+# Resume a previous session
+carbon chat <session-id>
+
+# Or use utility commands
 carbon <command>
-
-# Or use without installing
-npx @sankalpsthakur/carbon <command>
-
-# From a git clone (repo-local wrapper)
-./carbon <command>
 ```
 
 Commands:
 
 | Command | Description |
 |---------|-------------|
+| `carbon` | Launch interactive AI agent (6 MCP servers, 105 tools) |
+| `carbon chat [session-id]` | Launch agent, optionally resume a session |
 | `carbon list` | List all 11 installed plugins |
 | `carbon init <name>` | Scaffold a new plugin |
 | `carbon run <plugin>:<tool>` | Spawn MCP server and call a tool |
 | `carbon validate <plugin>` | Check plugin.json, commands, MCP health |
 | `carbon export <plugin>:<job_id>` | Create audit bundle with hashes |
 | `carbon help` | Show usage |
+
+### Interactive Agent Commands
+
+Inside the interactive agent, these commands are available:
+
+| Command | Description |
+|---------|-------------|
+| `/status` | Show MCP server connection status |
+| `/session` | Show current session ID (for resume) |
+| `/cost` | Show accumulated cost and turns |
+| `/help` | Show available commands |
+| `/exit` | Exit the agent |
 
 ## Testing
 

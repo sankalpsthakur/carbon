@@ -1,6 +1,6 @@
 {
   "name": "carbon-monorepo-plugins",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "description": "Open-source Claude Code SDK for end-to-end Scope 1/2/3 decarbonisation workflows",
   "bin": {
@@ -20,6 +20,7 @@
     "migrate": "node shared-services/tools/migrate-filestore.js"
   },
   "dependencies": {
+    "@anthropic-ai/claude-agent-sdk": "^0.1.0",
     "better-sqlite3": "^11.7.0"
   },
   "optionalDependencies": {},
