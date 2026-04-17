@@ -14,10 +14,28 @@ plugins/*/data/closed_periods.json
 
 # Build & runtime
 *.log
-.DS_Store
 dist/
 build/
 coverage/
+
+# OS artifacts
+.DS_Store
+Thumbs.db
+
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+
+# Archives
+*.tgz
+*.tar.gz
+
+# Test output
+**/test-output/
 
 # Git backup artifacts
 *.git.bak/
@@ -35,4 +53,3 @@ docker/data/
 # Temporary
 tmp/
 *.tmp
-.DS_Store

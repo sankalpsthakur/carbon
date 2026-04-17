@@ -1,17 +1,25 @@
 # Carbon
 
+[![npm version](https://img.shields.io/npm/v/@sankalpsthakur/carbon)](https://www.npmjs.com/package/@sankalpsthakur/carbon)
+[![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
+
 AI agent for end-to-end Scope 1/2/3 carbon accounting and decarbonisation workflows.
 
 11 plugins, 6 MCP servers (105 tools), 74 slash commands, 52 agents, 118 skills.
 
-Built on the [Claude Agent SDK](https://platform.claude.com/docs/en/agent-sdk/overview) — type `carbon` to get an interactive AI agent with all 6 MCP servers as tools, or use it as a bundle of Claude Code plugins and MCP servers.
+Built on the [Claude Agent SDK](https://platform.claude.com/docs/en/agent-sdk/overview) -- type `carbon` to get an interactive AI agent with all 6 MCP servers as tools, or use it as a bundle of Claude Code plugins and MCP servers.
+
+## Installation
+
+```bash
+npm install @sankalpsthakur/carbon
+```
+
+Requires Node.js >= 18.
 
 ## Quick Start
 
 ```bash
-# Install from npm
-npm i -g @sankalpsthakur/carbon
-
 # Set your API key
 export ANTHROPIC_API_KEY=sk-ant-...
 
@@ -27,10 +35,10 @@ carbon validate scope3-calculation
 carbon help
 ```
 
-### From source
+### From Source
 
 ```bash
-git clone <repo-url> carbon && cd carbon
+git clone https://github.com/sankalpsthakur/carbon.git && cd carbon
 
 # Install dependencies
 cd plugins && npm install
@@ -47,6 +55,16 @@ node --test **/__tests__/*.test.js
 # Validate all plugin manifests
 node shared-services/tools/validate.js
 ```
+
+## Features
+
+- **Scope 3 Calculation Engine** -- emission factor matching, currency conversion, data quality scoring, bulk ingest/export
+- **Scope 1/2 Accounting** -- stationary combustion, mobile sources, purchased electricity, KPI dashboards
+- **Execution Pipelines** -- document OCR, provenance tracking, PDF export, multi-step orchestration
+- **Strategy & Compliance** -- CSRD/ESRS double materiality assessment, risk scanning, target-setting snapshots
+- **Swarm Orchestration** -- DAG-based multi-agent workflows for complex decarbonisation tasks
+- **Connectors** -- schema mapping for ERP, CRM, and expense systems
+- **Interactive CLI** -- conversational AI agent with session persistence and cost tracking
 
 ## Project Structure
 
@@ -85,20 +103,10 @@ All 6 servers speak JSON-RPC 2.0 over stdio (default) or HTTP.
 ## CLI
 
 ```bash
-# Install from npm (recommended)
-npm i -g @sankalpsthakur/carbon
-
-# Launch interactive agent (requires ANTHROPIC_API_KEY)
-carbon
-
-# Resume a previous session
-carbon chat <session-id>
-
-# Or use utility commands
-carbon <command>
+carbon              # Launch interactive AI agent
+carbon chat <id>    # Resume a previous session
+carbon <command>    # Run a utility command
 ```
-
-Commands:
 
 | Command | Description |
 |---------|-------------|
@@ -128,7 +136,7 @@ Inside the interactive agent, these commands are available:
 ```bash
 cd plugins
 
-# Smoke tests — starts each MCP server, sends initialize + tools/list + health
+# Smoke tests -- starts each MCP server, sends initialize + tools/list + health
 node test-mcp-servers.js
 
 # All 253 unit tests
@@ -171,7 +179,7 @@ Data persistence uses a pluggable store adapter (`shared-services/tools/store-ad
 | File (JSON) | Default | Development, single-user |
 | SQLite | `CARBONKIT_DB_BACKEND=sqlite` | Production single-node |
 
-Postgres is planned but not yet supported. All backends implement `get`, `set`, `list`, `delete`, `bulkSet`, `count`.
+All backends implement `get`, `set`, `list`, `delete`, `bulkSet`, `count`.
 
 ## Environment Variables
 
@@ -189,8 +197,12 @@ Postgres is planned but not yet supported. All backends implement `get`, `set`, 
 
 - **Auth**: When `CARBONKIT_AUTH_SECRET` is unset, all HTTP endpoints are unauthenticated (open mode). Always set it for non-localhost deployments.
 - **CORS**: Defaults to `*`. Set `CARBONKIT_CORS_ORIGIN` to your domain in production.
-- **CLI trust boundary**: `carbon run` executes commands from plugin `.mcp.json` files. Only install plugins you trust — a malicious plugin.json can run arbitrary code.
+- **CLI trust boundary**: `carbon run` executes commands from plugin `.mcp.json` files. Only install plugins you trust -- a malicious plugin.json can run arbitrary code.
+
+## Contributing
+
+Contributions are welcome. Please open an issue to discuss proposed changes before submitting a pull request. Run `npm test` and `node plugins/test-mcp-servers.js` before submitting.
 
 ## License
 
-Apache-2.0
+[Apache-2.0](LICENSE)

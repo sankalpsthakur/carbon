@@ -1,0 +1,22 @@
+[
+  {
+    "_id": "asmt_e3234627-f0a1-448d-9d1d-613fcd9ff00a",
+    "org_id": "demo-corp-001",
+    "year": 2024,
+    "status": "draft",
+    "finalized": false,
+    "snapshot_count": 0,
+    "_updated_at": "2026-02-08T23:53:56.018Z",
+    "_created_at": "2026-02-08T23:53:56.018Z"
+  },
+  {
+    "_id": "asmt_9ce867dd-46de-4e02-9f38-9221dcf322b6",
+    "org_id": "demo_corp_2025",
+    "year": 2025,
+    "status": "draft",
+    "finalized": false,
+    "snapshot_count": 0,
+    "_updated_at": "2026-02-08T23:56:09.947Z",
+    "_created_at": "2026-02-08T23:56:09.947Z"
+  }
+]

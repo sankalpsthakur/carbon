@@ -150,5 +150,563 @@
     ],
     "_updated_at": "2026-02-07T11:32:10.817Z",
     "_created_at": "2026-02-07T11:32:10.817Z"
+  },
+  {
+    "_id": "bbae2e60-414e-41ec-9293-7f162c5d6c6b",
+    "run_id": "bbae2e60-414e-41ec-9293-7f162c5d6c6b",
+    "org_id": "demo-company-2026",
+    "period": "2025",
+    "gwp_version": "AR6",
+    "computed_at": "2026-02-08T23:54:10.158Z",
+    "scope1": {
+      "stationary": {
+        "category": "stationary",
+        "kgCO2e_fossil": 1091840.53425,
+        "kgCO2_biogenic": 0,
+        "items": [
+          {
+            "source_id": null,
+            "fuel_type": "natural_gas",
+            "quantity": 125000,
+            "unit": "m3",
+            "kgCO2e_fossil": 235873.475,
+            "kgCO2_biogenic": 0,
+            "breakdown": {
+              "kgCO2_fossil": 235625,
+              "kgCH4_CO2e": 129.0375,
+              "kgN2O_CO2e": 119.4375
+            }
+          },
+          {
+            "source_id": null,
+            "fuel_type": "natural_gas",
+            "quantity": 450000,
+            "unit": "m3",
+            "kgCO2e_fossil": 849144.51,
+            "kgCO2_biogenic": 0,
+            "breakdown": {
+              "kgCO2_fossil": 848250,
+              "kgCH4_CO2e": 464.535,
+              "kgN2O_CO2e": 429.975
+            }
+          },
+          {
+            "source_id": null,
+            "fuel_type": "diesel",
+            "quantity": 2500,
+            "unit": "liter",
+            "kgCO2e_fossil": 6822.54925,
+            "kgCO2_biogenic": 0,
+            "breakdown": {
+              "kgCO2_fossil": 6722.5,
+              "kgCH4_CO2e": 9.27675,
+              "kgN2O_CO2e": 90.7725
+            }
+          }
+        ]
+      },
+      "mobile": {
+        "category": "mobile",
+        "kgCO2e_fossil": 137239.73638,
+        "kgCO2_biogenic": 0,
+        "items": [
+          {
+            "source_id": null,
+            "fuel_type": "gasoline",
+            "quantity": 35000,
+            "unit": "liter",
+            "kgCO2e_fossil": 81842.425,
+            "kgCO2_biogenic": 0
+          },
+          {
+            "source_id": null,
+            "fuel_type": "diesel_mobile",
+            "quantity": 18000,
+            "unit": "liter",
+            "kgCO2e_fossil": 48595.60458,
+            "kgCO2_biogenic": 0
+          },
+          {
+            "source_id": null,
+            "fuel_type": "propane",
+            "quantity": 4500,
+            "unit": "liter",
+            "kgCO2e_fossil": 6801.7068,
+            "kgCO2_biogenic": 0
+          }
+        ]
+      },
+      "process": {
+        "category": "process",
+        "kgCO2e": 0,
+        "items": []
+      },
+      "fugitive": {
+        "category": "fugitive",
+        "kgCO2e": 0,
+        "items": [
+          {
+            "source_id": null,
+            "gas": "R-410A",
+            "leakage_kg": 0,
+            "gwp": 2088,
+            "kgCO2e": 0
+          },
+          {
+            "source_id": null,
+            "gas": "R-404A",
+            "leakage_kg": 0,
+            "gwp": 4728,
+            "kgCO2e": 0
+          }
+        ]
+      },
+      "total_kgCO2e": 1229080.27063,
+      "total_tCO2e": 1229.080271,
+      "biogenic_kgCO2": 0
+    },
+    "scope2": {
+      "location_based": {
+        "method": "location_based",
+        "kgCO2e": 0,
+        "items": [
+          {
+            "source_id": null,
+            "energy_carrier": "electricity",
+            "region": "US_WECC",
+            "unit": "kWh",
+            "net_kwh": 0,
+            "grid_factor": 0.272,
+            "kgCO2e": 0
+          },
+          {
+            "source_id": null,
+            "energy_carrier": "electricity",
+            "region": "US_ERCOT",
+            "unit": "kWh",
+            "net_kwh": 0,
+            "grid_factor": 0.395,
+            "kgCO2e": 0
+          },
+          {
+            "source_id": null,
+            "energy_carrier": "electricity",
+            "region": "US_SERC",
+            "unit": "kWh",
+            "net_kwh": 0,
+            "grid_factor": 0.404,
+            "kgCO2e": 0
+          },
+          {
+            "source_id": null,
+            "energy_carrier": "electricity",
+            "region": "US_RFC",
+            "unit": "kWh",
+            "net_kwh": 0,
+            "grid_factor": 0.418,
+            "kgCO2e": 0
+          }
+        ]
+      },
+      "market_based": {
+        "method": "market_based",
+        "kgCO2e": 0,
+        "items": [
+          {
+            "source_id": null,
+            "energy_carrier": "electricity",
+            "region": "US_WECC",
+            "net_kwh": 0,
+            "matched_kwh": 0,
+            "unmatched_kwh": 0,
+            "contract_factor": 0,
+            "unmatched_factor": 0.272,
+            "kgCO2e_matched": 0,
+            "kgCO2e_unmatched": 0,
+            "kgCO2e": 0,
+            "coverage_pct": 0,
+            "evidence_ids": []
+          },
+          {
+            "source_id": null,
+            "energy_carrier": "electricity",
+            "region": "US_ERCOT",
+            "net_kwh": 0,
+            "matched_kwh": 0,
+            "unmatched_kwh": 0,
+            "contract_factor": 0,
+            "unmatched_factor": 0.395,
+            "kgCO2e_matched": 0,
+            "kgCO2e_unmatched": 0,
+            "kgCO2e": 0,
+            "coverage_pct": 0,
+            "evidence_ids": []
+          },
+          {
+            "source_id": null,
+            "energy_carrier": "electricity",
+            "region": "US_SERC",
+            "net_kwh": 0,
+            "matched_kwh": 0,
+            "unmatched_kwh": 0,
+            "contract_factor": 0,
+            "unmatched_factor": 0.404,
+            "kgCO2e_matched": 0,
+            "kgCO2e_unmatched": 0,
+            "kgCO2e": 0,
+            "coverage_pct": 0,
+            "evidence_ids": []
+          },
+          {
+            "source_id": null,
+            "energy_carrier": "electricity",
+            "region": "US_RFC",
+            "net_kwh": 0,
+            "matched_kwh": 0,
+            "unmatched_kwh": 0,
+            "contract_factor": 0,
+            "unmatched_factor": 0.418,
+            "kgCO2e_matched": 0,
+            "kgCO2e_unmatched": 0,
+            "kgCO2e": 0,
+            "coverage_pct": 0,
+            "evidence_ids": []
+          }
+        ]
+      }
+    },
+    "totals": {
+      "scope12_location_based_kgCO2e": 1229080.27063,
+      "scope12_location_based_tCO2e": 1229.080271,
+      "scope12_market_based_kgCO2e": 1229080.27063,
+      "scope12_market_based_tCO2e": 1229.080271
+    },
+    "kpis": [
+      {
+        "name": "tCO2e_per_FTE_LB",
+        "value": 0.983264,
+        "scope": "scope12_location_based",
+        "denominator": "fte",
+        "denominator_value": 1250
+      },
+      {
+        "name": "tCO2e_per_FTE_MB",
+        "value": 0.983264,
+        "scope": "scope12_market_based",
+        "denominator": "fte",
+        "denominator_value": 1250
+      },
+      {
+        "name": "kgCO2e_per_unit_LB",
+        "value": 2.458161,
+        "scope": "scope12_location_based",
+        "denominator": "units_produced",
+        "denominator_value": 500000
+      },
+      {
+        "name": "kgCO2e_per_unit_MB",
+        "value": 2.458161,
+        "scope": "scope12_market_based",
+        "denominator": "units_produced",
+        "denominator_value": 500000
+      }
+    ],
+    "_updated_at": "2026-02-08T23:54:10.159Z",
+    "_created_at": "2026-02-08T23:54:10.159Z"
+  },
+  {
+    "_id": "9e45fde4-144c-4689-957f-9fc348f7c970",
+    "run_id": "9e45fde4-144c-4689-957f-9fc348f7c970",
+    "org_id": "demo-company-2026",
+    "period": "2025",
+    "gwp_version": "AR6",
+    "computed_at": "2026-02-08T23:54:44.645Z",
+    "scope1": {
+      "stationary": {
+        "category": "stationary",
+        "kgCO2e_fossil": 1091840.53425,
+        "kgCO2_biogenic": 0,
+        "items": [
+          {
+            "source_id": null,
+            "fuel_type": "natural_gas",
+            "quantity": 125000,
+            "unit": "m3",
+            "kgCO2e_fossil": 235873.475,
+            "kgCO2_biogenic": 0,
+            "breakdown": {
+              "kgCO2_fossil": 235625,
+              "kgCH4_CO2e": 129.0375,
+              "kgN2O_CO2e": 119.4375
+            }
+          },
+          {
+            "source_id": null,
+            "fuel_type": "natural_gas",
+            "quantity": 450000,
+            "unit": "m3",
+            "kgCO2e_fossil": 849144.51,
+            "kgCO2_biogenic": 0,
+            "breakdown": {
+              "kgCO2_fossil": 848250,
+              "kgCH4_CO2e": 464.535,
+              "kgN2O_CO2e": 429.975
+            }
+          },
+          {
+            "source_id": null,
+            "fuel_type": "diesel",
+            "quantity": 2500,
+            "unit": "liter",
+            "kgCO2e_fossil": 6822.54925,
+            "kgCO2_biogenic": 0,
+            "breakdown": {
+              "kgCO2_fossil": 6722.5,
+              "kgCH4_CO2e": 9.27675,
+              "kgN2O_CO2e": 90.7725
+            }
+          }
+        ]
+      },
+      "mobile": {
+        "category": "mobile",
+        "kgCO2e_fossil": 137239.73638,
+        "kgCO2_biogenic": 0,
+        "items": [
+          {
+            "source_id": null,
+            "fuel_type": "gasoline",
+            "quantity": 35000,
+            "unit": "liter",
+            "kgCO2e_fossil": 81842.425,
+            "kgCO2_biogenic": 0
+          },
+          {
+            "source_id": null,
+            "fuel_type": "diesel_mobile",
+            "quantity": 18000,
+            "unit": "liter",
+            "kgCO2e_fossil": 48595.60458,
+            "kgCO2_biogenic": 0
+          },
+          {
+            "source_id": null,
+            "fuel_type": "propane",
+            "quantity": 4500,
+            "unit": "liter",
+            "kgCO2e_fossil": 6801.7068,
+            "kgCO2_biogenic": 0
+          }
+        ]
+      },
+      "process": {
+        "category": "process",
+        "kgCO2e": 0,
+        "items": []
+      },
+      "fugitive": {
+        "category": "fugitive",
+        "kgCO2e": 661320,
+        "items": [
+          {
+            "source_id": null,
+            "gas": "R-410A",
+            "leakage_kg": 45,
+            "gwp": 2088,
+            "kgCO2e": 93960
+          },
+          {
+            "source_id": null,
+            "gas": "R-404A",
+            "leakage_kg": 120,
+            "gwp": 4728,
+            "kgCO2e": 567360
+          }
+        ]
+      },
+      "total_kgCO2e": 1890400.27063,
+      "total_tCO2e": 1890.400271,
+      "biogenic_kgCO2": 0
+    },
+    "scope2": {
+      "location_based": {
+        "method": "location_based",
+        "kgCO2e": 6863500,
+        "items": [
+          {
+            "source_id": null,
+            "energy_carrier": "electricity",
+            "region": "US_WECC",
+            "quantity": 2400000,
+            "unit": "kWh",
+            "net_kwh": 2400000,
+            "grid_factor": 0.272,
+            "kgCO2e": 652800
+          },
+          {
+            "source_id": null,
+            "energy_carrier": "electricity",
+            "region": "US_ERCOT",
+            "quantity": 8500000,
+            "unit": "kWh",
+            "net_kwh": 8500000,
+            "grid_factor": 0.395,
+            "kgCO2e": 3357500
+          },
+          {
+            "source_id": null,
+            "energy_carrier": "electricity",
+            "region": "US_SERC",
+            "quantity": 5200000,
+            "unit": "kWh",
+            "net_kwh": 5200000,
+            "grid_factor": 0.404,
+            "kgCO2e": 2100800
+          },
+          {
+            "source_id": null,
+            "energy_carrier": "electricity",
+            "region": "US_RFC",
+            "quantity": 1800000,
+            "unit": "kWh",
+            "net_kwh": 1800000,
+            "grid_factor": 0.418,
+            "kgCO2e": 752400
+          }
+        ]
+      },
+      "market_based": {
+        "method": "market_based",
+        "kgCO2e": 4762700,
+        "items": [
+          {
+            "source_id": null,
+            "energy_carrier": "electricity",
+            "region": "US_WECC",
+            "net_kwh": 2400000,
+            "matched_kwh": 0,
+            "unmatched_kwh": 2400000,
+            "contract_factor": 0,
+            "unmatched_factor": 0.272,
+            "kgCO2e_matched": 0,
+            "kgCO2e_unmatched": 652800,
+            "kgCO2e": 652800,
+            "coverage_pct": 0,
+            "evidence_ids": []
+          },
+          {
+            "source_id": null,
+            "energy_carrier": "electricity",
+            "region": "US_ERCOT",
+            "net_kwh": 8500000,
+            "matched_kwh": 0,
+            "unmatched_kwh": 8500000,
+            "contract_factor": 0,
+            "unmatched_factor": 0.395,
+            "kgCO2e_matched": 0,
+            "kgCO2e_unmatched": 3357500,
+            "kgCO2e": 3357500,
+            "coverage_pct": 0,
+            "evidence_ids": []
+          },
+          {
+            "source_id": null,
+            "energy_carrier": "electricity",
+            "region": "US_SERC",
+            "net_kwh": 5200000,
+            "matched_kwh": 5200000,
+            "unmatched_kwh": 0,
+            "contract_factor": 0,
+            "unmatched_factor": 0.404,
+            "kgCO2e_matched": 0,
+            "kgCO2e_unmatched": 0,
+            "kgCO2e": 0,
+            "coverage_pct": 100,
+            "evidence_ids": []
+          },
+          {
+            "source_id": null,
+            "energy_carrier": "electricity",
+            "region": "US_RFC",
+            "net_kwh": 1800000,
+            "matched_kwh": 0,
+            "unmatched_kwh": 1800000,
+            "contract_factor": 0,
+            "unmatched_factor": 0.418,
+            "kgCO2e_matched": 0,
+            "kgCO2e_unmatched": 752400,
+            "kgCO2e": 752400,
+            "coverage_pct": 0,
+            "evidence_ids": []
+          }
+        ]
+      }
+    },
+    "totals": {
+      "scope12_location_based_kgCO2e": 8753900.27063,
+      "scope12_location_based_tCO2e": 8753.900271,
+      "scope12_market_based_kgCO2e": 6653100.27063,
+      "scope12_market_based_tCO2e": 6653.100271
+    },
+    "kpis": [
+      {
+        "name": "tCO2e_per_mUSD_revenue_LB",
+        "value": 19.453112,
+        "scope": "scope12_location_based",
+        "denominator": "revenue_mUSD",
+        "denominator_value": 450
+      },
+      {
+        "name": "tCO2e_per_mUSD_revenue_MB",
+        "value": 14.784667,
+        "scope": "scope12_market_based",
+        "denominator": "revenue_mUSD",
+        "denominator_value": 450
+      },
+      {
+        "name": "tCO2e_per_FTE_LB",
+        "value": 7.00312,
+        "scope": "scope12_location_based",
+        "denominator": "fte",
+        "denominator_value": 1250
+      },
+      {
+        "name": "tCO2e_per_FTE_MB",
+        "value": 5.32248,
+        "scope": "scope12_market_based",
+        "denominator": "fte",
+        "denominator_value": 1250
+      },
+      {
+        "name": "kgCO2e_per_sqm_LB",
+        "value": 102.987062,
+        "scope": "scope12_location_based",
+        "denominator": "floor_area_sqm",
+        "denominator_value": 85000
+      },
+      {
+        "name": "kgCO2e_per_sqm_MB",
+        "value": 78.271768,
+        "scope": "scope12_market_based",
+        "denominator": "floor_area_sqm",
+        "denominator_value": 85000
+      },
+      {
+        "name": "kgCO2e_per_unit_LB",
+        "value": 17.507801,
+        "scope": "scope12_location_based",
+        "denominator": "units_produced",
+        "denominator_value": 500000
+      },
+      {
+        "name": "kgCO2e_per_unit_MB",
+        "value": 13.306201,
+        "scope": "scope12_market_based",
+        "denominator": "units_produced",
+        "denominator_value": 500000
+      }
+    ],
+    "_updated_at": "2026-02-08T23:54:44.646Z",
+    "_created_at": "2026-02-08T23:54:44.646Z"
   }
 ]

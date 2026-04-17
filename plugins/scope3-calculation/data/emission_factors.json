@@ -310,5 +310,53 @@
     "_id": "66c8238f-4ee8-4f6c-8b59-64bf5e9cc962",
     "_updated_at": "2026-02-07T13:48:07.746Z",
     "_created_at": "2026-02-07T13:48:07.746Z"
+  },
+  {
+    "basis": "spend",
+    "kgco2e_per_unit": 0.5,
+    "category": "purchased_goods",
+    "_id": "43dedf7a-27a0-4969-8677-e7f543455ce5",
+    "_updated_at": "2026-02-08T21:20:55.719Z",
+    "_created_at": "2026-02-08T21:20:55.719Z"
+  },
+  {
+    "basis": "spend",
+    "kgco2e_per_unit": 0.5,
+    "category": "purchased_goods",
+    "_id": "2e9bc8dc-c3fc-401c-99d2-59ad9abdc1bb",
+    "_updated_at": "2026-02-08T22:14:57.375Z",
+    "_created_at": "2026-02-08T22:14:57.375Z"
+  },
+  {
+    "basis": "spend",
+    "kgco2e_per_unit": 0.5,
+    "category": "purchased_goods",
+    "_id": "e970c7c7-f232-4caa-abc3-d18313a2a50f",
+    "_updated_at": "2026-02-08T22:15:18.078Z",
+    "_created_at": "2026-02-08T22:15:18.078Z"
+  },
+  {
+    "basis": "spend",
+    "kgco2e_per_unit": 0.5,
+    "category": "purchased_goods",
+    "_id": "161f1c53-ef51-4c15-ad14-c49df5432a8d",
+    "_updated_at": "2026-02-08T22:51:49.815Z",
+    "_created_at": "2026-02-08T22:51:49.815Z"
+  },
+  {
+    "basis": "spend",
+    "kgco2e_per_unit": 0.5,
+    "category": "purchased_goods",
+    "_id": "00f3580b-cc09-4d17-895c-3bbc49e49c28",
+    "_updated_at": "2026-02-08T22:52:23.644Z",
+    "_created_at": "2026-02-08T22:52:23.644Z"
+  },
+  {
+    "basis": "spend",
+    "kgco2e_per_unit": 0.5,
+    "category": "purchased_goods",
+    "_id": "72366032-79ee-4482-833e-c8064530f5a3",
+    "_updated_at": "2026-02-08T23:52:27.402Z",
+    "_created_at": "2026-02-08T23:52:27.402Z"
   }
 ]

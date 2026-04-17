@@ -1,16 +1,95 @@
-# Keep npm tarball small and avoid shipping local artifacts.
+# Keep npm tarball small - only ship runtime code.
+
+# OS artifacts
 .DS_Store
 **/.DS_Store
+Thumbs.db
 
+# Backups & archives
 backups/
 **/*.tgz
 
-plugins/node_modules/
-plugins/**/node_modules/
+# Node artifacts
+**/node_modules/
+plugins/package-lock.json
 
-plugins/**/data/_audit_log.json
-plugins/**/data/export_*.json
+# Test data artifacts
+**/data/_audit_log.json
+**/data/export_*.json
+**/__pycache__/
+**/.pytest_cache/
 
-plugins/**/__pycache__/
-plugins/**/.pytest_cache/
+# Tests — directories
+**/__tests__/
+**/test-e2e/
+**/test-fixtures/
+**/test-output/
+**/tests/
+**/workflows/tests/
 
+# Tests — individual files
+**/test-*.js
+**/test-*.sh
+**/*-test.js
+**/*.test.js
+**/*.spec.js
+**/validate-*.js
+**/validation-*.json
+test-emission-factors.js
+plugins/run-rapid-baseline-real.js
+
+# Scripts (test/demo/seed utilities)
+**/scripts/
+**/generate-demo-data.js
+**/seed-demo-data.js
+**/load-demo-data.js
+
+# Shell scripts
+**/*.sh
+
+# Docker & infrastructure
+docker/
+docker-compose*.yml
+Makefile
+
+# Docs (available on GitHub)
+docs/
+
+# Non-README markdown docs
+**/Architecture.md
+**/Documentation.md
+**/Implement.md
+**/Plans.md
+**/Prompt.md
+**/CHANGELOG.md
+**/CASE_COVERAGE.md
+**/CALC_MODULE_UPDATES.md
+**/README_CALC_COMPLETE.md
+**/EXECUTION_MODULE_IMPLEMENTATION.md
+**/EXPORT_GUIDE.md
+**/FRONTEND_INTEGRATION_GUIDE.md
+**/FRONTEND_QUICKSTART.md
+**/EXECUTION_CHECKLIST.md
+CARBONKIT_BUILD_SPEC.md
+CARBONKIT_SDK.md
+FRONTEND_WIRING.md
+
+# Plugin metadata not needed at runtime
+plugins/.claude/
+plugins/.claude-plugin/
+plugins/teams/
+
+# CI/CD
+.github/
+
+# Dev files
+.env.example
+*.log
+coverage/
+tmp/
+*.tmp
+.git/
+
+# Python files (not needed for JS runtime)
+**/*.py
+**/*.py[cod]

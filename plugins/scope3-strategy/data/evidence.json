@@ -1,0 +1,80 @@
+[
+  {
+    "_id": "ev_499d797c-0164-4da6-9162-81752fa4dbe8",
+    "iro_id": "iro_deda1b2e-5af0-4d71-9550-a18bbc1a54a9",
+    "assessment_id": "asmt_e3234627-f0a1-448d-9d1d-613fcd9ff00a",
+    "source": "Community consultation meetings",
+    "source_hash": "3ddf37177947d6e5308d5a27e48cf35f0ef2a6d767de271c32902c8be055234b",
+    "dedup_hash": "787d02ab42bfe9fe9bc2014bdba1548c398e22875d4be03f773aa36a23ebda85",
+    "stakeholder_type": "external",
+    "description": "Local residents raised concerns about water quality in downstream communities. Multiple complaints documented about changes in water color and aquatic life decline near discharge points.",
+    "captured_at": "2026-02-08T23:54:18.312Z",
+    "_updated_at": "2026-02-08T23:54:18.312Z",
+    "_created_at": "2026-02-08T23:54:18.312Z"
+  },
+  {
+    "_id": "ev_66074812-7933-4b46-ad78-240d68af0325",
+    "iro_id": "iro_5020e507-ddf5-42e4-a937-ca43dbe6fb42",
+    "assessment_id": "asmt_e3234627-f0a1-448d-9d1d-613fcd9ff00a",
+    "source": "Employee safety surveys and incident reports",
+    "source_hash": "d25a00909f87339ebd6845bdd00f55b63fe36a4c1323df4de4b54f52bf59e953",
+    "dedup_hash": "a63b0461869a3447f0dd3a0e1f92e53cd9886916513f4f20721624a20fcde15c",
+    "stakeholder_type": "internal",
+    "description": "Annual safety survey showed 68% of manufacturing workers expressed concerns about workplace safety. 12 reportable incidents in 2024, including 3 requiring medical leave.",
+    "captured_at": "2026-02-08T23:54:18.325Z",
+    "_updated_at": "2026-02-08T23:54:18.325Z",
+    "_created_at": "2026-02-08T23:54:18.325Z"
+  },
+  {
+    "_id": "ev_0aa3fc5b-0f4a-4e08-bb75-4612b7973ff4",
+    "iro_id": "iro_ee2f33a3-77ff-435a-82b8-223e38a5f57f",
+    "assessment_id": "asmt_9ce867dd-46de-4e02-9f38-9221dcf322b6",
+    "source": "Risk Committee Meeting Minutes Q4 2024",
+    "source_hash": "d7739ba90cf356026e98c60ff49d47b5565abd75eb6626312f0279809e1197b6",
+    "dedup_hash": "b8ba34bfa1d1809d0bf95750c5c8be92100d748fb981ee55998df0099f3f23e3",
+    "stakeholder_type": "internal",
+    "description": "Board-level risk assessment identified extreme weather events as top physical climate risk, with historical incidents causing $2.3M in operational disruptions in 2024",
+    "captured_at": "2026-02-08T23:56:41.671Z",
+    "_updated_at": "2026-02-08T23:56:41.671Z",
+    "_created_at": "2026-02-08T23:56:41.671Z"
+  },
+  {
+    "_id": "ev_dad90ff2-835f-4fb5-be3b-987476025150",
+    "iro_id": "iro_ee2f33a3-77ff-435a-82b8-223e38a5f57f",
+    "assessment_id": "asmt_9ce867dd-46de-4e02-9f38-9221dcf322b6",
+    "source": "Insurance provider climate risk assessment",
+    "source_hash": "a49af73aad97901c455716520b2c35a1f85e2a31e0e2b24704278e74449be4a0",
+    "dedup_hash": "06cff9128368890f9ec3fa763d7c09c8ea43515995abd6db4486b1c3216b0a1c",
+    "stakeholder_type": "external",
+    "description": "External insurance broker analysis projects 40% increase in premium costs by 2027 due to elevated climate-related property risks in our operating regions",
+    "captured_at": "2026-02-08T23:56:41.689Z",
+    "_updated_at": "2026-02-08T23:56:41.689Z",
+    "_created_at": "2026-02-08T23:56:41.689Z"
+  },
+  {
+    "_id": "ev_38234021-dd7d-4c68-b6a0-cb42c1921347",
+    "iro_id": "iro_0dce13ce-a49a-4f82-91cd-b1d3773d21e3",
+    "assessment_id": "asmt_9ce867dd-46de-4e02-9f38-9221dcf322b6",
+    "source": "Community stakeholder engagement sessions",
+    "source_hash": "ade4f92de0cb0ea85727e1b2e682ad577e0641357278b322ed3cf78d2c477096",
+    "dedup_hash": "4c8f97f8e55a02300e4313022f7490132a8cdedd16c6cc137474f24fa54112d1",
+    "stakeholder_type": "external",
+    "description": "Local community representatives and environmental NGOs raised concerns about air quality impacts from plant operations, with documented exceedances of local NOx limits in Q2 2024",
+    "captured_at": "2026-02-08T23:56:41.703Z",
+    "_updated_at": "2026-02-08T23:56:41.703Z",
+    "_created_at": "2026-02-08T23:56:41.703Z"
+  },
+  {
+    "_id": "ev_f9818f89-3b3c-430d-a7cf-6bee431de79b",
+    "iro_id": "iro_202430b1-5a62-44c8-b64f-28dd4fe158aa",
+    "assessment_id": "asmt_9ce867dd-46de-4e02-9f38-9221dcf322b6",
+    "source": "Third-party supply chain audit reports",
+    "source_hash": "b69d34571f771561887c00a58a694df37d018ff1367a271ff0621a51838ba3db",
+    "dedup_hash": "554bb50502ef68348ccb4f6b4d83c8a8b9de371fb75fb2768b4aadd9f349fd28",
+    "stakeholder_type": "external",
+    "description": "Independent audits of tier 2-3 suppliers identified non-compliance with working hours and wage standards affecting approximately 450 workers across 3 facilities",
+    "captured_at": "2026-02-08T23:56:41.714Z",
+    "_updated_at": "2026-02-08T23:56:41.714Z",
+    "_created_at": "2026-02-08T23:56:41.714Z"
+  }
+]

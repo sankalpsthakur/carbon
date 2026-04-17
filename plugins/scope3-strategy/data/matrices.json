@@ -1,0 +1,76 @@
+[
+  {
+    "_id": "mtx_15c94546-592d-4dfe-8dde-30086435ada6",
+    "assessment_id": "asmt_e3234627-f0a1-448d-9d1d-613fcd9ff00a",
+    "org_id": "demo-corp-001",
+    "year": 2024,
+    "generated_at": "2026-02-08T23:54:21.551Z",
+    "threshold": 3,
+    "total_iros": 4,
+    "scored_count": 4,
+    "unscored_count": 0,
+    "summary": {
+      "material": 4,
+      "impact_only": 0,
+      "financial_only": 0,
+      "not_material": 0
+    },
+    "quadrants": {
+      "material": [
+        {
+          "iro_id": "iro_2a618207-7b37-48df-a8bc-f542c3b0d44f",
+          "title": "Physical climate risks to manufacturing facilities from extreme weather events",
+          "type": "risk",
+          "topic": "E1",
+          "impact_materiality": 4,
+          "financial_materiality": 4.5,
+          "likelihood": 3,
+          "confidence": "high",
+          "evidence_count": 0,
+          "quadrant": "material"
+        },
+        {
+          "iro_id": "iro_5020e507-ddf5-42e4-a937-ca43dbe6fb42",
+          "title": "Health and safety risks to workers in manufacturing operations",
+          "type": "risk",
+          "topic": "S1",
+          "impact_materiality": 5,
+          "financial_materiality": 3.5,
+          "likelihood": 3,
+          "confidence": "high",
+          "evidence_count": 1,
+          "quadrant": "material"
+        },
+        {
+          "iro_id": "iro_d8b6ef0c-ff36-44b6-a59b-44ec90a31538",
+          "title": "Transition to renewable energy sources and energy efficiency improvements",
+          "type": "opportunity",
+          "topic": "E1",
+          "impact_materiality": 3.5,
+          "financial_materiality": 4,
+          "likelihood": 4,
+          "confidence": "medium",
+          "evidence_count": 0,
+          "quadrant": "material"
+        },
+        {
+          "iro_id": "iro_deda1b2e-5af0-4d71-9550-a18bbc1a54a9",
+          "title": "Water pollution from industrial wastewater discharge affecting local communities",
+          "type": "impact",
+          "topic": "E2",
+          "impact_materiality": 4.5,
+          "financial_materiality": 3,
+          "likelihood": 4,
+          "confidence": "high",
+          "evidence_count": 1,
+          "quadrant": "material"
+        }
+      ],
+      "impact_only": [],
+      "financial_only": [],
+      "not_material": []
+    },
+    "_updated_at": "2026-02-08T23:54:21.551Z",
+    "_created_at": "2026-02-08T23:54:21.551Z"
+  }
+]
