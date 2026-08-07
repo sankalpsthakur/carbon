@@ -1094,6 +1094,9 @@ msgstr "契約業者を追加"
 msgid "Add cost center"
 msgstr "コスト センターを追加"
 
+msgid "Add Employee"
+msgstr ""
+
 msgid "Add Entry"
 msgstr "エントリを追加"
 
@@ -7867,6 +7870,14 @@ msgstr "招待"
 
 msgid "Invite Expired"
 msgstr "招待が期限切れになりました"
+msgid "Invite All"
+msgstr ""
+
+msgid "Invite Multiple"
+msgstr ""
+
+msgid "Invite Multiple Employees"
+msgstr ""
 
 msgid "Invited"
 msgstr "招待済み"
@@ -12165,6 +12176,9 @@ msgstr "句を削除"
 
 msgid "Remove condition"
 msgstr "条件を削除"
+
+msgid "Remove employee"
+msgstr ""
 
 msgid "Remove filter"
 msgstr "フィルターを削除"

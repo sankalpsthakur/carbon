@@ -1094,6 +1094,9 @@ msgstr "Добавить подрядчика"
 msgid "Add cost center"
 msgstr "Добавить центр затрат"
 
+msgid "Add Employee"
+msgstr ""
+
 msgid "Add Entry"
 msgstr "Добавить запись"
 
@@ -7867,6 +7870,14 @@ msgstr "Пригласить"
 
 msgid "Invite Expired"
 msgstr "Приглашение истекло"
+msgid "Invite All"
+msgstr ""
+
+msgid "Invite Multiple"
+msgstr ""
+
+msgid "Invite Multiple Employees"
+msgstr ""
 
 msgid "Invited"
 msgstr "Приглашено"
@@ -12165,6 +12176,9 @@ msgstr "Удалить условие"
 
 msgid "Remove condition"
 msgstr "Удалить условие"
+
+msgid "Remove employee"
+msgstr ""
 
 msgid "Remove filter"
 msgstr "Удалить фильтр"

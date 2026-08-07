@@ -1094,6 +1094,9 @@ msgstr "Ajouter un entrepreneur"
 msgid "Add cost center"
 msgstr "Ajouter un centre de coûts"
 
+msgid "Add Employee"
+msgstr ""
+
 msgid "Add Entry"
 msgstr "Ajouter une entrée"
 
@@ -7867,6 +7870,14 @@ msgstr "Inviter"
 
 msgid "Invite Expired"
 msgstr "Invitation expirée"
+msgid "Invite All"
+msgstr ""
+
+msgid "Invite Multiple"
+msgstr ""
+
+msgid "Invite Multiple Employees"
+msgstr ""
 
 msgid "Invited"
 msgstr "Invité"
@@ -12165,6 +12176,9 @@ msgstr "Supprimer la clause"
 
 msgid "Remove condition"
 msgstr "Supprimer la condition"
+
+msgid "Remove employee"
+msgstr ""
 
 msgid "Remove filter"
 msgstr "Supprimer le filtre"
