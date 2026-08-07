@@ -1095,7 +1095,7 @@ msgid "Add cost center"
 msgstr "Maliyet Merkezi Ekle"
 
 msgid "Add Employee"
-msgstr ""
+msgstr "Çalışan ekle"
 
 msgid "Add Entry"
 msgstr "Giri Ekle"
@@ -7871,13 +7871,13 @@ msgstr "Davet et"
 msgid "Invite Expired"
 msgstr "Davet Süresi Doldu"
 msgid "Invite All"
-msgstr ""
+msgstr "Tümünü davet et"
 
 msgid "Invite Multiple"
-msgstr ""
+msgstr "Toplu davet"
 
 msgid "Invite Multiple Employees"
-msgstr ""
+msgstr "Birden fazla çalışan davet et"
 
 msgid "Invited"
 msgstr "Davetli"
@@ -12178,7 +12178,7 @@ msgid "Remove condition"
 msgstr "Koşulu kaldır"
 
 msgid "Remove employee"
-msgstr ""
+msgstr "Çalışanı kaldır"
 
 msgid "Remove filter"
 msgstr "Filtreyi kaldır"
