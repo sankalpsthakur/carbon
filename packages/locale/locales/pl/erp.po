@@ -7876,6 +7876,8 @@ msgstr "Zaproś wszystkich"
 
 msgid "Invite Multiple Employees"
 msgstr "Zaproś wielu pracowników"
+msgid "Invite Employees"
+msgstr ""
 
 msgid "Invited"
 msgstr "Zaproszony"
